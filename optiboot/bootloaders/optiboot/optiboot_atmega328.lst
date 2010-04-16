@@ -1,0 +1,483 @@
+
+optiboot_atmega328.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001fa  00007e00  00007e00  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .debug_aranges 00000028  00000000  00000000  0000024e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  2 .debug_pubnames 00000064  00000000  00000000  00000276  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   0000022f  00000000  00000000  000002da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 00000164  00000000  00000000  00000509  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   000003c8  00000000  00000000  0000066d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000090  00000000  00000000  00000a38  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000011c  00000000  00000000  00000ac8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    000001d6  00000000  00000000  00000be4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_ranges 00000068  00000000  00000000  00000dba  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00007e00 <main>:
+#define buff    ((uint8_t*)(0x100))
+#define address (*(uint16_t*)(0x200))
+#define length  (*(uint8_t*)(0x202))
+
+/* main program starts here */
+int main(void) {
+    7e00:	85 e0       	ldi	r24, 0x05	; 5
+    7e02:	80 93 81 00 	sts	0x0081, r24
+    [addr5]"i"(_SFR_MEM_ADDR(UBRR0L)), [val5]"i"((F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1)
+  );
+#else
+  // Set up Timer 1 for timeout counter
+  TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
+  UCSR0A = _BV(U2X0); //Double speed mode USART0
+    7e06:	82 e0       	ldi	r24, 0x02	; 2
+    7e08:	80 93 c0 00 	sts	0x00C0, r24
+  UCSR0B = _BV(RXEN0) | _BV(TXEN0);
+    7e0c:	98 e1       	ldi	r25, 0x18	; 24
+    7e0e:	90 93 c1 00 	sts	0x00C1, r25
+  UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
+    7e12:	86 e0       	ldi	r24, 0x06	; 6
+    7e14:	80 93 c2 00 	sts	0x00C2, r24
+  UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+    7e18:	80 e1       	ldi	r24, 0x10	; 16
+    7e1a:	80 93 c4 00 	sts	0x00C4, r24
+#endif
+
+  // Adaboot no-wait mod
+  ch = MCUSR;
+    7e1e:	84 b7       	in	r24, 0x34	; 52
+  MCUSR = 0;
+    7e20:	14 be       	out	0x34, r1	; 52
+  WDTCSR = _BV(WDCE) | _BV(WDE);
+    7e22:	90 93 60 00 	sts	0x0060, r25
+  WDTCSR = 0;
+    7e26:	10 92 60 00 	sts	0x0060, r1
+  if (!(ch & _BV(EXTRF))) appStart();
+    7e2a:	81 ff       	sbrs	r24, 1
+    7e2c:	c1 d0       	rcall	.+386    	; 0x7fb0 <appStart>
+
+  /* set LED pin as output */
+  LED_DDR |= _BV(LED);
+    7e2e:	25 9a       	sbi	0x04, 5	; 4
+    7e30:	06 e0       	ldi	r16, 0x06	; 6
+  putch(STK_INSYNC);
+}
+
+void flash_led(uint8_t count) {
+  do {
+    setTimer(-(F_CPU/(1024*16))); // 62ms
+    7e32:	80 e3       	ldi	r24, 0x30	; 48
+    7e34:	9c ef       	ldi	r25, 0xFC	; 252
+    7e36:	b5 d0       	rcall	.+362    	; 0x7fa2 <setTimer>
+    while(!(TIFR1 & _BV(TOV1)));
+    7e38:	b0 9b       	sbis	0x16, 0	; 22
+    7e3a:	fe cf       	rjmp	.-4      	; 0x7e38 <main+0x38>
+    LED_PIN |= _BV(LED);
+    7e3c:	1d 9a       	sbi	0x03, 5	; 3
+  } while (--count);
+    7e3e:	01 50       	subi	r16, 0x01	; 1
+    7e40:	c1 f7       	brne	.-16     	; 0x7e32 <main+0x32>
+    /* get character from UART */
+    ch = getch();
+
+    if(ch == STK_GET_PARAMETER) {
+      // GET PARAMETER returns a generic 0x03 reply - enough to keep Avrdude happy
+      getNch(1);
+    7e42:	dd 24       	eor	r13, r13
+    7e44:	d3 94       	inc	r13
+      putch(SIGNATURE_1);
+      putch(SIGNATURE_2);
+    }
+    else if (ch == 'Q') {
+      // Adaboot no-wait mod
+      WDTCSR = _BV(WDE);
+    7e46:	b8 e0       	ldi	r27, 0x08	; 8
+    7e48:	cb 2e       	mov	r12, r27
+        boot_page_fill((uint16_t)(void*)addrPtr,a);
+        addrPtr += 2;
+      } while (--ch);
+      
+      // Write from programming buffer
+      boot_page_write((uint16_t)(void*)address);
+    7e4a:	a5 e0       	ldi	r26, 0x05	; 5
+    7e4c:	ea 2e       	mov	r14, r26
+      boot_spm_busy_wait();
+
+      // Reenable read access to flash
+      boot_rww_enable();
+    7e4e:	f1 e1       	ldi	r31, 0x11	; 17
+    7e50:	ff 2e       	mov	r15, r31
+  flash_led(NUM_LED_FLASHES * 2);
+
+  /* forever loop */
+  for (;;) {
+    /* get character from UART */
+    ch = getch();
+    7e52:	b1 d0       	rcall	.+354    	; 0x7fb6 <getch>
+
+    if(ch == STK_GET_PARAMETER) {
+    7e54:	81 34       	cpi	r24, 0x41	; 65
+    7e56:	21 f4       	brne	.+8      	; 0x7e60 <main+0x60>
+      // GET PARAMETER returns a generic 0x03 reply - enough to keep Avrdude happy
+      getNch(1);
+    7e58:	81 e0       	ldi	r24, 0x01	; 1
+    7e5a:	c7 d0       	rcall	.+398    	; 0x7fea <verifySpace+0xc>
+      putch(0x03);
+    7e5c:	83 e0       	ldi	r24, 0x03	; 3
+    7e5e:	24 c0       	rjmp	.+72     	; 0x7ea8 <main+0xa8>
+    }
+    else if(ch == STK_SET_DEVICE) {
+    7e60:	82 34       	cpi	r24, 0x42	; 66
+    7e62:	11 f4       	brne	.+4      	; 0x7e68 <main+0x68>
+      // SET DEVICE is ignored
+      getNch(20);
+    7e64:	84 e1       	ldi	r24, 0x14	; 20
+    7e66:	03 c0       	rjmp	.+6      	; 0x7e6e <main+0x6e>
+    }
+    else if(ch == STK_SET_DEVICE_EXT) {
+    7e68:	85 34       	cpi	r24, 0x45	; 69
+    7e6a:	19 f4       	brne	.+6      	; 0x7e72 <main+0x72>
+      // SET DEVICE EXT is ignored
+      getNch(5);
+    7e6c:	85 e0       	ldi	r24, 0x05	; 5
+    7e6e:	bd d0       	rcall	.+378    	; 0x7fea <verifySpace+0xc>
+    7e70:	8d c0       	rjmp	.+282    	; 0x7f8c <main+0x18c>
+    }
+    else if(ch == STK_LOAD_ADDRESS) {
+    7e72:	85 35       	cpi	r24, 0x55	; 85
+    7e74:	a1 f4       	brne	.+40     	; 0x7e9e <main+0x9e>
+      // LOAD ADDRESS
+      address = getch();
+    7e76:	9f d0       	rcall	.+318    	; 0x7fb6 <getch>
+    7e78:	08 2f       	mov	r16, r24
+    7e7a:	10 e0       	ldi	r17, 0x00	; 0
+    7e7c:	10 93 01 02 	sts	0x0201, r17
+    7e80:	00 93 00 02 	sts	0x0200, r16
+      address = (address & 0xff) | (getch() << 8);
+    7e84:	98 d0       	rcall	.+304    	; 0x7fb6 <getch>
+    7e86:	90 e0       	ldi	r25, 0x00	; 0
+    7e88:	98 2f       	mov	r25, r24
+    7e8a:	88 27       	eor	r24, r24
+    7e8c:	80 2b       	or	r24, r16
+    7e8e:	91 2b       	or	r25, r17
+      address += address; // Convert from word address to byte address
+    7e90:	88 0f       	add	r24, r24
+    7e92:	99 1f       	adc	r25, r25
+    7e94:	90 93 01 02 	sts	0x0201, r25
+    7e98:	80 93 00 02 	sts	0x0200, r24
+    7e9c:	76 c0       	rjmp	.+236    	; 0x7f8a <main+0x18a>
+      verifySpace();
+    }
+    else if(ch == STK_UNIVERSAL) {
+    7e9e:	86 35       	cpi	r24, 0x56	; 86
+    7ea0:	29 f4       	brne	.+10     	; 0x7eac <main+0xac>
+      // UNIVERSAL command is ignored
+      getNch(4);
+    7ea2:	84 e0       	ldi	r24, 0x04	; 4
+    7ea4:	a2 d0       	rcall	.+324    	; 0x7fea <verifySpace+0xc>
+      putch(0x00);
+    7ea6:	80 e0       	ldi	r24, 0x00	; 0
+    7ea8:	74 d0       	rcall	.+232    	; 0x7f92 <putch>
+    7eaa:	70 c0       	rjmp	.+224    	; 0x7f8c <main+0x18c>
+    }
+    /* Write memory, length is big endian and is in bytes  */
+    else if(ch == STK_PROG_PAGE) {
+    7eac:	84 36       	cpi	r24, 0x64	; 100
+    7eae:	09 f0       	breq	.+2      	; 0x7eb2 <main+0xb2>
+    7eb0:	46 c0       	rjmp	.+140    	; 0x7f3e <main+0x13e>
+      // PROGRAM PAGE - we support flash programming only, not EEPROM
+      uint8_t *bufPtr;
+      uint16_t addrPtr;
+      
+      if (getLen() != 'F') appStart(); // Abort is not flash programming
+    7eb2:	90 d0       	rcall	.+288    	; 0x7fd4 <getLen>
+    7eb4:	86 34       	cpi	r24, 0x46	; 70
+    7eb6:	09 f0       	breq	.+2      	; 0x7eba <main+0xba>
+    7eb8:	7b d0       	rcall	.+246    	; 0x7fb0 <appStart>
+  
+      // Immediately start page erase - this will 4.5ms
+      boot_page_erase((uint16_t)(void*)address);
+    7eba:	e0 91 00 02 	lds	r30, 0x0200
+    7ebe:	f0 91 01 02 	lds	r31, 0x0201
+    7ec2:	83 e0       	ldi	r24, 0x03	; 3
+    7ec4:	80 93 57 00 	sts	0x0057, r24
+    7ec8:	e8 95       	spm
+    7eca:	c0 e0       	ldi	r28, 0x00	; 0
+    7ecc:	d1 e0       	ldi	r29, 0x01	; 1
+
+      // While that is going on, read in page contents
+      bufPtr = buff;
+      do *bufPtr++ = getch();
+    7ece:	73 d0       	rcall	.+230    	; 0x7fb6 <getch>
+    7ed0:	89 93       	st	Y+, r24
+      while (--length);
+    7ed2:	80 91 02 02 	lds	r24, 0x0202
+    7ed6:	81 50       	subi	r24, 0x01	; 1
+    7ed8:	80 93 02 02 	sts	0x0202, r24
+    7edc:	88 23       	and	r24, r24
+    7ede:	b9 f7       	brne	.-18     	; 0x7ece <main+0xce>
+
+      // If only a partial page is to be programmed, the erase might not be complete.
+      // So check that here
+      boot_spm_busy_wait();
+    7ee0:	07 b6       	in	r0, 0x37	; 55
+    7ee2:	00 fc       	sbrc	r0, 0
+    7ee4:	fd cf       	rjmp	.-6      	; 0x7ee0 <main+0xe0>
+
+      // Read command terminator, start reply
+      verifySpace();
+    7ee6:	7b d0       	rcall	.+246    	; 0x7fde <verifySpace>
+      
+      // Copy buffer into programming buffer
+      bufPtr = buff;
+      addrPtr = (uint16_t)(void*)address;
+    7ee8:	40 91 00 02 	lds	r20, 0x0200
+    7eec:	50 91 01 02 	lds	r21, 0x0201
+    7ef0:	a0 e0       	ldi	r26, 0x00	; 0
+    7ef2:	b1 e0       	ldi	r27, 0x01	; 1
+      ch = SPM_PAGESIZE / 2;
+      do {
+        uint16_t a;
+        a = *bufPtr++;
+    7ef4:	2c 91       	ld	r18, X
+    7ef6:	30 e0       	ldi	r19, 0x00	; 0
+        a |= (*bufPtr++) << 8;
+    7ef8:	11 96       	adiw	r26, 0x01	; 1
+    7efa:	8c 91       	ld	r24, X
+    7efc:	11 97       	sbiw	r26, 0x01	; 1
+    7efe:	90 e0       	ldi	r25, 0x00	; 0
+    7f00:	98 2f       	mov	r25, r24
+    7f02:	88 27       	eor	r24, r24
+    7f04:	82 2b       	or	r24, r18
+    7f06:	93 2b       	or	r25, r19
+#define buff    ((uint8_t*)(0x100))
+#define address (*(uint16_t*)(0x200))
+#define length  (*(uint8_t*)(0x202))
+
+/* main program starts here */
+int main(void) {
+    7f08:	12 96       	adiw	r26, 0x02	; 2
+      ch = SPM_PAGESIZE / 2;
+      do {
+        uint16_t a;
+        a = *bufPtr++;
+        a |= (*bufPtr++) << 8;
+        boot_page_fill((uint16_t)(void*)addrPtr,a);
+    7f0a:	fa 01       	movw	r30, r20
+    7f0c:	0c 01       	movw	r0, r24
+    7f0e:	d0 92 57 00 	sts	0x0057, r13
+    7f12:	e8 95       	spm
+    7f14:	11 24       	eor	r1, r1
+        addrPtr += 2;
+    7f16:	4e 5f       	subi	r20, 0xFE	; 254
+    7f18:	5f 4f       	sbci	r21, 0xFF	; 255
+      } while (--ch);
+    7f1a:	f1 e0       	ldi	r31, 0x01	; 1
+    7f1c:	a0 38       	cpi	r26, 0x80	; 128
+    7f1e:	bf 07       	cpc	r27, r31
+    7f20:	49 f7       	brne	.-46     	; 0x7ef4 <main+0xf4>
+      
+      // Write from programming buffer
+      boot_page_write((uint16_t)(void*)address);
+    7f22:	e0 91 00 02 	lds	r30, 0x0200
+    7f26:	f0 91 01 02 	lds	r31, 0x0201
+    7f2a:	e0 92 57 00 	sts	0x0057, r14
+    7f2e:	e8 95       	spm
+      boot_spm_busy_wait();
+    7f30:	07 b6       	in	r0, 0x37	; 55
+    7f32:	00 fc       	sbrc	r0, 0
+    7f34:	fd cf       	rjmp	.-6      	; 0x7f30 <main+0x130>
+
+      // Reenable read access to flash
+      boot_rww_enable();
+    7f36:	f0 92 57 00 	sts	0x0057, r15
+    7f3a:	e8 95       	spm
+    7f3c:	27 c0       	rjmp	.+78     	; 0x7f8c <main+0x18c>
+    }
+    /* Read memory block mode, length is big endian.  */
+    else if(ch == STK_READ_PAGE) {
+    7f3e:	84 37       	cpi	r24, 0x74	; 116
+    7f40:	b9 f4       	brne	.+46     	; 0x7f70 <main+0x170>
+      // READ PAGE - we only read flash
+      getLen();
+    7f42:	48 d0       	rcall	.+144    	; 0x7fd4 <getLen>
+      verifySpace();
+    7f44:	4c d0       	rcall	.+152    	; 0x7fde <verifySpace>
+      do putch(pgm_read_byte_near(address++));
+    7f46:	e0 91 00 02 	lds	r30, 0x0200
+    7f4a:	f0 91 01 02 	lds	r31, 0x0201
+    7f4e:	31 96       	adiw	r30, 0x01	; 1
+    7f50:	f0 93 01 02 	sts	0x0201, r31
+    7f54:	e0 93 00 02 	sts	0x0200, r30
+    7f58:	31 97       	sbiw	r30, 0x01	; 1
+    7f5a:	e4 91       	lpm	r30, Z+
+    7f5c:	8e 2f       	mov	r24, r30
+    7f5e:	19 d0       	rcall	.+50     	; 0x7f92 <putch>
+      while (--length);
+    7f60:	80 91 02 02 	lds	r24, 0x0202
+    7f64:	81 50       	subi	r24, 0x01	; 1
+    7f66:	80 93 02 02 	sts	0x0202, r24
+    7f6a:	88 23       	and	r24, r24
+    7f6c:	61 f7       	brne	.-40     	; 0x7f46 <main+0x146>
+    7f6e:	0e c0       	rjmp	.+28     	; 0x7f8c <main+0x18c>
+    }
+
+    /* Get device signature bytes  */
+    else if(ch == STK_READ_SIGN) {
+    7f70:	85 37       	cpi	r24, 0x75	; 117
+    7f72:	39 f4       	brne	.+14     	; 0x7f82 <main+0x182>
+      // READ SIGN - return what Avrdude wants to hear
+      verifySpace();
+    7f74:	34 d0       	rcall	.+104    	; 0x7fde <verifySpace>
+      putch(SIGNATURE_0);
+    7f76:	8e e1       	ldi	r24, 0x1E	; 30
+    7f78:	0c d0       	rcall	.+24     	; 0x7f92 <putch>
+      putch(SIGNATURE_1);
+    7f7a:	85 e9       	ldi	r24, 0x95	; 149
+    7f7c:	0a d0       	rcall	.+20     	; 0x7f92 <putch>
+      putch(SIGNATURE_2);
+    7f7e:	8f e0       	ldi	r24, 0x0F	; 15
+    7f80:	93 cf       	rjmp	.-218    	; 0x7ea8 <main+0xa8>
+    }
+    else if (ch == 'Q') {
+    7f82:	81 35       	cpi	r24, 0x51	; 81
+    7f84:	11 f4       	brne	.+4      	; 0x7f8a <main+0x18a>
+      // Adaboot no-wait mod
+      WDTCSR = _BV(WDE);
+    7f86:	c0 92 60 00 	sts	0x0060, r12
+      verifySpace();
+    }
+    else {
+      // This covers the response to commands like STK_ENTER_PROGMODE
+      verifySpace();
+    7f8a:	29 d0       	rcall	.+82     	; 0x7fde <verifySpace>
+    }
+    putch(STK_OK);
+    7f8c:	80 e1       	ldi	r24, 0x10	; 16
+    7f8e:	01 d0       	rcall	.+2      	; 0x7f92 <putch>
+    7f90:	60 cf       	rjmp	.-320    	; 0x7e52 <main+0x52>
+
+00007f92 <putch>:
+  }
+}
+
+void putch(char ch) {
+    7f92:	98 2f       	mov	r25, r24
+  while (!(UCSR0A & _BV(UDRE0)));
+    7f94:	80 91 c0 00 	lds	r24, 0x00C0
+    7f98:	85 ff       	sbrs	r24, 5
+    7f9a:	fc cf       	rjmp	.-8      	; 0x7f94 <putch+0x2>
+  UDR0 = ch;
+    7f9c:	90 93 c6 00 	sts	0x00C6, r25
+}
+    7fa0:	08 95       	ret
+
+00007fa2 <setTimer>:
+
+void setTimer(uint16_t counts) {
+  TCNT1 = counts;
+    7fa2:	90 93 85 00 	sts	0x0085, r25
+    7fa6:	80 93 84 00 	sts	0x0084, r24
+  TIFR1 = _BV(TOV1);
+    7faa:	81 e0       	ldi	r24, 0x01	; 1
+    7fac:	86 bb       	out	0x16, r24	; 22
+}
+    7fae:	08 95       	ret
+
+00007fb0 <appStart>:
+  length = getch();
+  return getch();
+}
+
+void appStart() {
+  __asm__ __volatile__ (
+    7fb0:	ee 27       	eor	r30, r30
+    7fb2:	ff 27       	eor	r31, r31
+    7fb4:	09 94       	ijmp
+
+00007fb6 <getch>:
+  TCNT1 = counts;
+  TIFR1 = _BV(TOV1);
+}
+
+uint8_t getch(void) {
+  LED_PORT &= ~_BV(LED);
+    7fb6:	2d 98       	cbi	0x05, 5	; 5
+  setTimer(-(F_CPU/(1024*2))); // 500ms
+    7fb8:	8c e7       	ldi	r24, 0x7C	; 124
+    7fba:	91 ee       	ldi	r25, 0xE1	; 225
+    7fbc:	f2 df       	rcall	.-28     	; 0x7fa2 <setTimer>
+    7fbe:	02 c0       	rjmp	.+4      	; 0x7fc4 <getch+0xe>
+  while(!(UCSR0A & _BV(RXC0))) if (TIFR1 & _BV(TOV1)) appStart();
+    7fc0:	b0 99       	sbic	0x16, 0	; 22
+    7fc2:	f6 df       	rcall	.-20     	; 0x7fb0 <appStart>
+    7fc4:	80 91 c0 00 	lds	r24, 0x00C0
+    7fc8:	87 ff       	sbrs	r24, 7
+    7fca:	fa cf       	rjmp	.-12     	; 0x7fc0 <getch+0xa>
+  LED_PORT |= _BV(LED);
+    7fcc:	2d 9a       	sbi	0x05, 5	; 5
+  return UDR0;
+    7fce:	80 91 c6 00 	lds	r24, 0x00C6
+}
+    7fd2:	08 95       	ret
+
+00007fd4 <getLen>:
+    LED_PIN |= _BV(LED);
+  } while (--count);
+}
+
+uint8_t getLen() {
+  getch();
+    7fd4:	f0 df       	rcall	.-32     	; 0x7fb6 <getch>
+  length = getch();
+    7fd6:	ef df       	rcall	.-34     	; 0x7fb6 <getch>
+    7fd8:	80 93 02 02 	sts	0x0202, r24
+  return getch();
+}
+    7fdc:	ec cf       	rjmp	.-40     	; 0x7fb6 <getch>
+
+00007fde <verifySpace>:
+  do getch(); while (--count);
+  verifySpace();
+}
+
+void verifySpace() {
+  if (getch() != CRC_EOP) appStart();
+    7fde:	eb df       	rcall	.-42     	; 0x7fb6 <getch>
+    7fe0:	80 32       	cpi	r24, 0x20	; 32
+    7fe2:	09 f0       	breq	.+2      	; 0x7fe6 <verifySpace+0x8>
+    7fe4:	e5 df       	rcall	.-54     	; 0x7fb0 <appStart>
+  putch(STK_INSYNC);
+    7fe6:	84 e1       	ldi	r24, 0x14	; 20
+}
+    7fe8:	d4 cf       	rjmp	.-88     	; 0x7f92 <putch>
+  while(!(UCSR0A & _BV(RXC0))) if (TIFR1 & _BV(TOV1)) appStart();
+  LED_PORT |= _BV(LED);
+  return UDR0;
+}
+
+void getNch(uint8_t count) {
+    7fea:	1f 93       	push	r17
+    7fec:	18 2f       	mov	r17, r24
+
+00007fee <getNch>:
+  do getch(); while (--count);
+    7fee:	e3 df       	rcall	.-58     	; 0x7fb6 <getch>
+    7ff0:	11 50       	subi	r17, 0x01	; 1
+    7ff2:	e9 f7       	brne	.-6      	; 0x7fee <getNch>
+  verifySpace();
+    7ff4:	f4 df       	rcall	.-24     	; 0x7fde <verifySpace>
+}
+    7ff6:	1f 91       	pop	r17
+    7ff8:	08 95       	ret
