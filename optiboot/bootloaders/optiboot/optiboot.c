@@ -40,6 +40,7 @@
 /*   Spiff's 1K bootloader http://spiffie.org/know/arduino_1k_bootloader/bootloader.shtml */
 /*   avr-libc project      http://nongnu.org/avr-libc     */
 /*   Adaboot               http://www.ladyada.net/library/arduino/bootloader.html */
+/*   AVR305                Atmel Application Note         */
 /*                                                        */
 /* This program is free software; you can redistribute it */
 /* and/or modify it under the terms of the GNU General    */
@@ -63,13 +64,16 @@
 /*                                                        */
 /**********************************************************/
 
-
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <avr/boot.h>
 
-#define NOWAIT
+//#define LED_DATA_FLASH
+
+#ifndef LED_START_FLASHES
+#define LED_START_FLASHES 0
+#endif
 
 /* Build-time variables */
 /* BAUD_RATE       Programming baud rate */
@@ -82,11 +86,21 @@
 #define BAUD_RATE   19200
 #endif
 
+
 /* Onboard LED is connected to pin PB5 in Arduino NG, Diecimila, and Duemilanove */ 
-#define LED_DDR  DDRB
-#define LED_PORT PORTB
-#define LED_PIN  PINB
-#define LED      PINB5
+#define LED_DDR     DDRB
+#define LED_PORT    PORTB
+#define LED_PIN     PINB
+#define LED         PINB5
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
 
 /* STK500 constants list, from AVRDUDE */
 #define STK_OK              0x10
@@ -138,8 +152,12 @@ uint8_t getch(void);
 static inline void getNch(uint8_t); /* "static inline" is a compiler hint to reduce code size */
 void verifySpace();
 static inline void flash_led(uint8_t);
-void setTimer(uint16_t counts);
 uint8_t getLen();
+static inline void watchdogReset();
+void watchdogConfig(uint8_t x);
+#ifdef SOFT_UART
+void uartDelay() __attribute__ ((naked));
+#endif
 void appStart() __attribute__ ((naked));
 
 /* C zero initialises all global variables. However, that requires */
@@ -165,46 +183,11 @@ int main(void) {
 
   uint8_t ch;
 
-#if 0
-  // The compiler normally generates sts instructions for setting
-  // up I/O space registers. But that takes 6 bytes per register.
-  // This code can do it in 2, with an overhead of 20 bytes.
-  // This starts to pay off when initialising 6 or more registers
-  __asm__ volatile (
-    "ldi r30,lo8(init_table)\n"
-    "ldi r31,hi8(init_table)\n"
-    "ldi r29,0\n"
-    "init_loop:lpm r28,Z+\n"
-    "lpm r0,Z+\n"
-    "tst r28\n"
-    "breq init_exit+2\n"
-    "st Y,r0\n"
-    "rjmp init_loop\n"
-    "init_table:\n"
-    ".byte %[addr1]\n"
-    ".byte %[val1]\n"
-    ".byte %[addr2]\n"
-    ".byte %[val2]\n"
-    ".byte %[addr3]\n"
-    ".byte %[val3]\n"
-    ".byte %[addr4]\n"
-    ".byte %[val4]\n"
-    ".byte %[addr5]\n"
-    ".byte %[val5]\n"
-    "init_exit:.word 0\n"
-    // Clobbers R0,R28,R29,R30,R31
-    // But that is fine so we won't tell the compiler
-    // otherwise it will generate useless extra code
-    ::
-    [addr1]"i"(_SFR_MEM_ADDR(TCCR1B)), [val1]"i"(_BV(CS12) | _BV(CS10)),
-    [addr2]"i"(_SFR_MEM_ADDR(UCSR0A)), [val2]"i"(_BV(U2X0)),
-    [addr3]"i"(_SFR_MEM_ADDR(UCSR0B)), [val3]"i"(_BV(RXEN0) | _BV(TXEN0)),
-    [addr4]"i"(_SFR_MEM_ADDR(UCSR0C)), [val4]"i"(_BV(UCSZ00) | _BV(UCSZ01)),
-    [addr5]"i"(_SFR_MEM_ADDR(UBRR0L)), [val5]"i"((F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1)
-  );
-#else
+#if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
+#endif
+#ifndef SOFT_UART
   UCSR0A = _BV(U2X0); //Double speed mode USART0
   UCSR0B = _BV(RXEN0) | _BV(TXEN0);
   UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
@@ -214,17 +197,25 @@ int main(void) {
   // Adaboot no-wait mod
   ch = MCUSR;
   MCUSR = 0;
-  WDTCSR = _BV(WDCE) | _BV(WDE);
-  WDTCSR = 0;
   if (!(ch & _BV(EXTRF))) appStart();
 
-  /* set LED pin as output */
+  // Set up watchdog to trigger after 500ms
+  watchdogConfig(_BV(WDP2)|_BV(WDP0)|_BV(WDE));
+
+  /* Set LED pin as output */
   LED_DDR |= _BV(LED);
 
-  /* flash onboard LED to signal entering of bootloader */
-  flash_led(NUM_LED_FLASHES * 2);
+#ifdef SOFT_UART
+  /* Set TX pin as output */
+  UART_DDR |= _BV(UART_TX_BIT);
+#endif
 
-  /* forever loop */
+#if LED_START_FLASHES > 0
+  /* Flash onboard LED to signal entering of bootloader */
+  flash_led(LED_START_FLASHES * 2);
+#endif
+
+  /* Forever loop */
   for (;;) {
     /* get character from UART */
     ch = getch();
@@ -259,9 +250,9 @@ int main(void) {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t *bufPtr;
       uint16_t addrPtr;
-      
-      if (getLen() != 'F') appStart(); // Abort is not flash programming
-  
+
+      getLen();
+
       // Immediately start page erase - this will 4.5ms
       boot_page_erase((uint16_t)(void*)address);
 
@@ -270,13 +261,13 @@ int main(void) {
       do *bufPtr++ = getch();
       while (--length);
 
+      // Read command terminator, start reply
+      verifySpace();
+      
       // If only a partial page is to be programmed, the erase might not be complete.
       // So check that here
       boot_spm_busy_wait();
 
-      // Read command terminator, start reply
-      verifySpace();
-      
       // Copy buffer into programming buffer
       bufPtr = buff;
       addrPtr = (uint16_t)(void*)address;
@@ -315,7 +306,7 @@ int main(void) {
     }
     else if (ch == 'Q') {
       // Adaboot no-wait mod
-      WDTCSR = _BV(WDE);
+      watchdogConfig(_BV(WDE));
       verifySpace();
     }
     else {
@@ -327,22 +318,97 @@ int main(void) {
 }
 
 void putch(char ch) {
+#ifndef SOFT_UART
   while (!(UCSR0A & _BV(UDRE0)));
   UDR0 = ch;
-}
-
-void setTimer(uint16_t counts) {
-  TCNT1 = counts;
-  TIFR1 = _BV(TOV1);
+#else
+  __asm__ __volatile__ (
+    "   com %[ch]\n" // ones complement, carry set
+    "   sec\n"
+    "1: brcc 2f\n"
+    "   cbi %[uartPort],%[uartBit]\n"
+    "   rjmp 3f\n"
+    "2: sbi %[uartPort],%[uartBit]\n"
+    "   nop\n"
+    "3: rcall uartDelay\n"
+    "   rcall uartDelay\n"
+    "   lsr %[ch]\n"
+    "   dec %[bitcnt]\n"
+    "   brne 1b\n"
+    :
+    :
+      [bitcnt] "d" (10),
+      [ch] "r" (ch),
+      [uartPort] "I" (_SFR_IO_ADDR(UART_PORT)),
+      [uartBit] "I" (UART_TX_BIT)
+    :
+      "r25"
+  );
+#endif
 }
 
 uint8_t getch(void) {
-  LED_PORT &= ~_BV(LED);
-  setTimer(-(F_CPU/(1024*2))); // 500ms
-  while(!(UCSR0A & _BV(RXC0))) if (TIFR1 & _BV(TOV1)) appStart();
-  LED_PORT |= _BV(LED);
-  return UDR0;
+  uint8_t ch;
+
+  watchdogReset();
+
+#ifdef LED_DATA_FLASH
+  LED_PIN |= _BV(LED);
+#endif
+
+#ifdef SOFT_UART
+  __asm__ __volatile__ (
+    "1: sbic  %[uartPin],%[uartBit]\n"  // Wait for start edge
+    "   rjmp  1b\n"
+    "   rcall uartDelay\n"          // Get to middle of start bit
+    "2: rcall uartDelay\n"              // Wait 1 bit period
+    "   rcall uartDelay\n"              // Wait 1 bit period
+    "   clc\n"
+    "   sbic  %[uartPin],%[uartBit]\n"
+    "   sec\n"                          
+    "   dec   %[bitCnt]\n"
+    "   breq  3f\n"
+    "   ror   %[ch]\n"
+    "   rjmp  2b\n"
+    "3:\n"
+    :
+      [ch] "=r" (ch)
+    :
+      [bitCnt] "d" (9),
+      [uartPin] "I" (_SFR_IO_ADDR(UART_PIN)),
+      [uartBit] "I" (UART_RX_BIT)
+    :
+      "r25"
+);
+#else
+  while(!(UCSR0A & _BV(RXC0)));
+  ch = UDR0;
+#endif
+
+#ifdef LED_DATA_FLASH
+  LED_PIN |= _BV(LED);
+#endif
+
+  return ch;
 }
+
+#ifdef SOFT_UART
+//#define UART_B_VALUE (((F_CPU/BAUD_RATE)-23)/6)
+#define UART_B_VALUE (((F_CPU/BAUD_RATE)-20)/6)
+#if UART_B_VALUE > 255
+#error Baud rate too slow for soft UART
+#endif
+
+void uartDelay() {
+  __asm__ __volatile__ (
+    "ldi r25,%[count]\n"
+    "1:dec r25\n"
+    "brne 1b\n"
+    "ret\n"
+    ::[count] "M" (UART_B_VALUE)
+  );
+}
+#endif
 
 void getNch(uint8_t count) {
   do getch(); while (--count);
@@ -354,13 +420,17 @@ void verifySpace() {
   putch(STK_INSYNC);
 }
 
+#if LED_START_FLASHES > 0
 void flash_led(uint8_t count) {
   do {
-    setTimer(-(F_CPU/(1024*16))); // 62ms
+    TCNT1 = -(F_CPU/(1024*16));
+    TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
     LED_PIN |= _BV(LED);
+    watchdogReset();
   } while (--count);
 }
+#endif
 
 uint8_t getLen() {
   getch();
@@ -368,7 +438,20 @@ uint8_t getLen() {
   return getch();
 }
 
+// Watchdog functions. These are only safe with interrupts turned off.
+void watchdogReset() {
+  __asm__ __volatile__ (
+    "wdr\n"
+  );
+}
+
+void watchdogConfig(uint8_t x) {
+  WDTCSR = _BV(WDCE) | _BV(WDE);
+  WDTCSR = x;
+}
+
 void appStart() {
+  watchdogConfig(0);
   __asm__ __volatile__ (
     "clr r30\n"
     "clr r31\n"

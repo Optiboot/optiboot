@@ -64,7 +64,7 @@ OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump
 
 lilypad: TARGET = lilypad
-lilypad: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>1' '-DNUM_LED_FLASHES=3'
+lilypad: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 lilypad: AVR_FREQ = 8000000L
 lilypad: $(PROGRAM)_lilypad.hex
 lilypad: $(PROGRAM)_lilypad.lst
@@ -77,7 +77,7 @@ lilypad_isp: EFUSE = 02
 lilypad_isp: isp
 
 lilypad_resonator: TARGET = lilypad_resonator
-lilypad_resonator: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=3'
+lilypad_resonator: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 lilypad_resonator: AVR_FREQ = 8000000L
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.hex
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.lst
@@ -90,7 +90,7 @@ lilypad_resonator_isp: EFUSE = 02
 lilypad_resonator_isp: isp
 
 pro8: TARGET = pro_8MHz
-pro8: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=1' '-DWATCHDOG_MODS'
+pro8: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 pro8: AVR_FREQ = 8000000L
 pro8: $(PROGRAM)_pro_8MHz.hex
 pro8: $(PROGRAM)_pro_8MHz.lst
@@ -103,7 +103,7 @@ pro8_isp: EFUSE = 02
 pro8_isp: isp
 
 pro16: TARGET = pro_16MHz
-pro16: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=1' '-DWATCHDOG_MODS'
+pro16: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=230400'
 pro16: AVR_FREQ = 16000000L
 pro16: $(PROGRAM)_pro_16MHz.hex
 pro16: $(PROGRAM)_pro_16MHz.lst
@@ -116,7 +116,7 @@ pro16_isp: EFUSE = 02
 pro16_isp: isp
 
 pro20: TARGET = pro_20mhz
-pro20: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=1' '-DWATCHDOG_MODS'
+pro20: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=230400'
 pro20: AVR_FREQ = 20000000L
 pro20: $(PROGRAM)_pro_20mhz.hex
 pro20: $(PROGRAM)_pro_20mhz.lst
@@ -129,7 +129,7 @@ pro20_isp: EFUSE = 02
 pro20_isp: isp
 
 diecimila: TARGET = diecimila
-diecimila: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=1'
+diecimila: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=230400'
 diecimila: AVR_FREQ = 16000000L 
 diecimila: $(PROGRAM)_diecimila.hex
 diecimila: $(PROGRAM)_diecimila.lst
@@ -142,7 +142,7 @@ diecimila_isp: EFUSE = 02
 diecimila_isp: isp
 
 ng: TARGET = ng
-ng: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>1' '-DNUM_LED_FLASHES=3'
+ng: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=230400'
 ng: AVR_FREQ = 16000000L
 ng: $(PROGRAM)_ng.hex
 ng: $(PROGRAM)_ng.lst
@@ -156,7 +156,7 @@ ng_isp: isp
 
 atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
-atmega328: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=3' '-DBAUD_RATE=115200'
+atmega328: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=230400'
 atmega328: AVR_FREQ = 16000000L
 atmega328: LDSECTION  = --section-start=.text=0x7e00
 atmega328: $(PROGRAM)_atmega328.hex
@@ -172,7 +172,7 @@ atmega328_isp: isp
 
 atmega328_pro8: TARGET = atmega328_pro_8MHz
 atmega328_pro8: MCU_TARGET = atmega328p
-atmega328_pro8: CFLAGS += '-DMAX_TIME_COUNT=F_CPU>>4' '-DNUM_LED_FLASHES=1' '-DBAUD_RATE=57600'
+atmega328_pro8: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 atmega328_pro8: AVR_FREQ = 8000000L
 atmega328_pro8: LDSECTION  = --section-start=.text=0x7e00
 atmega328_pro8: $(PROGRAM)_atmega328_pro_8MHz.hex
@@ -185,6 +185,14 @@ atmega328_pro8_isp: HFUSE = DE
 atmega328_pro8_isp: LFUSE = FF
 atmega328_pro8_isp: EFUSE = 05
 atmega328_pro8_isp: isp
+
+luminet: TARGET = luminet
+luminet: MCU_TARGET = attiny84
+luminet: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
+luminet: AVR_FREQ = 1000000L
+luminet: LDSECTION  = --section-start=.text=0x1e00
+luminet: $(PROGRAM)_luminet.hex
+luminet: $(PROGRAM)_luminet.lst
 
 isp: $(TARGET)
 	$(ISPFUSES)
