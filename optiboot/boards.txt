@@ -7,7 +7,7 @@
 atmega328o.name=[Optiboot] Arduino Duemilanove or Nano w/ ATmega328
 atmega328o.upload.protocol=stk500
 atmega328o.upload.maximum_size=32256
-atmega328o.upload.speed=230400
+atmega328o.upload.speed=115200
 atmega328o.bootloader.low_fuses=0xff
 atmega328o.bootloader.high_fuses=0xde
 atmega328o.bootloader.extended_fuses=0x05
@@ -21,10 +21,27 @@ atmega328o.build.core=arduino
 
 ##############################################################
 
-diecimilao.name=[Optiboot] Arduino Diecimila, Duemilanove, or Nano w/ ATmega168
+atmega328o.name=[Optiboot] Arduino Duemilanove or Nano w/ ATmega328
+atmega328o.upload.protocol=stk500
+atmega328o.upload.maximum_size=32256
+atmega328o.upload.speed=115200
+atmega328o.bootloader.low_fuses=0xff
+atmega328o.bootloader.high_fuses=0xde
+atmega328o.bootloader.extended_fuses=0x05
+atmega328o.bootloader.path=optiboot
+atmega328o.bootloader.file=optiboot_atmega328.hex
+atmega328o.bootloader.unlock_bits=0x3F
+atmega328o.bootloader.lock_bits=0x0F
+atmega328o.build.mcu=atmega328p
+atmega328o.build.f_cpu=16000000L
+atmega328o.build.core=arduino
+
+##############################################################
+
+diecimilao.name=[Optiboot] Arduino Diecimila, Duemilanove, Nano, NG w/ ATmega168
 diecimilao.upload.protocol=stk500
 diecimilao.upload.maximum_size=15360
-diecimilao.upload.speed=230400
+diecimilao.upload.speed=115200
 diecimilao.bootloader.low_fuses=0xff
 diecimilao.bootloader.high_fuses=0xdd
 diecimilao.bootloader.extended_fuses=0x02
@@ -41,7 +58,7 @@ diecimilao.build.core=arduino
 minio.name=[Optiboot] Arduino Mini
 minio.upload.protocol=stk500
 minio.upload.maximum_size=15360
-minio.upload.speed=230400
+minio.upload.speed=115200
 minio.bootloader.low_fuses=0xff
 minio.bootloader.high_fuses=0xdd
 minio.bootloader.extended_fuses=0x02
@@ -122,18 +139,16 @@ proo.build.f_cpu=8000000L
 proo.build.core=arduino
 
 ##############################################################
-
-atmega168o.name=[Optiboot] Arduino NG or older w/ ATmega168
-atmega168o.upload.protocol=stk500
-atmega168o.upload.maximum_size=14336
-atmega168o.upload.speed=230400
-atmega168o.bootloader.low_fuses=0xff
-atmega168o.bootloader.high_fuses=0xdd
-atmega168o.bootloader.extended_fuses=0x02
-atmega168o.bootloader.path=optiboot
-atmega168o.bootloader.file=optiboot_ng.hex
-atmega168o.bootloader.unlock_bits=0x3F
-atmega168o.bootloader.lock_bits=0x0F
-atmega168o.build.mcu=atmega168
-atmega168o.build.f_cpu=16000000L
-atmega168o.build.core=arduino
+#
+#lumineto.name=[Optiboot] Luminet (in development)
+#lumineto.upload.protocol=stk500
+#lumineto.upload.maximum_size=7424
+#lumineto.upload.speed=9600
+#lumineto.bootloader.low_fuses=0x62
+#lumineto.bootloader.high_fuses=0xdf
+#lumineto.bootloader.extended_fuses=0xfe
+#lumineto.bootloader.path=optiboot
+#lumineto.bootloader.file=optiboot_luminet.hex
+#lumineto.build.mcu=attiny84
+#lumineto.build.f_cpu=1000000L
+#lumineto.build.core=arduino

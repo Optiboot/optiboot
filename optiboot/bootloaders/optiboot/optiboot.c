@@ -86,7 +86,7 @@
 #define BAUD_RATE   19200
 #endif
 
-
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__)
 /* Onboard LED is connected to pin PB5 in Arduino NG, Diecimila, and Duemilanove */ 
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
@@ -100,6 +100,24 @@
 #define UART_DDR    DDRD
 #define UART_TX_BIT 1
 #define UART_RX_BIT 0
+#endif
+#endif
+
+#if defined(__AVR_ATtiny84__)
+/* Onboard LED is connected to pin PB5 in Arduino NG, Diecimila, and Duemilanove */ 
+#define LED_DDR     DDRA
+#define LED_PORT    PORTA
+#define LED_PIN     PINA
+#define LED         PINA4
+
+/* Ports for soft UART - left port only for now*/
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 2
+#define UART_RX_BIT 3
+#endif
 #endif
 
 /* STK500 constants list, from AVRDUDE */
@@ -142,6 +160,19 @@
 #define STK_READ_FUSE_EXT   0x77  // 'w'
 #define STK_READ_OSCCAL_EXT 0x78  // 'x'
 
+/* Watchdog settings */
+#define WATCHDOG_OFF    (0)
+#define WATCHDOG_16MS   (_BV(WDE))
+#define WATCHDOG_32MS   (_BV(WDP0) | _BV(WDE))
+#define WATCHDOG_64MS   (_BV(WDP1) | _BV(WDE))
+#define WATCHDOG_125MS  (_BV(WDP1) | _BV(WDP0) | _BV(WDE))
+#define WATCHDOG_250MS  (_BV(WDP2) | _BV(WDE))
+#define WATCHDOG_500MS  (_BV(WDP2) | _BV(WDP0) | _BV(WDE))
+#define WATCHDOG_1S     (_BV(WDP2) | _BV(WDP1) | _BV(WDE))
+#define WATCHDOG_2S     (_BV(WDP2) | _BV(WDP1) | _BV(WDP0) | _BV(WDE))
+#define WATCHDOG_4S     (_BV(WDE3) | _BV(WDE))
+#define WATCHDOG_8S     (_BV(WDE3) | _BV(WDE0) | _BV(WDE))
+
 /* Function Prototypes */
 /* The main function is in init9, which removes the interrupt vector table */
 /* we don't need. It is also 'naked', which means the compiler does not    */
@@ -166,7 +197,10 @@ void appStart() __attribute__ ((naked));
 #define buff    ((uint8_t*)(0x100))
 #define address (*(uint16_t*)(0x200))
 #define length  (*(uint8_t*)(0x202))
-
+#ifdef VIRTUAL_BOOT_PARTITION
+#define rstVect (*(uint16_t*)(0x204))
+#define wdtVect (*(uint16_t*)(0x206))
+#endif
 /* main program starts here */
 int main(void) {
   // After the zero init loop, this is the first code to run.
@@ -200,7 +234,7 @@ int main(void) {
   if (!(ch & _BV(EXTRF))) appStart();
 
   // Set up watchdog to trigger after 500ms
-  watchdogConfig(_BV(WDP2)|_BV(WDP0)|_BV(WDE));
+  watchdogConfig(WATCHDOG_500MS);
 
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);
@@ -268,6 +302,25 @@ int main(void) {
       // So check that here
       boot_spm_busy_wait();
 
+#ifdef VIRTUAL_BOOT_PARTITION
+      if ((uint16_t)(void*)address == 0) {
+        // This is the reset vector page. We need to live-patch the code so the
+        // bootloader runs.
+        //
+        // Move RESET vector to WDT vector
+        uint16_t vect = buff[0] | (buff[1]<<8);
+        rstVect = vect;
+        wdtVect = buff[10] | (buff[11]<<8);
+        vect -= 4; // Instruction is a relative jump (rjmp), so recalculate.
+        buff[10] = vect & 0xff;
+        buff[11] = vect >> 8;
+
+        // Add jump to bootloader at RESET vector
+        buff[0] = 0x7f;
+        buff[1] = 0xce; // rjmp 0x1d00 instruction
+      }
+#endif
+
       // Copy buffer into programming buffer
       bufPtr = buff;
       addrPtr = (uint16_t)(void*)address;
@@ -284,16 +337,32 @@ int main(void) {
       boot_page_write((uint16_t)(void*)address);
       boot_spm_busy_wait();
 
+#if defined(RWWSRE)
       // Reenable read access to flash
       boot_rww_enable();
+#endif
+
     }
     /* Read memory block mode, length is big endian.  */
     else if(ch == STK_READ_PAGE) {
       // READ PAGE - we only read flash
       getLen();
       verifySpace();
+#ifdef VIRTUAL_BOOT_PARTITION
+      do {
+        // Undo vector patch in bottom page so verify passes
+        if (address == 0)       ch=rstVect & 0xff;
+        else if (address == 1)  ch=rstVect >> 8;
+        else if (address == 10)  ch=wdtVect & 0xff;
+        else if (address == 11) ch=wdtVect >> 8;
+        else ch = pgm_read_byte_near(address);
+        address++;
+        putch(ch);
+      } while (--length);
+#else
       do putch(pgm_read_byte_near(address++));
       while (--length);
+#endif
     }
 
     /* Get device signature bytes  */
@@ -306,7 +375,7 @@ int main(void) {
     }
     else if (ch == 'Q') {
       // Adaboot no-wait mod
-      watchdogConfig(_BV(WDE));
+      watchdogConfig(WATCHDOG_16MS);
       verifySpace();
     }
     else {
@@ -451,10 +520,17 @@ void watchdogConfig(uint8_t x) {
 }
 
 void appStart() {
-  watchdogConfig(0);
+  watchdogConfig(WATCHDOG_OFF);
   __asm__ __volatile__ (
+#ifdef VIRTUAL_BOOT_PARTITION
+    // Jump to WDT vector
+    "ldi r30,5\n"
+    "clr r31\n"
+#else
+    // Jump to RST vector
     "clr r30\n"
     "clr r31\n"
+#endif
     "ijmp\n"
   );
 }

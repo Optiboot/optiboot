@@ -9,3 +9,5 @@ make diecimila
 make ng
 make atmega328
 make atmega328_pro8
+make luminet
+

@@ -9,28 +9,28 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   2 .debug_pubnames 00000078  00000000  00000000  00000278  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   00000275  00000000  00000000  000002f0  2**0
+  3 .debug_info   00000277  00000000  00000000  000002f0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 000001a3  00000000  00000000  00000565  2**0
+  4 .debug_abbrev 00000194  00000000  00000000  00000567  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   000003b8  00000000  00000000  00000708  2**0
+  5 .debug_line   000003bb  00000000  00000000  000006fb  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_frame  000000a0  00000000  00000000  00000ac0  2**2
+  6 .debug_frame  000000a0  00000000  00000000  00000ab8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000133  00000000  00000000  00000b60  2**0
+  7 .debug_str    0000013f  00000000  00000000  00000b58  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_loc    000001a0  00000000  00000000  00000c93  2**0
+  8 .debug_loc    000001a0  00000000  00000000  00000c97  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_ranges 00000070  00000000  00000000  00000e33  2**0
+  9 .debug_ranges 00000070  00000000  00000000  00000e37  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
 
 00003e00 <main>:
-#define buff    ((uint8_t*)(0x100))
-#define address (*(uint16_t*)(0x200))
-#define length  (*(uint8_t*)(0x202))
-
+#ifdef VIRTUAL_BOOT_PARTITION
+#define rstVect (*(uint16_t*)(0x204))
+#define wdtVect (*(uint16_t*)(0x206))
+#endif
 /* main program starts here */
 int main(void) {
     3e00:	85 e0       	ldi	r24, 0x05	; 5
@@ -49,7 +49,7 @@ int main(void) {
     3e0c:	e4 d0       	rcall	.+456    	; 0x3fd6 <appStart>
 
   // Set up watchdog to trigger after 500ms
-  watchdogConfig(_BV(WDP2)|_BV(WDP0)|_BV(WDE));
+  watchdogConfig(WATCHDOG_500MS);
     3e0e:	8d e0       	ldi	r24, 0x0D	; 13
     3e10:	dc d0       	rcall	.+440    	; 0x3fca <watchdogConfig>
 
@@ -120,6 +120,7 @@ void watchdogReset() {
     3e3a:	ea 2e       	mov	r14, r26
       boot_spm_busy_wait();
 
+#if defined(RWWSRE)
       // Reenable read access to flash
       boot_rww_enable();
     3e3c:	f1 e1       	ldi	r31, 0x11	; 17
@@ -241,6 +242,8 @@ void watchdogReset() {
     3eca:	07 b6       	in	r0, 0x37	; 55
     3ecc:	00 fc       	sbrc	r0, 0
     3ece:	fd cf       	rjmp	.-6      	; 0x3eca <main+0xca>
+      }
+#endif
 
       // Copy buffer into programming buffer
       bufPtr = buff;
@@ -264,10 +267,10 @@ void watchdogReset() {
     3eea:	88 27       	eor	r24, r24
     3eec:	82 2b       	or	r24, r18
     3eee:	93 2b       	or	r25, r19
-#define buff    ((uint8_t*)(0x100))
-#define address (*(uint16_t*)(0x200))
-#define length  (*(uint8_t*)(0x202))
-
+#ifdef VIRTUAL_BOOT_PARTITION
+#define rstVect (*(uint16_t*)(0x204))
+#define wdtVect (*(uint16_t*)(0x206))
+#endif
 /* main program starts here */
 int main(void) {
     3ef0:	12 96       	adiw	r26, 0x02	; 2
@@ -302,11 +305,14 @@ int main(void) {
     3f1a:	00 fc       	sbrc	r0, 0
     3f1c:	fd cf       	rjmp	.-6      	; 0x3f18 <main+0x118>
 
+#if defined(RWWSRE)
       // Reenable read access to flash
       boot_rww_enable();
     3f1e:	f0 92 57 00 	sts	0x0057, r15
     3f22:	e8 95       	spm
     3f24:	27 c0       	rjmp	.+78     	; 0x3f74 <main+0x174>
+#endif
+
     }
     /* Read memory block mode, length is big endian.  */
     else if(ch == STK_READ_PAGE) {
@@ -317,6 +323,11 @@ int main(void) {
     3f2a:	4a d0       	rcall	.+148    	; 0x3fc0 <getLen>
       verifySpace();
     3f2c:	59 d0       	rcall	.+178    	; 0x3fe0 <verifySpace>
+        else ch = pgm_read_byte_near(address);
+        address++;
+        putch(ch);
+      } while (--length);
+#else
       do putch(pgm_read_byte_near(address++));
     3f2e:	e0 91 00 02 	lds	r30, 0x0200
     3f32:	f0 91 01 02 	lds	r31, 0x0201
@@ -334,6 +345,7 @@ int main(void) {
     3f52:	88 23       	and	r24, r24
     3f54:	61 f7       	brne	.-40     	; 0x3f2e <main+0x12e>
     3f56:	0e c0       	rjmp	.+28     	; 0x3f74 <main+0x174>
+#endif
     }
 
     /* Get device signature bytes  */
@@ -357,7 +369,7 @@ int main(void) {
     3f6a:	81 35       	cpi	r24, 0x51	; 81
     3f6c:	11 f4       	brne	.+4      	; 0x3f72 <main+0x172>
       // Adaboot no-wait mod
-      watchdogConfig(_BV(WDE));
+      watchdogConfig(WATCHDOG_16MS);
     3f6e:	88 e0       	ldi	r24, 0x08	; 8
     3f70:	2c d0       	rcall	.+88     	; 0x3fca <watchdogConfig>
       verifySpace();
@@ -477,7 +489,7 @@ void watchdogConfig(uint8_t x) {
 00003fd6 <appStart>:
 
 void appStart() {
-  watchdogConfig(0);
+  watchdogConfig(WATCHDOG_OFF);
     3fd6:	80 e0       	ldi	r24, 0x00	; 0
     3fd8:	f8 df       	rcall	.-16     	; 0x3fca <watchdogConfig>
   __asm__ __volatile__ (
