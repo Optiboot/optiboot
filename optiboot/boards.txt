@@ -21,23 +21,6 @@ atmega328o.build.core=arduino
 
 ##############################################################
 
-atmega328o.name=[Optiboot] Arduino Duemilanove or Nano w/ ATmega328
-atmega328o.upload.protocol=stk500
-atmega328o.upload.maximum_size=32256
-atmega328o.upload.speed=115200
-atmega328o.bootloader.low_fuses=0xff
-atmega328o.bootloader.high_fuses=0xde
-atmega328o.bootloader.extended_fuses=0x05
-atmega328o.bootloader.path=optiboot
-atmega328o.bootloader.file=optiboot_atmega328.hex
-atmega328o.bootloader.unlock_bits=0x3F
-atmega328o.bootloader.lock_bits=0x0F
-atmega328o.build.mcu=atmega328p
-atmega328o.build.f_cpu=16000000L
-atmega328o.build.core=arduino
-
-##############################################################
-
 diecimilao.name=[Optiboot] Arduino Diecimila, Duemilanove, Nano, NG w/ ATmega168
 diecimilao.upload.protocol=stk500
 diecimilao.upload.maximum_size=15360
