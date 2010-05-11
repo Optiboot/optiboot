@@ -122,16 +122,50 @@ proo.build.f_cpu=8000000L
 proo.build.core=arduino
 
 ##############################################################
-#
-#lumineto.name=[Optiboot] Luminet (in development)
-#lumineto.upload.protocol=stk500
-#lumineto.upload.maximum_size=7424
-#lumineto.upload.speed=9600
-#lumineto.bootloader.low_fuses=0x62
-#lumineto.bootloader.high_fuses=0xdf
-#lumineto.bootloader.extended_fuses=0xfe
-#lumineto.bootloader.path=optiboot
-#lumineto.bootloader.file=optiboot_luminet.hex
-#lumineto.build.mcu=attiny84
-#lumineto.build.f_cpu=1000000L
-#lumineto.build.core=arduino
+
+megao.name=[Optiboot] Arduino Mega (work in progress)
+megao.upload.protocol=stk500
+megao.upload.maximum_size=130048
+megao.upload.speed=115200
+megao.bootloader.low_fuses=0xff
+megao.bootloader.high_fuses=0xde
+megao.bootloader.extended_fuses=0xf5
+megao.bootloader.path=optiboot
+megao.bootloader.file=optiboot_atmega1280.hex
+megao.bootloader.unlock_bits=0x3F
+megao.bootloader.lock_bits=0x0F
+megao.build.mcu=atmega1280
+megao.build.f_cpu=16000000L
+megao.build.core=arduino
+
+##############################################################
+
+sanguinoo.name=[Optiboot] Sanguino (work in progress)
+sanguinoo.upload.protocol=stk500
+sanguinoo.upload.maximum_size=63488
+sanguinoo.upload.speed=115200
+sanguinoo.bootloader.low_fuses=0xff
+sanguinoo.bootloader.high_fuses=0xdc
+sanguinoo.bootloader.extended_fuses=0xfd
+sanguinoo.bootloader.path=optiboot
+sanguinoo.bootloader.file=optiboot_sanguino.hex
+sanguinoo.bootloader.unlock_bits=0x3F
+sanguinoo.bootloader.lock_bits=0x0F
+sanguinoo.build.mcu=atmega644p
+sanguinoo.build.f_cpu=16000000L
+sanguinoo.build.core=sanguino
+
+##############################################################
+
+lumineto.name=[Optiboot] Luminet (work in progress)
+lumineto.upload.protocol=stk500
+lumineto.upload.maximum_size=7424
+lumineto.upload.speed=9600
+lumineto.bootloader.low_fuses=0x62
+lumineto.bootloader.high_fuses=0xdf
+lumineto.bootloader.extended_fuses=0xfe
+lumineto.bootloader.path=optiboot
+lumineto.bootloader.file=optiboot_luminet.hex
+lumineto.build.mcu=attiny84
+lumineto.build.f_cpu=1000000L
+lumineto.build.core=luminet

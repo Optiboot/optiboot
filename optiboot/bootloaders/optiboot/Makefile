@@ -73,7 +73,6 @@ pro20: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 pro20: AVR_FREQ = 20000000L
 pro20: $(PROGRAM)_pro_20mhz.hex
 pro20: $(PROGRAM)_pro_20mhz.lst
-
 pro20_isp: pro20
 pro20_isp: TARGET = pro_20mhz
 pro20_isp: HFUSE = DD # 2.7V brownout
@@ -91,7 +90,6 @@ pro16: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 pro16: AVR_FREQ = 16000000L
 pro16: $(PROGRAM)_pro_16MHz.hex
 pro16: $(PROGRAM)_pro_16MHz.lst
-
 pro16_isp: pro16
 pro16_isp: TARGET = pro_16MHz
 pro16_isp: HFUSE = DD # 2.7V brownout
@@ -100,13 +98,11 @@ pro16_isp: EFUSE = 02 # 512 byte boot
 pro16_isp: isp
 
 # Diecimila and NG use identical bootloaders
-#
 diecimila: TARGET = diecimila
 diecimila: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 diecimila: AVR_FREQ = 16000000L 
 diecimila: $(PROGRAM)_diecimila.hex
 diecimila: $(PROGRAM)_diecimila.lst
-
 diecimila_isp: diecimila
 diecimila_isp: TARGET = diecimila
 diecimila_isp: HFUSE = DD # 2.7V brownout
@@ -121,7 +117,6 @@ atmega328: AVR_FREQ = 16000000L
 atmega328: LDSECTION  = --section-start=.text=0x7e00
 atmega328: $(PROGRAM)_atmega328.hex
 atmega328: $(PROGRAM)_atmega328.lst
-
 atmega328_isp: atmega328
 atmega328_isp: TARGET = atmega328
 atmega328_isp: MCU_TARGET = atmega328p
@@ -129,6 +124,38 @@ atmega328_isp: HFUSE = DE # 512 byte boot
 atmega328_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_isp: EFUSE = 05 # 2.7V brownout
 atmega328_isp: isp
+
+# Sanguino has a minimum boot size of 1024 bytes, so enable extra functions
+sanguino: TARGET = atmega644p
+sanguino: MCU_TARGET = atmega644p
+sanguino: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
+sanguino: AVR_FREQ = 16000000L
+sanguino: LDSECTION  = --section-start=.text=0xfc00
+sanguino: $(PROGRAM)_atmega644p.hex
+sanguino: $(PROGRAM)_atmega644p.lst
+sanguino_isp: sanguino
+sanguino_isp: TARGET = atmega644p
+sanguino_isp: MCU_TARGET = atmega644p
+sanguino_isp: HFUSE = DE # 1024 byte boot
+sanguino_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
+sanguino_isp: EFUSE = 05 # 2.7V brownout
+sanguino_isp: isp
+
+# Mega has a minimum boot size of 1024 bytes, so enable extra functions
+mega: TARGET = atmega1280
+mega: MCU_TARGET = atmega1280
+mega: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=230400' '-DSOFT_UART' '-DBIGBOOT'
+mega: AVR_FREQ = 16000000L
+mega: LDSECTION  = --section-start=.text=0x1fc00
+mega: $(PROGRAM)_atmega1280.hex
+mega: $(PROGRAM)_atmega1280.lst
+mega_isp: mega
+mega_isp: TARGET = atmega1280
+mega_isp: MCU_TARGET = atmega1280
+mega_isp: HFUSE = DE # 1024 byte boot
+mega_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
+mega_isp: EFUSE = 05 # 2.7V brownout
+mega_isp: isp
 
 # 8MHz clocked platforms
 #
@@ -140,7 +167,6 @@ lilypad: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 lilypad: AVR_FREQ = 8000000L
 lilypad: $(PROGRAM)_lilypad.hex
 lilypad: $(PROGRAM)_lilypad.lst
-
 lilypad_isp: lilypad
 lilypad_isp: TARGET = lilypad
 lilypad_isp: HFUSE = DD # 2.7V brownout
@@ -153,7 +179,6 @@ lilypad_resonator: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=
 lilypad_resonator: AVR_FREQ = 8000000L
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.hex
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.lst
-
 lilypad_resonator_isp: lilypad_resonator
 lilypad_resonator_isp: TARGET = lilypad_resonator
 lilypad_resonator_isp: HFUSE = DD # 2.7V brownout
@@ -166,7 +191,6 @@ pro8: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
 pro8: AVR_FREQ = 8000000L
 pro8: $(PROGRAM)_pro_8MHz.hex
 pro8: $(PROGRAM)_pro_8MHz.lst
-
 pro8_isp: pro8
 pro8_isp: TARGET = pro_8MHz
 pro8_isp: HFUSE = DD # 2.7V brownout
@@ -181,7 +205,6 @@ atmega328_pro8: AVR_FREQ = 8000000L
 atmega328_pro8: LDSECTION  = --section-start=.text=0x7e00
 atmega328_pro8: $(PROGRAM)_atmega328_pro_8MHz.hex
 atmega328_pro8: $(PROGRAM)_atmega328_pro_8MHz.lst
-
 atmega328_pro8_isp: atmega328_pro8
 atmega328_pro8_isp: TARGET = atmega328_pro_8MHz
 atmega328_pro8_isp: MCU_TARGET = atmega328p
@@ -203,7 +226,6 @@ luminet: AVR_FREQ = 1000000L
 luminet: LDSECTION  = --section-start=.text=0x1d00
 luminet: $(PROGRAM)_luminet.hex
 luminet: $(PROGRAM)_luminet.lst
-
 luminet_isp: luminet
 luminet_isp: TARGET = luminet
 luminet_isp: MCU_TARGET = attiny84
@@ -211,6 +233,11 @@ luminet_isp: HFUSE = DF # Brownout disabled
 luminet_isp: LFUSE = 62 # 1MHz internal oscillator, slowly rising power
 luminet_isp: EFUSE = FE # Self-programming enable
 luminet_isp: isp
+
+#
+# Generic build instructions
+#
+#
 
 isp: $(TARGET)
 	$(ISPFUSES)
