@@ -27,7 +27,6 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/signal.h>
 #include <avr/delay.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -48,8 +47,17 @@ extern "C"{
 #define EXTERNAL_INT_0 0
 #define EXTERNAL_INT_1 1
 #define EXTERNAL_INT_2 2
+#define EXTERNAL_INT_3 3
+#define EXTERNAL_INT_4 4
+#define EXTERNAL_INT_5 5
+#define EXTERNAL_INT_6 6
+#define EXTERNAL_INT_7 7
 
-#define EXTERNAL_NUM_INTERRUPTS 3
+#if defined(__AVR_ATmega1280__)
+#define EXTERNAL_NUM_INTERRUPTS 8
+#else
+#define EXTERNAL_NUM_INTERRUPTS 2
+#endif
 
 typedef void (*voidFuncPtr)(void);
 

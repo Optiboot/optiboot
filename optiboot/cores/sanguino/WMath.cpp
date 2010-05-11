@@ -29,7 +29,7 @@ extern "C" {
 
 void randomSeed(unsigned int seed)
 {
-  if (seed != 0){
+  if (seed != 0) {
     srandom(seed);
   }
 }

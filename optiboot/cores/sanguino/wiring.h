@@ -19,7 +19,7 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 
-  $Id: wiring.h 387 2008-03-08 21:30:00Z mellis $
+  $Id: wiring.h 804 2009-12-18 16:05:52Z dmellis $
 */
 
 #ifndef Wiring_h
@@ -41,11 +41,11 @@ extern "C"{
 #define true 0x1
 #define false 0x0
 
-#define PI 3.14159265
-#define HALF_PI 1.57079
-#define TWO_PI 6.283185
-#define DEG_TO_RAD 0.01745329
-#define RAD_TO_DEG 57.2957786
+#define PI 3.1415926535897932384626433832795
+#define HALF_PI 1.5707963267948966192313216916398
+#define TWO_PI 6.283185307179586476925286766559
+#define DEG_TO_RAD 0.017453292519943295769236907684886
+#define RAD_TO_DEG 57.295779513082320876798154814105
 
 #define SERIAL  0x0
 #define DISPLAY 0x1
@@ -82,8 +82,8 @@ extern "C"{
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
-#define lowByte(w) ((w) & 0xff)
-#define highByte(w) ((w) >> 8)
+#define lowByte(w) ((uint8_t) ((w) & 0xff))
+#define highByte(w) ((uint8_t) ((w) >> 8))
 
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define bitSet(value, bit) ((value) |= (1UL << (bit)))
@@ -92,7 +92,7 @@ extern "C"{
 
 typedef unsigned int word;
 
-#define bit(b) (1 << (b))
+#define bit(b) (1UL << (b))
 
 typedef uint8_t boolean;
 typedef uint8_t byte;
@@ -106,11 +106,11 @@ int analogRead(uint8_t);
 void analogReference(uint8_t mode);
 void analogWrite(uint8_t, int);
 
-void beginSerial(uint8_t, long);
-void serialWrite(uint8_t, unsigned char);
-int serialAvailable(uint8_t);
-int serialRead(uint8_t);
-void serialFlush(uint8_t);
+void beginSerial(long);
+void serialWrite(unsigned char);
+int serialAvailable(void);
+int serialRead(void);
+void serialFlush(void);
 
 unsigned long millis(void);
 unsigned long micros(void);
