@@ -63,6 +63,16 @@ override LDFLAGS       = -Wl,$(LDSECTION) -Wl,--relax -nostartfiles
 OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump
 
+# Test platforms
+# Virtual boot block test
+virboot328: TARGET = atmega328
+virboot328: MCU_TARGET = atmega328p
+virboot328: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DVIRTUAL_BOOT
+virboot328: AVR_FREQ = 16000000L
+virboot328: LDSECTION  = --section-start=.text=0x7e00
+virboot328: $(PROGRAM)_atmega328.hex
+virboot328: $(PROGRAM)_atmega328.lst
+
 # 20MHz clocked platforms
 #
 # These are capable of 230400 baud, or 115200 baud on PC (Arduino Avrdude issue)

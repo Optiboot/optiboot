@@ -9,11 +9,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   2 .debug_pubnames 00000078  00000000  00000000  000002ee  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   000002a3  00000000  00000000  00000366  2**0
+  3 .debug_info   000002a4  00000000  00000000  00000366  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 000001ac  00000000  00000000  00000609  2**0
+  4 .debug_abbrev 000001ac  00000000  00000000  0000060a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   0000043d  00000000  00000000  000007b5  2**0
+  5 .debug_line   0000043d  00000000  00000000  000007b6  2**0
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_frame  000000a0  00000000  00000000  00000bf4  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -217,28 +217,31 @@ void watchdogReset() {
 
       getLen();
     1d96:	d1 d0       	rcall	.+418    	; 0x1f3a <getLen>
-
-      // Immediately start page erase - this will 4.5ms
-      __boot_page_erase_short((uint16_t)(void*)address);
-    1d98:	e0 91 80 01 	lds	r30, 0x0180
-    1d9c:	f0 91 81 01 	lds	r31, 0x0181
-    1da0:	83 e0       	ldi	r24, 0x03	; 3
-    1da2:	87 bf       	out	0x37, r24	; 55
-    1da4:	e8 95       	spm
-    1da6:	c0 e0       	ldi	r28, 0x00	; 0
-    1da8:	d1 e0       	ldi	r29, 0x01	; 1
+    1d98:	c0 e0       	ldi	r28, 0x00	; 0
+    1d9a:	d1 e0       	ldi	r29, 0x01	; 1
+      // If we are in RWW section, immediately start page erase
+      if (address < NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
       
       // While that is going on, read in page contents
       bufPtr = buff;
       do *bufPtr++ = getch();
-    1daa:	b3 d0       	rcall	.+358    	; 0x1f12 <getch>
-    1dac:	89 93       	st	Y+, r24
+    1d9c:	ba d0       	rcall	.+372    	; 0x1f12 <getch>
+    1d9e:	89 93       	st	Y+, r24
       while (--length);
-    1dae:	80 91 82 01 	lds	r24, 0x0182
-    1db2:	81 50       	subi	r24, 0x01	; 1
-    1db4:	80 93 82 01 	sts	0x0182, r24
-    1db8:	88 23       	and	r24, r24
-    1dba:	b9 f7       	brne	.-18     	; 0x1daa <main+0xaa>
+    1da0:	80 91 82 01 	lds	r24, 0x0182
+    1da4:	81 50       	subi	r24, 0x01	; 1
+    1da6:	80 93 82 01 	sts	0x0182, r24
+    1daa:	88 23       	and	r24, r24
+    1dac:	b9 f7       	brne	.-18     	; 0x1d9c <main+0x9c>
+
+      // If we are in NRWW section, page erase has to be delayed until now.
+      // Todo: Take RAMPZ into account
+      if (address >= NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
+    1dae:	e0 91 80 01 	lds	r30, 0x0180
+    1db2:	f0 91 81 01 	lds	r31, 0x0181
+    1db6:	83 e0       	ldi	r24, 0x03	; 3
+    1db8:	87 bf       	out	0x37, r24	; 55
+    1dba:	e8 95       	spm
 
       // Read command terminator, start reply
       verifySpace();

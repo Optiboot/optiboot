@@ -184,10 +184,21 @@ void uartDelay() __attribute__ ((naked));
 #endif
 void appStart() __attribute__ ((naked));
 
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || (__AVR_ATmega644P__) || defined(__AVR_ATtiny84__)
+#if defined(__AVR_ATmega168__)
 #define RAMSTART (0x100)
+#define NRWWSTART (0x3800)
+#elif defined(__AVR_ATmega328P__)
+#define RAMSTART (0x100)
+#define NRWWSTART (0x7000)
+#elif defined (__AVR_ATmega644P__)
+#define RAMSTART (0x100)
+#define NRWWSTART (0xE000)
+#elif defined(__AVR_ATtiny84__)
+#define RAMSTART (0x100)
+#define NRWWSTART (0x0000)
 #elif defined(__AVR_ATmega1280__)
 #define RAMSTART (0x200)
+#define NRWWSTART (0xE000)
 #endif
 
 /* C zero initialises all global variables. However, that requires */
@@ -293,13 +304,17 @@ int main(void) {
 
       getLen();
 
-      // Immediately start page erase - this will 4.5ms
-      __boot_page_erase_short((uint16_t)(void*)address);
+      // If we are in RWW section, immediately start page erase
+      if (address < NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
       
       // While that is going on, read in page contents
       bufPtr = buff;
       do *bufPtr++ = getch();
       while (--length);
+
+      // If we are in NRWW section, page erase has to be delayed until now.
+      // Todo: Take RAMPZ into account
+      if (address >= NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
 
       // Read command terminator, start reply
       verifySpace();
