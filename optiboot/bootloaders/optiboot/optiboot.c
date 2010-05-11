@@ -146,6 +146,13 @@
 #endif
 #endif
 
+/* Switch in soft UART for hard baud rates */
+#if (F_CPU/BAUD_RATE) > 280 // > 57600 for 16MHz
+#ifndef SOFT_UART
+#define SOFT_UART
+#endif
+#endif
+
 /* Watchdog settings */
 #define WATCHDOG_OFF    (0)
 #define WATCHDOG_16MS   (_BV(WDE))

@@ -144,7 +144,7 @@ sanguino_isp: isp
 # Mega has a minimum boot size of 1024 bytes, so enable extra functions
 mega: TARGET = atmega1280
 mega: MCU_TARGET = atmega1280
-mega: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=230400' '-DSOFT_UART' '-DBIGBOOT'
+mega: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
 mega: AVR_FREQ = 16000000L
 mega: LDSECTION  = --section-start=.text=0x1fc00
 mega: $(PROGRAM)_atmega1280.hex
@@ -163,7 +163,7 @@ mega_isp: isp
 #
 
 lilypad: TARGET = lilypad
-lilypad: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
+lilypad: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 lilypad: AVR_FREQ = 8000000L
 lilypad: $(PROGRAM)_lilypad.hex
 lilypad: $(PROGRAM)_lilypad.lst
@@ -175,7 +175,7 @@ lilypad_isp: EFUSE = 02 # 512 byte boot
 lilypad_isp: isp
 
 lilypad_resonator: TARGET = lilypad_resonator
-lilypad_resonator: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
+lilypad_resonator: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 lilypad_resonator: AVR_FREQ = 8000000L
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.hex
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.lst
@@ -187,7 +187,7 @@ lilypad_resonator_isp: EFUSE = 02 # 512 byte boot
 lilypad_resonator_isp: isp
 
 pro8: TARGET = pro_8MHz
-pro8: CFLAGS += '-DLED_START_FLASHES=3' '-DSOFT_UART' '-DBAUD_RATE=115200'
+pro8: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
 pro8: AVR_FREQ = 8000000L
 pro8: $(PROGRAM)_pro_8MHz.hex
 pro8: $(PROGRAM)_pro_8MHz.lst
