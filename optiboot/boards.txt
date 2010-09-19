@@ -17,7 +17,7 @@ atmega328o.bootloader.unlock_bits=0x3F
 atmega328o.bootloader.lock_bits=0x0F
 atmega328o.build.mcu=atmega328p
 atmega328o.build.f_cpu=16000000L
-atmega328o.build.core=arduino
+atmega328o.build.core=arduino:arduino
 
 ##############################################################
 
@@ -34,7 +34,7 @@ diecimilao.bootloader.unlock_bits=0x3F
 diecimilao.bootloader.lock_bits=0x0F
 diecimilao.build.mcu=atmega168
 diecimilao.build.f_cpu=16000000L
-diecimilao.build.core=arduino
+diecimilao.build.core=arduino:arduino
 
 ##############################################################
 
@@ -51,7 +51,7 @@ minio.bootloader.unlock_bits=0x3F
 minio.bootloader.lock_bits=0x0F
 minio.build.mcu=atmega168
 minio.build.f_cpu=16000000L
-minio.build.core=arduino
+minio.build.core=arduino:arduino
 
 ##############################################################
 
@@ -68,7 +68,7 @@ lilypad328o.bootloader.unlock_bits=0x3F
 lilypad328o.bootloader.lock_bits=0x0F
 lilypad328o.build.mcu=atmega328p
 lilypad328o.build.f_cpu=8000000L
-lilypad328o.build.core=arduino
+lilypad328o.build.core=arduino:arduino
 
 ##############################################################
 
@@ -85,7 +85,7 @@ lilypado.bootloader.unlock_bits=0x3F
 lilypado.bootloader.lock_bits=0x0F
 lilypado.build.mcu=atmega168
 lilypado.build.f_cpu=8000000L
-lilypado.build.core=arduino
+lilypado.build.core=arduino:arduino
 
 ##############################################################
 
@@ -102,7 +102,7 @@ pro328o.bootloader.unlock_bits=0x3F
 pro328o.bootloader.lock_bits=0x0F
 pro328o.build.mcu=atmega328p
 pro328o.build.f_cpu=8000000L
-pro328o.build.core=arduino
+pro328o.build.core=arduino:arduino
 
 ##############################################################
 
@@ -119,7 +119,7 @@ proo.bootloader.unlock_bits=0x3F
 proo.bootloader.lock_bits=0x0F
 proo.build.mcu=atmega168
 proo.build.f_cpu=8000000L
-proo.build.core=arduino
+proo.build.core=arduino:arduino
 
 ##############################################################
 
@@ -136,36 +136,36 @@ megao.bootloader.unlock_bits=0x3F
 megao.bootloader.lock_bits=0x0F
 megao.build.mcu=atmega1280
 megao.build.f_cpu=16000000L
-megao.build.core=arduino
+megao.build.core=arduino:arduino
 
 ##############################################################
-
-sanguinoo.name=[Optiboot] Sanguino (work in progress)
-sanguinoo.upload.protocol=stk500
-sanguinoo.upload.maximum_size=63488
-sanguinoo.upload.speed=115200
-sanguinoo.bootloader.low_fuses=0xff
-sanguinoo.bootloader.high_fuses=0xdc
-sanguinoo.bootloader.extended_fuses=0xfd
-sanguinoo.bootloader.path=optiboot
-sanguinoo.bootloader.file=optiboot_atmega644p.hex
-sanguinoo.bootloader.unlock_bits=0x3F
-sanguinoo.bootloader.lock_bits=0x0F
-sanguinoo.build.mcu=atmega644p
-sanguinoo.build.f_cpu=16000000L
-sanguinoo.build.core=sanguino
+#
+# sanguinoo.name=[Optiboot] Sanguino (work in progress)
+# sanguinoo.upload.protocol=stk500
+# sanguinoo.upload.maximum_size=63488
+# sanguinoo.upload.speed=115200
+# sanguinoo.bootloader.low_fuses=0xff
+# sanguinoo.bootloader.high_fuses=0xdc
+# sanguinoo.bootloader.extended_fuses=0xfd
+# sanguinoo.bootloader.path=optiboot
+# sanguinoo.bootloader.file=optiboot_atmega644p.hex
+# sanguinoo.bootloader.unlock_bits=0x3F
+# sanguinoo.bootloader.lock_bits=0x0F
+# sanguinoo.build.mcu=atmega644p
+# sanguinoo.build.f_cpu=16000000L
+# sanguinoo.build.core=sanguino:sanguino
 
 ##############################################################
-
-lumineto.name=[Optiboot] Luminet (work in progress)
-lumineto.upload.protocol=stk500
-lumineto.upload.maximum_size=7424
-lumineto.upload.speed=9600
-lumineto.bootloader.low_fuses=0x62
-lumineto.bootloader.high_fuses=0xdf
-lumineto.bootloader.extended_fuses=0xfe
-lumineto.bootloader.path=optiboot
-lumineto.bootloader.file=optiboot_luminet.hex
-lumineto.build.mcu=attiny84
-lumineto.build.f_cpu=1000000L
-lumineto.build.core=luminet
+#
+# lumineto.name=[Optiboot] Luminet (work in progress)
+# lumineto.upload.protocol=stk500
+# lumineto.upload.maximum_size=7424
+# lumineto.upload.speed=9600
+# lumineto.bootloader.low_fuses=0x62
+# lumineto.bootloader.high_fuses=0xdf
+# lumineto.bootloader.extended_fuses=0xfe
+# lumineto.bootloader.path=optiboot
+# lumineto.bootloader.file=optiboot_luminet.hex
+# lumineto.build.mcu=attiny84
+# lumineto.build.f_cpu=1000000L
+# lumineto.build.core=luminet:luminet
