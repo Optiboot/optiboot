@@ -167,6 +167,22 @@ mega_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
 mega_isp: EFUSE = 05 # 2.7V brownout
 mega_isp: isp
 
+# ATmega8
+#
+atmega8: TARGET = atmega8
+atmega8: MCU_TARGET = atmega8
+atmega8: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
+atmega8: AVR_FREQ = 16000000L 
+atmega8: LDSECTION  = --section-start=.text=0x1e00
+atmega8: $(PROGRAM)_atmega8.hex
+atmega8: $(PROGRAM)_atmega8.lst
+atmega8_isp: atmega8
+atmega8_isp: TARGET = atmega8
+atmega8_isp: MCU_TARGET = atmega8
+atmega8_isp: HFUSE = DC # 2.7V brownout
+atmega8_isp: LFUSE = BF # Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega8_isp: isp
+
 # 8MHz clocked platforms
 #
 # These are capable of 115200 baud

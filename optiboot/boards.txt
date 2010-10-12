@@ -138,6 +138,20 @@ megao.build.mcu=atmega1280
 megao.build.f_cpu=16000000L
 megao.build.core=arduino:arduino
 
+atmega8o.name=[Optiboot] Arduino NG or older w/ ATmega8
+atmega8o.upload.protocol=stk500
+atmega8o.upload.maximum_size=7680
+atmega8o.upload.speed=115200
+atmega8o.bootloader.low_fuses=0xbf
+atmega8o.bootloader.high_fuses=0xdc
+atmega8o.bootloader.path=optiboot
+atmega8o.bootloader.file=optiboot_atmega8.hex
+atmega8o.bootloader.unlock_bits=0x3F
+atmega8o.bootloader.lock_bits=0x0F
+atmega8o.build.mcu=atmega8
+atmega8o.build.f_cpu=16000000L
+atmega8o.build.core=arduino
+
 ##############################################################
 #
 # sanguinoo.name=[Optiboot] Sanguino (work in progress)

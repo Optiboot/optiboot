@@ -163,8 +163,10 @@
 #define WATCHDOG_500MS  (_BV(WDP2) | _BV(WDP0) | _BV(WDE))
 #define WATCHDOG_1S     (_BV(WDP2) | _BV(WDP1) | _BV(WDE))
 #define WATCHDOG_2S     (_BV(WDP2) | _BV(WDP1) | _BV(WDP0) | _BV(WDE))
+#ifndef __AVR_ATmega8__
 #define WATCHDOG_4S     (_BV(WDE3) | _BV(WDE))
 #define WATCHDOG_8S     (_BV(WDE3) | _BV(WDE0) | _BV(WDE))
+#endif
 
 /* Function Prototypes */
 /* The main function is in init9, which removes the interrupt vector table */
@@ -223,7 +225,11 @@ int main(void) {
   //
   // If not, uncomment the following instructions:
   // cli();
-  // SP=RAMEND;  // This is done by hardware reset
+
+#ifdef __AVR_ATmega8__
+  SP=RAMEND;  // This is done by hardware reset
+#endif
+
   // asm volatile ("clr __zero_reg__");
 
   uint8_t ch;
@@ -233,10 +239,17 @@ int main(void) {
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
 #endif
 #ifndef SOFT_UART
+#ifdef __AVR_ATmega8__
+  UCSRA = _BV(U2X); //Double speed mode USART
+  UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
+  UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
+  UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+#else
   UCSR0A = _BV(U2X0); //Double speed mode USART0
   UCSR0B = _BV(RXEN0) | _BV(TXEN0);
   UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
   UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+#endif
 #endif
 
   // Adaboot no-wait mod
@@ -245,7 +258,7 @@ int main(void) {
   if (!(ch & _BV(EXTRF))) appStart();
 
   // Set up watchdog to trigger after 500ms
-  watchdogConfig(WATCHDOG_500MS);
+  watchdogConfig(WATCHDOG_1MS);
 
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);
@@ -296,7 +309,7 @@ int main(void) {
       getNch(4);
       putch(0x00);
     }
-    /* Write memory, length is big endian and is in bytes  */
+    /* Write memory, length is big endian and is in bytes */
     else if(ch == STK_PROG_PAGE) {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t *bufPtr;
@@ -455,7 +468,11 @@ uint8_t getch(void) {
   watchdogReset();
 
 #ifdef LED_DATA_FLASH
+#ifdef __AVR_ATmega8__
+  LED_PORT ^= _BV(LED);
+#else
   LED_PIN |= _BV(LED);
+#endif
 #endif
 
 #ifdef SOFT_UART
@@ -488,7 +505,11 @@ uint8_t getch(void) {
 #endif
 
 #ifdef LED_DATA_FLASH
+#ifdef __AVR_ATmega8__
+  LED_PORT ^= _BV(LED);
+#else
   LED_PIN |= _BV(LED);
+#endif
 #endif
 
   return ch;
@@ -529,7 +550,11 @@ void flash_led(uint8_t count) {
     TCNT1 = -(F_CPU/(1024*16));
     TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
+#ifdef __AVR_ATmega8__
+    LED_PORT ^= _BV(LED);
+#else
     LED_PIN |= _BV(LED);
+#endif
     watchdogReset();
   } while (--count);
 }
