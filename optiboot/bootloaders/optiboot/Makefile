@@ -203,6 +203,24 @@ atmega8_isp: HFUSE = DC
 atmega8_isp: LFUSE = BF
 atmega8_isp: isp
 
+# ATmega88
+atmega88: TARGET = atmega88
+atmega88: MCU_TARGET = atmega88
+atmega88: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
+atmega88: AVR_FREQ = 16000000L 
+atmega88: $(PROGRAM)_atmega88.hex
+atmega88: $(PROGRAM)_atmega88.lst
+atmega88_isp: atmega88
+atmega88_isp: TARGET = atmega88
+atmega88_isp: MCU_TARGET = atmega88
+# 2.7V brownout
+atmega88_isp: HFUSE = DD
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atemga88_isp: LFUSE = FF
+# 512 byte boot
+atmega88_isp: EFUSE = 04
+atmega88_isp: isp
+
 # 8MHz clocked platforms
 #
 # These are capable of 115200 baud
