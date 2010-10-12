@@ -13,15 +13,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   4 .debug_abbrev 000001a1  00000000  00000000  00000566  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   000003f3  00000000  00000000  00000707  2**0
+  5 .debug_line   000003f4  00000000  00000000  00000707  2**0
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_frame  00000090  00000000  00000000  00000afc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000135  00000000  00000000  00000b8c  2**0
+  7 .debug_str    00000136  00000000  00000000  00000b8c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_loc    000001b1  00000000  00000000  00000cc1  2**0
+  8 .debug_loc    000001b1  00000000  00000000  00000cc2  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_ranges 00000068  00000000  00000000  00000e72  2**0
+  9 .debug_ranges 00000068  00000000  00000000  00000e73  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -33,39 +33,46 @@ Disassembly of section .text:
 
 /* main program starts here */
 int main(void) {
-   1fc00:	85 e0       	ldi	r24, 0x05	; 5
-   1fc02:	80 93 81 00 	sts	0x0081, r24
-#if LED_START_FLASHES > 0
-  // Set up Timer 1 for timeout counter
-  TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
-#endif
-#ifndef SOFT_UART
-  UCSR0A = _BV(U2X0); //Double speed mode USART0
-   1fc06:	82 e0       	ldi	r24, 0x02	; 2
-   1fc08:	80 93 c0 00 	sts	0x00C0, r24
-  UCSR0B = _BV(RXEN0) | _BV(TXEN0);
-   1fc0c:	88 e1       	ldi	r24, 0x18	; 24
-   1fc0e:	80 93 c1 00 	sts	0x00C1, r24
-  UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
-   1fc12:	86 e0       	ldi	r24, 0x06	; 6
-   1fc14:	80 93 c2 00 	sts	0x00C2, r24
-  UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
-   1fc18:	80 e1       	ldi	r24, 0x10	; 16
-   1fc1a:	80 93 c4 00 	sts	0x00C4, r24
-#endif
+   1fc00:	84 b7       	in	r24, 0x34	; 52
+
+  uint8_t ch;
 
   // Adaboot no-wait mod
   ch = MCUSR;
-   1fc1e:	84 b7       	in	r24, 0x34	; 52
   MCUSR = 0;
-   1fc20:	14 be       	out	0x34, r1	; 52
+   1fc02:	14 be       	out	0x34, r1	; 52
   if (!(ch & _BV(EXTRF))) appStart();
-   1fc22:	81 ff       	sbrs	r24, 1
-   1fc24:	de d0       	rcall	.+444    	; 0x1fde2 <appStart>
+   1fc04:	81 ff       	sbrs	r24, 1
+   1fc06:	ed d0       	rcall	.+474    	; 0x1fde2 <appStart>
+
+#if LED_START_FLASHES > 0
+  // Set up Timer 1 for timeout counter
+  TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
+   1fc08:	85 e0       	ldi	r24, 0x05	; 5
+   1fc0a:	80 93 81 00 	sts	0x0081, r24
+  UCSRA = _BV(U2X); //Double speed mode USART
+  UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
+  UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
+  UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+#else
+  UCSR0A = _BV(U2X0); //Double speed mode USART0
+   1fc0e:	82 e0       	ldi	r24, 0x02	; 2
+   1fc10:	80 93 c0 00 	sts	0x00C0, r24
+  UCSR0B = _BV(RXEN0) | _BV(TXEN0);
+   1fc14:	88 e1       	ldi	r24, 0x18	; 24
+   1fc16:	80 93 c1 00 	sts	0x00C1, r24
+  UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
+   1fc1a:	86 e0       	ldi	r24, 0x06	; 6
+   1fc1c:	80 93 c2 00 	sts	0x00C2, r24
+  UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+   1fc20:	80 e1       	ldi	r24, 0x10	; 16
+   1fc22:	80 93 c4 00 	sts	0x00C4, r24
+#endif
+#endif
 
   // Set up watchdog to trigger after 500ms
-  watchdogConfig(WATCHDOG_500MS);
-   1fc26:	8d e0       	ldi	r24, 0x0D	; 13
+  watchdogConfig(WATCHDOG_1S);
+   1fc26:	8e e0       	ldi	r24, 0x0E	; 14
    1fc28:	d6 d0       	rcall	.+428    	; 0x1fdd6 <watchdogConfig>
 
   /* Set LED pin as output */
@@ -95,6 +102,9 @@ void flash_led(uint8_t count) {
     while(!(TIFR1 & _BV(TOV1)));
    1fc3e:	b0 9b       	sbis	0x16, 0	; 22
    1fc40:	fe cf       	rjmp	.-4      	; 0x1fc3e <main+0x3e>
+#ifdef __AVR_ATmega8__
+    LED_PORT ^= _BV(LED);
+#else
     LED_PIN |= _BV(LED);
    1fc42:	1f 9a       	sbi	0x03, 7	; 3
   return getch();
@@ -104,10 +114,10 @@ void flash_led(uint8_t count) {
 void watchdogReset() {
   __asm__ __volatile__ (
    1fc44:	a8 95       	wdr
-    TCNT1 = -(F_CPU/(1024*16));
-    TIFR1 = _BV(TOV1);
-    while(!(TIFR1 & _BV(TOV1)));
+    LED_PORT ^= _BV(LED);
+#else
     LED_PIN |= _BV(LED);
+#endif
     watchdogReset();
   } while (--count);
    1fc46:	81 50       	subi	r24, 0x01	; 1
@@ -149,7 +159,7 @@ void watchdogReset() {
       // GET PARAMETER returns a generic 0x03 reply - enough to keep Avrdude happy
       getNch(1);
    1fc5c:	81 e0       	ldi	r24, 0x01	; 1
-   1fc5e:	cc d0       	rcall	.+408    	; 0x1fdf8 <verifySpace+0xc>
+   1fc5e:	cc d0       	rcall	.+408    	; 0x1fdf8 <getNch>
    1fc60:	9b c0       	rjmp	.+310    	; 0x1fd98 <main+0x198>
       putch(0x03);
     }
@@ -167,7 +177,7 @@ void watchdogReset() {
       // SET DEVICE EXT is ignored
       getNch(5);
    1fc6e:	85 e0       	ldi	r24, 0x05	; 5
-   1fc70:	c3 d0       	rcall	.+390    	; 0x1fdf8 <verifySpace+0xc>
+   1fc70:	c3 d0       	rcall	.+390    	; 0x1fdf8 <getNch>
    1fc72:	99 c0       	rjmp	.+306    	; 0x1fda6 <main+0x1a6>
     }
     else if(ch == STK_LOAD_ADDRESS) {
@@ -210,13 +220,13 @@ void watchdogReset() {
       // UNIVERSAL command is ignored
       getNch(4);
    1fca6:	84 e0       	ldi	r24, 0x04	; 4
-   1fca8:	a7 d0       	rcall	.+334    	; 0x1fdf8 <verifySpace+0xc>
+   1fca8:	a7 d0       	rcall	.+334    	; 0x1fdf8 <getNch>
       putch(0x00);
    1fcaa:	80 e0       	ldi	r24, 0x00	; 0
    1fcac:	7f d0       	rcall	.+254    	; 0x1fdac <putch>
    1fcae:	7b c0       	rjmp	.+246    	; 0x1fda6 <main+0x1a6>
     }
-    /* Write memory, length is big endian and is in bytes  */
+    /* Write memory, length is big endian and is in bytes */
     else if(ch == STK_PROG_PAGE) {
    1fcb0:	84 36       	cpi	r24, 0x64	; 100
    1fcb2:	09 f0       	breq	.+2      	; 0x1fcb6 <main+0xb6>
@@ -464,8 +474,8 @@ void watchdogReset() {
    1fdc4:	fc cf       	rjmp	.-8      	; 0x1fdbe <getch+0x2>
   ch = UDR0;
    1fdc6:	80 91 c6 00 	lds	r24, 0x00C6
-#ifdef LED_DATA_FLASH
   LED_PIN |= _BV(LED);
+#endif
 #endif
 
   return ch;
@@ -529,6 +539,8 @@ void verifySpace() {
    1fdf4:	84 e1       	ldi	r24, 0x14	; 20
 }
    1fdf6:	da cf       	rjmp	.-76     	; 0x1fdac <putch>
+
+0001fdf8 <getNch>:
     ::[count] "M" (UART_B_VALUE)
   );
 }
@@ -537,12 +549,10 @@ void verifySpace() {
 void getNch(uint8_t count) {
    1fdf8:	1f 93       	push	r17
    1fdfa:	18 2f       	mov	r17, r24
-
-0001fdfc <getNch>:
   do getch(); while (--count);
    1fdfc:	df df       	rcall	.-66     	; 0x1fdbc <getch>
    1fdfe:	11 50       	subi	r17, 0x01	; 1
-   1fe00:	e9 f7       	brne	.-6      	; 0x1fdfc <getNch>
+   1fe00:	e9 f7       	brne	.-6      	; 0x1fdfc <getNch+0x4>
   verifySpace();
    1fe02:	f4 df       	rcall	.-24     	; 0x1fdec <verifySpace>
 }

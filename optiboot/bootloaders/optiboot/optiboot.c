@@ -201,6 +201,9 @@ void appStart() __attribute__ ((naked));
 #elif defined(__AVR_ATmega1280__)
 #define RAMSTART (0x200)
 #define NRWWSTART (0xE000)
+#elif defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+#define RAMSTART (0x100)
+#define NRWWSTART (0x1800)
 #endif
 
 /* C zero initialises all global variables. However, that requires */
@@ -258,7 +261,7 @@ int main(void) {
 #endif
 
   // Set up watchdog to trigger after 500ms
-  watchdogConfig(WATCHDOG_1MS);
+  watchdogConfig(WATCHDOG_1S);
 
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);

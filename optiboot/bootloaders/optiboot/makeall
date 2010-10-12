@@ -12,16 +12,3 @@ make mega
 make atmega8
 make atmega88
 make luminet
-
-lilypad: TARGET = lilypad
-lilypad_resonator: TARGET = lilypad_resonator
-pro8: TARGET = pro_8MHz
-pro16: TARGET = pro_16MHz
-pro20: TARGET = pro_20mhz
-diecimila: TARGET = diecimila
-atmega328: TARGET = atmega328
-sanguino: TARGET = atmega644p
-mega: TARGET = atmega1280
-atmega8: TARGET = atmega8
-atmega328_pro8: TARGET = atmega328_pro_8MHz
-luminet: TARGET = luminet
