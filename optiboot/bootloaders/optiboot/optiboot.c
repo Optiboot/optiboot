@@ -234,6 +234,11 @@ int main(void) {
 
   uint8_t ch;
 
+  // Adaboot no-wait mod
+  ch = MCUSR;
+  MCUSR = 0;
+  if (!(ch & _BV(EXTRF))) appStart();
+
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
@@ -251,11 +256,6 @@ int main(void) {
   UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #endif
 #endif
-
-  // Adaboot no-wait mod
-  ch = MCUSR;
-  MCUSR = 0;
-  if (!(ch & _BV(EXTRF))) appStart();
 
   // Set up watchdog to trigger after 500ms
   watchdogConfig(WATCHDOG_1MS);
