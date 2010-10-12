@@ -85,9 +85,12 @@ pro20: $(PROGRAM)_pro_20mhz.hex
 pro20: $(PROGRAM)_pro_20mhz.lst
 pro20_isp: pro20
 pro20_isp: TARGET = pro_20mhz
-pro20_isp: HFUSE = DD # 2.7V brownout
-pro20_isp: LFUSE = C6 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-pro20_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+pro20_isp: HFUSE = DD
+# Full swing xtal (20MHz) 258CK/14CK+4.1ms
+pro20_isp: LFUSE = C6
+# 512 byte boot
+pro20_isp: EFUSE = 04
 pro20_isp: isp
 
 # 16MHz clocked platforms
@@ -102,9 +105,12 @@ pro16: $(PROGRAM)_pro_16MHz.hex
 pro16: $(PROGRAM)_pro_16MHz.lst
 pro16_isp: pro16
 pro16_isp: TARGET = pro_16MHz
-pro16_isp: HFUSE = DD # 2.7V brownout
-pro16_isp: LFUSE = C6 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-pro16_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+pro16_isp: HFUSE = DD
+# Full swing xtal (20MHz) 258CK/14CK+4.1ms
+pro16_isp: LFUSE = C6
+# 512 byte boot
+pro16_isp: EFUSE = 04
 pro16_isp: isp
 
 # Diecimila and NG use identical bootloaders
@@ -115,9 +121,12 @@ diecimila: $(PROGRAM)_diecimila.hex
 diecimila: $(PROGRAM)_diecimila.lst
 diecimila_isp: diecimila
 diecimila_isp: TARGET = diecimila
-diecimila_isp: HFUSE = DD # 2.7V brownout
-diecimila_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
-diecimila_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+diecimila_isp: HFUSE = DD
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+diecimila_isp: LFUSE = FF
+# 512 byte boot
+diecimila_isp: EFUSE = 04
 diecimila_isp: isp
 
 atmega328: TARGET = atmega328
@@ -130,9 +139,12 @@ atmega328: $(PROGRAM)_atmega328.lst
 atmega328_isp: atmega328
 atmega328_isp: TARGET = atmega328
 atmega328_isp: MCU_TARGET = atmega328p
-atmega328_isp: HFUSE = DE # 512 byte boot
-atmega328_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega328_isp: EFUSE = 05 # 2.7V brownout
+# 512 byte boot
+atmega328_isp: HFUSE = DE
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega328_isp: LFUSE = FF
+# 2.7V brownout
+atmega328_isp: EFUSE = 05
 atmega328_isp: isp
 
 # Sanguino has a minimum boot size of 1024 bytes, so enable extra functions
@@ -146,9 +158,12 @@ sanguino: $(PROGRAM)_atmega644p.lst
 sanguino_isp: sanguino
 sanguino_isp: TARGET = atmega644p
 sanguino_isp: MCU_TARGET = atmega644p
-sanguino_isp: HFUSE = DE # 1024 byte boot
-sanguino_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
-sanguino_isp: EFUSE = 05 # 2.7V brownout
+# 1024 byte boot
+sanguino_isp: HFUSE = DE
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+sanguino_isp: LFUSE = FF
+# 2.7V brownout
+sanguino_isp: EFUSE = 05
 sanguino_isp: isp
 
 # Mega has a minimum boot size of 1024 bytes, so enable extra functions
@@ -162,9 +177,12 @@ mega: $(PROGRAM)_atmega1280.lst
 mega_isp: mega
 mega_isp: TARGET = atmega1280
 mega_isp: MCU_TARGET = atmega1280
-mega_isp: HFUSE = DE # 1024 byte boot
-mega_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
-mega_isp: EFUSE = 05 # 2.7V brownout
+# 1024 byte boot
+mega_isp: HFUSE = DE
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+mega_isp: LFUSE = FF
+# 2.7V brownout
+mega_isp: EFUSE = 05
 mega_isp: isp
 
 # ATmega8
@@ -179,8 +197,10 @@ atmega8: $(PROGRAM)_atmega8.lst
 atmega8_isp: atmega8
 atmega8_isp: TARGET = atmega8
 atmega8_isp: MCU_TARGET = atmega8
-atmega8_isp: HFUSE = DC # 2.7V brownout
-atmega8_isp: LFUSE = BF # Low power xtal (16MHz) 16KCK/14CK+65ms
+# 2.7V brownout
+atmega8_isp: HFUSE = DC
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega8_isp: LFUSE = BF
 atmega8_isp: isp
 
 # 8MHz clocked platforms
@@ -195,9 +215,12 @@ lilypad: $(PROGRAM)_lilypad.hex
 lilypad: $(PROGRAM)_lilypad.lst
 lilypad_isp: lilypad
 lilypad_isp: TARGET = lilypad
-lilypad_isp: HFUSE = DD # 2.7V brownout
-lilypad_isp: LFUSE = E2 # Internal 8MHz osc (8MHz) Slow rising power
-lilypad_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+lilypad_isp: HFUSE = DD
+# Internal 8MHz osc (8MHz) Slow rising power
+lilypad_isp: LFUSE = E2
+# 512 byte boot
+lilypad_isp: EFUSE = 02
 lilypad_isp: isp
 
 lilypad_resonator: TARGET = lilypad_resonator
@@ -207,9 +230,12 @@ lilypad_resonator: $(PROGRAM)_lilypad_resonator.hex
 lilypad_resonator: $(PROGRAM)_lilypad_resonator.lst
 lilypad_resonator_isp: lilypad_resonator
 lilypad_resonator_isp: TARGET = lilypad_resonator
-lilypad_resonator_isp: HFUSE = DD # 2.7V brownout
-lilypad_resonator_isp: LFUSE = C6 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-lilypad_resonator_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+lilypad_resonator_isp: HFUSE = DD
+# Full swing xtal (20MHz) 258CK/14CK+4.1ms
+lilypad_resonator_isp: LFUSE = C6
+# 512 byte boot
+lilypad_resonator_isp: EFUSE = 02
 lilypad_resonator_isp: isp
 
 pro8: TARGET = pro_8MHz
@@ -219,9 +245,12 @@ pro8: $(PROGRAM)_pro_8MHz.hex
 pro8: $(PROGRAM)_pro_8MHz.lst
 pro8_isp: pro8
 pro8_isp: TARGET = pro_8MHz
-pro8_isp: HFUSE = DD # 2.7V brownout
-pro8_isp: LFUSE = C6 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-pro8_isp: EFUSE = 02 # 512 byte boot
+# 2.7V brownout
+pro8_isp: HFUSE = DD
+# Full swing xtal (20MHz) 258CK/14CK+4.1ms
+pro8_isp: LFUSE = C6
+# 512 byte boot
+pro8_isp: EFUSE = 02
 pro8_isp: isp
 
 atmega328_pro8: TARGET = atmega328_pro_8MHz
@@ -234,9 +263,12 @@ atmega328_pro8: $(PROGRAM)_atmega328_pro_8MHz.lst
 atmega328_pro8_isp: atmega328_pro8
 atmega328_pro8_isp: TARGET = atmega328_pro_8MHz
 atmega328_pro8_isp: MCU_TARGET = atmega328p
-atmega328_pro8_isp: HFUSE = DE # 512 byte boot
-atmega328_pro8_isp: LFUSE = FF # Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega328_pro8_isp: EFUSE = 05 # 2.7V brownout
+# 512 byte boot
+atmega328_pro8_isp: HFUSE = DE
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega328_pro8_isp: LFUSE = FF
+# 2.7V brownout
+atmega328_pro8_isp: EFUSE = 05
 atmega328_pro8_isp: isp
 
 # 1MHz clocked platforms
@@ -255,9 +287,12 @@ luminet: $(PROGRAM)_luminet.lst
 luminet_isp: luminet
 luminet_isp: TARGET = luminet
 luminet_isp: MCU_TARGET = attiny84
-luminet_isp: HFUSE = DF # Brownout disabled
-luminet_isp: LFUSE = 62 # 1MHz internal oscillator, slowly rising power
-luminet_isp: EFUSE = FE # Self-programming enable
+# Brownout disabled
+luminet_isp: HFUSE = DF
+# 1MHz internal oscillator, slowly rising power
+luminet_isp: LFUSE = 62
+# Self-programming enable
+luminet_isp: EFUSE = FE
 luminet_isp: isp
 
 #
