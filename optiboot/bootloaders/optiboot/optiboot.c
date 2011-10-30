@@ -3,6 +3,9 @@
 /*                                                        */
 /* http://optiboot.googlecode.com                         */
 /*                                                        */
+/* Arduino-maintained version : See README.TXT            */
+/* http://code.google.com/p/arduino/                      */
+/*                                                        */
 /* Heavily optimised bootloader that is faster and        */
 /* smaller than the Arduino standard bootloader           */
 /*                                                        */
@@ -111,7 +114,45 @@
 /* 500,1000,2000,4000,8000 supported.                     */
 /*                                                        */
 /**********************************************************/
+
+/**********************************************************/
+/* Version Numbers!                                       */
+/*                                                        */
+/* Arduino Optiboot now includes this Version number in   */
+/* the source and object code.                            */
+/*                                                        */
+/* Version 3 was released as zip from the optiboot        */
+/*  repository and was distributed with Arduino 0022.     */
+/* Version 4 starts with the arduino repository commit    */
+/*  that brought the arduino repository up-to-date with   */
+/* the optiboot source tree changes since v3.             */
+/*                                                        */
+/**********************************************************/
 
+/**********************************************************/
+/* Edit History:					  */
+/*							  */
+/* 4.4 WestfW: add initialization of address to keep      */
+/*             the compiler happy.  Change SC'ed targets. */
+/*             Return the SW version via READ PARAM       */
+/* 4.3 WestfW: catch framing errors in getch(), so that   */
+/*             AVRISP works without HW kludges.           */
+/*  http://code.google.com/p/arduino/issues/detail?id=368n*/
+/* 4.2 WestfW: reduce code size, fix timeouts, change     */
+/*             verifySpace to use WDT instead of appstart */
+/* 4.1 WestfW: put version number in binary.		  */
+/**********************************************************/
+
+#define OPTIBOOT_MAJVER 4
+#define OPTIBOOT_MINVER 4
+
+#define MAKESTR(a) #a
+#define MAKEVER(a, b) MAKESTR(a*256+b)
+
+asm("  .section .version\n"
+    "optiboot_version:  .word " MAKEVER(OPTIBOOT_MAJVER, OPTIBOOT_MINVER) "\n"
+    "  .section .text\n");
+
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -119,6 +160,7 @@
 // <avr/boot.h> uses sts instructions, but this version uses out instructions
 // This saves cycles and program memory.
 #include "boot.h"
+
 
 // We don't use <avr/wdt.h> as those routines have interrupt overhead we don't need.
 
@@ -164,8 +206,8 @@
 #define WATCHDOG_1S     (_BV(WDP2) | _BV(WDP1) | _BV(WDE))
 #define WATCHDOG_2S     (_BV(WDP2) | _BV(WDP1) | _BV(WDP0) | _BV(WDE))
 #ifndef __AVR_ATmega8__
-#define WATCHDOG_4S     (_BV(WDE3) | _BV(WDE))
-#define WATCHDOG_8S     (_BV(WDE3) | _BV(WDE0) | _BV(WDE))
+#define WATCHDOG_4S     (_BV(WDP3) | _BV(WDE))
+#define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 #endif
 
 /* Function Prototypes */
@@ -210,8 +252,6 @@ void appStart() __attribute__ ((naked));
 /* These definitions are NOT zero initialised, but that doesn't matter */
 /* This allows us to drop the zero init code, saving us memory */
 #define buff    ((uint8_t*)(RAMSTART))
-#define address (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2))
-#define length  (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+2))
 #ifdef VIRTUAL_BOOT_PARTITION
 #define rstVect (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2+4))
 #define wdtVect (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2+6))
@@ -219,6 +259,17 @@ void appStart() __attribute__ ((naked));
 
 /* main program starts here */
 int main(void) {
+  uint8_t ch;
+
+  /*
+   * Making these local and in registers prevents the need for initializing
+   * them, and also saves space because code no longer stores to memory.
+   * (initializing address keeps the compiler happy, but isn't really
+   *  necessary, and uses 4 bytes of flash.)
+   */
+  register uint16_t address = 0;
+  register uint8_t  length;
+
   // After the zero init loop, this is the first code to run.
   //
   // This code makes the following assumptions:
@@ -228,14 +279,10 @@ int main(void) {
   //
   // If not, uncomment the following instructions:
   // cli();
-
+  asm volatile ("clr __zero_reg__");
 #ifdef __AVR_ATmega8__
   SP=RAMEND;  // This is done by hardware reset
 #endif
-
-  // asm volatile ("clr __zero_reg__");
-
-  uint8_t ch;
 
   // Adaboot no-wait mod
   ch = MCUSR;
@@ -282,9 +329,22 @@ int main(void) {
     ch = getch();
 
     if(ch == STK_GET_PARAMETER) {
-      // GET PARAMETER returns a generic 0x03 reply - enough to keep Avrdude happy
-      getNch(1);
-      putch(0x03);
+      unsigned char which = getch();
+      verifySpace();
+      if (which == 0x82) {
+	/*
+	 * Send optiboot version as "minor SW version"
+	 */
+	putch(OPTIBOOT_MINVER);
+      } else if (which == 0x81) {
+	  putch(OPTIBOOT_MAJVER);
+      } else {
+	/*
+	 * GET PARAMETER returns a generic 0x03 reply for
+         * other parameters - enough to keep Avrdude happy
+	 */
+	putch(0x03);
+      }
     }
     else if(ch == STK_SET_DEVICE) {
       // SET DEVICE is ignored
@@ -318,11 +378,13 @@ int main(void) {
       uint8_t *bufPtr;
       uint16_t addrPtr;
 
-      getLen();
+      getch();			/* getlen() */
+      length = getch();
+      getch();
 
       // If we are in RWW section, immediately start page erase
       if (address < NRWWSTART) __boot_page_erase_short((uint16_t)(void*)address);
-      
+
       // While that is going on, read in page contents
       bufPtr = buff;
       do *bufPtr++ = getch();
@@ -334,7 +396,7 @@ int main(void) {
 
       // Read command terminator, start reply
       verifySpace();
-      
+
       // If only a partial page is to be programmed, the erase might not be complete.
       // So check that here
       boot_spm_busy_wait();
@@ -369,7 +431,7 @@ int main(void) {
         __boot_page_fill_short((uint16_t)(void*)addrPtr,a);
         addrPtr += 2;
       } while (--ch);
-      
+
       // Write from programming buffer
       __boot_page_write_short((uint16_t)(void*)address);
       boot_spm_busy_wait();
@@ -383,7 +445,10 @@ int main(void) {
     /* Read memory block mode, length is big endian.  */
     else if(ch == STK_READ_PAGE) {
       // READ PAGE - we only read flash
-      getLen();
+      getch();			/* getlen() */
+      length = getch();
+      getch();
+
       verifySpace();
 #ifdef VIRTUAL_BOOT_PARTITION
       do {
@@ -468,8 +533,6 @@ void putch(char ch) {
 uint8_t getch(void) {
   uint8_t ch;
 
-  watchdogReset();
-
 #ifdef LED_DATA_FLASH
 #ifdef __AVR_ATmega8__
   LED_PORT ^= _BV(LED);
@@ -487,7 +550,7 @@ uint8_t getch(void) {
     "   rcall uartDelay\n"              // Wait 1 bit period
     "   clc\n"
     "   sbic  %[uartPin],%[uartBit]\n"
-    "   sec\n"                          
+    "   sec\n"
     "   dec   %[bitCnt]\n"
     "   breq  3f\n"
     "   ror   %[ch]\n"
@@ -503,7 +566,20 @@ uint8_t getch(void) {
       "r25"
 );
 #else
-  while(!(UCSR0A & _BV(RXC0)));
+  while(!(UCSR0A & _BV(RXC0)))
+    ;
+  if (!(UCSR0A & _BV(FE0))) {
+      /*
+       * A Framing Error indicates (probably) that something is talking
+       * to us at the wrong bit rate.  Assume that this is because it
+       * expects to be talking to the application, and DON'T reset the
+       * watchdog.  This should cause the bootloader to abort and run
+       * the application "soon", if it keeps happening.  (Note that we
+       * don't care that an invalid char is returned...)
+       */
+    watchdogReset();
+  }
+  
   ch = UDR0;
 #endif
 
@@ -543,7 +619,11 @@ void getNch(uint8_t count) {
 }
 
 void verifySpace() {
-  if (getch() != CRC_EOP) appStart();
+  if (getch() != CRC_EOP) {
+    watchdogConfig(WATCHDOG_16MS);    // shorten WD timeout
+    while (1)			      // and busy-loop so that WD causes
+      ;				      //  a reset and app start.
+  }
   putch(STK_INSYNC);
 }
 
@@ -562,12 +642,6 @@ void flash_led(uint8_t count) {
   } while (--count);
 }
 #endif
-
-uint8_t getLen() {
-  getch();
-  length = getch();
-  return getch();
-}
 
 // Watchdog functions. These are only safe with interrupts turned off.
 void watchdogReset() {
