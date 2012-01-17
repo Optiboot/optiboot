@@ -132,6 +132,11 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* 4.4 WestfW: remove automatic soft_uart detect (didn't  */
+/*             know what it was doing or why.)  Added a   */
+/*             check of the calculated BRG value instead. */
+/*             Version stays 4.4; existing binaries are   */
+/*             not changed.                               */
 /* 4.4 WestfW: add initialization of address to keep      */
 /*             the compiler happy.  Change SC'ed targets. */
 /*             Return the SW version via READ PARAM       */
@@ -188,11 +193,26 @@ asm("  .section .version\n"
 #endif
 #endif
 
+#if 0
 /* Switch in soft UART for hard baud rates */
+/*
+ * I don't understand what this was supposed to accomplish, where the
+ * constant "280" came from, or why automatically (and perhaps unexpectedly)
+ * switching to a soft uart is a good thing, so I'm undoing this in favor
+ * of a range check using the same calc used to config the BRG...
+ */
 #if (F_CPU/BAUD_RATE) > 280 // > 57600 for 16MHz
 #ifndef SOFT_UART
 #define SOFT_UART
 #endif
+#endif
+#else // 0
+#if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 > 250
+#error Unachievable baud rate (too slow) BAUD_RATE 
+#endif // baud rate slow check
+#if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 < 3
+#error Unachievable baud rate (too fast) BAUD_RATE 
+#endif // baud rate fastn check
 #endif
 
 /* Watchdog settings */
