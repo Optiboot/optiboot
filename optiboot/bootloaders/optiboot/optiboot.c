@@ -132,6 +132,11 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Jan 2012:                                              */
+/* 4.4 WestfW and Maniacbug:  Add m1284 support.  This    */
+/*             does not change the 328 binary, so the     */
+/*             version number didn't change either. (?)   */
+/* June 2011:                                             */
 /* 4.4 WestfW: remove automatic soft_uart detect (didn't  */
 /*             know what it was doing or why.)  Added a   */
 /*             check of the calculated BRG value instead. */
@@ -257,6 +262,9 @@ void appStart() __attribute__ ((naked));
 #elif defined (__AVR_ATmega644P__)
 #define RAMSTART (0x100)
 #define NRWWSTART (0xE000)
+#elif defined (__AVR_ATmega1284P__)
+#define RAMSTART (0x100)
+#define NRWWSTART (0xF000)
 #elif defined(__AVR_ATtiny84__)
 #define RAMSTART (0x100)
 #define NRWWSTART (0x0000)
@@ -482,7 +490,8 @@ int main(void) {
         putch(ch);
       } while (--length);
 #else
-#ifdef __AVR_ATmega1280__
+#ifdef RAMPZ
+// Since RAMPZ should already be set, we need to use EPLM directly.
 //      do putch(pgm_read_byte_near(address++));
 //      while (--length);
       do {
@@ -615,7 +624,7 @@ uint8_t getch(void) {
 }
 
 #ifdef SOFT_UART
-// AVR350 equation: #define UART_B_VALUE (((F_CPU/BAUD_RATE)-23)/6)
+// AVR305 equation: #define UART_B_VALUE (((F_CPU/BAUD_RATE)-23)/6)
 // Adding 3 to numerator simulates nearest rounding for more accurate baud rates
 #define UART_B_VALUE (((F_CPU/BAUD_RATE)-20)/6)
 #if UART_B_VALUE > 255

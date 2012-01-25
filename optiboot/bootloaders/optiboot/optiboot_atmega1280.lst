@@ -399,7 +399,7 @@ int main(void) {
    1fd5a:	39 d0       	rcall	.+114    	; 0x1fdce <verifySpace>
    1fd5c:	e6 01       	movw	r28, r12
    1fd5e:	0e 2d       	mov	r16, r14
-#ifdef __AVR_ATmega1280__
+// Since RAMPZ should already be set, we need to use EPLM directly.
 //      do putch(pgm_read_byte_near(address++));
 //      while (--length);
       do {
