@@ -133,6 +133,12 @@
 /* Edit History:					  */
 /*							  */
 /* Jan 2012:                                              */
+/* 4.4 WestfW: use attribute OS_main instead of naked for */
+/*             main().  This allows optimizations that we */
+/*             count on, which are prohibited in naked    */
+/*             functions due to PR42240.  (keeps us less  */
+/*             than 512 bytes when compiler is gcc4.5     */
+/*             (code from 4.3.2 remains the same.)        */
 /* 4.4 WestfW and Maniacbug:  Add m1284 support.  This    */
 /*             does not change the 328 binary, so the     */
 /*             version number didn't change either. (?)   */
@@ -239,7 +245,7 @@ asm("  .section .version\n"
 /* The main function is in init9, which removes the interrupt vector table */
 /* we don't need. It is also 'naked', which means the compiler does not    */
 /* generate any entry or exit code itself. */
-int main(void) __attribute__ ((naked)) __attribute__ ((section (".init9")));
+int main(void) __attribute__ ((OS_main)) __attribute__ ((section (".init9")));
 void putch(char);
 uint8_t getch(void);
 static inline void getNch(uint8_t); /* "static inline" is a compiler hint to reduce code size */
