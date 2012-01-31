@@ -133,6 +133,7 @@
 /* Edit History:					  */
 /*							  */
 /* Jan 2012:                                              */
+/* 4.5 WestfW: fix NRWW value for m1284.                  */
 /* 4.4 WestfW: use attribute OS_main instead of naked for */
 /*             main().  This allows optimizations that we */
 /*             count on, which are prohibited in naked    */
@@ -160,7 +161,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 4
-#define OPTIBOOT_MINVER 4
+#define OPTIBOOT_MINVER 5
 
 #define MAKESTR(a) #a
 #define MAKEVER(a, b) MAKESTR(a*256+b)
