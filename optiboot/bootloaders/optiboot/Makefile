@@ -233,7 +233,7 @@ atmega328_isp: HFUSE = DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_isp: LFUSE = FF
 # 2.7V brownout
-atmega328_isp: EFUSE = 05
+atmega328_isp: EFUSE = FD
 atmega328_isp: isp
 
 atmega1284: TARGET = atmega1284p
@@ -273,7 +273,7 @@ sanguino_isp: HFUSE = DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 sanguino_isp: LFUSE = FF
 # 2.7V brownout
-sanguino_isp: EFUSE = 05
+sanguino_isp: EFUSE = FD
 sanguino_isp: isp
 
 # Mega has a minimum boot size of 1024 bytes, so enable extra functions
@@ -293,7 +293,7 @@ mega_isp: HFUSE = DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 mega_isp: LFUSE = FF
 # 2.7V brownout
-mega_isp: EFUSE = 05
+mega_isp: EFUSE = FD
 mega_isp: isp
 
 # ATmega8
