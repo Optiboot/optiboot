@@ -5,6 +5,9 @@
 /*                                                        */
 /* Arduino-maintained version : See README.TXT            */
 /* http://code.google.com/p/arduino/                      */
+/*  It is the intent that changes not relevant to the     */
+/*  Arduino production envionment get moved from the      */
+/*  optiboot project to the arduino project in "lumps."   */
 /*                                                        */
 /* Heavily optimised bootloader that is faster and        */
 /* smaller than the Arduino standard bootloader           */
@@ -29,11 +32,16 @@
 /*   ATmega168 based devices  (Diecimila etc)             */
 /*   ATmega328P based devices (Duemilanove etc)           */
 /*                                                        */
+/* Beta test (believed working.)                          */
+/*   ATmega8 based devices (Arduino legacy)               */
+/*   ATmega328 non-picopower devices                      */
+/*   ATmega644P based devices (Sanguino)                  */
+/*   ATmega1284P based devices                            */
+/*                                                        */
 /* Alpha test                                             */
 /*   ATmega1280 based devices (Arduino Mega)              */
 /*                                                        */
 /* Work in progress:                                      */
-/*   ATmega644P based devices (Sanguino)                  */
 /*   ATtiny84 based devices (Luminet)                     */
 /*                                                        */
 /* Does not support:                                      */
@@ -113,6 +121,10 @@
 /* Bootloader timeout period, in milliseconds.            */
 /* 500,1000,2000,4000,8000 supported.                     */
 /*                                                        */
+/* UART:                                                  */
+/* UART number (0..n) for devices with more than          */
+/* one hardware uart (644P, 1284P, etc)                   */
+/*                                                        */
 /**********************************************************/
 
 /**********************************************************/
@@ -132,6 +144,9 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Mar 2012                                               */
+/* 4.5 WestfW: add infrastructure for non-zero UARTS.     */
+/* 4.5 WestfW: fix SIGNATURE_2 for m644 (bad in avr-libc) */
 /* Jan 2012:                                              */
 /* 4.5 WestfW: fix NRWW value for m1284.                  */
 /* 4.4 WestfW: use attribute OS_main instead of naked for */
@@ -203,6 +218,10 @@ asm("  .section .version\n"
 #else
 #define BAUD_RATE 1200L     // Good even at 32768Hz
 #endif
+#endif
+
+#ifndef UART
+#define UART 0
 #endif
 
 #if 0
@@ -310,6 +329,37 @@ void appStart() __attribute__ ((naked));
 #define wdtVect (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2+6))
 #endif
 
+/*
+ * Handle devices with up to 4 uarts (eg m1280.)  Rather inelegantly.
+ * Note that mega8 still needs special handling, because ubrr is handled
+ * differently.
+ */
+#if UART == 0
+# define UART_SRA UCSR0A
+# define UART_SRB UCSR0B
+# define UART_SRC UCSR0C
+# define UART_SRL UBRR0L
+# define UART_UDR UDR0
+#elif UART == 1
+# define UART_SRA UCSR1A
+# define UART_SRB UCSR1B
+# define UART_SRC UCSR1C
+# define UART_SRL UBRR1L
+# define UART_UDR UDR1
+#elif UART == 2
+# define UART_SRA UCSR2A
+# define UART_SRB UCSR2B
+# define UART_SRC UCSR2C
+# define UART_SRL UBRR2L
+# define UART_UDR UDR2
+#elif UART == 3
+# define UART_SRA UCSR3A
+# define UART_SRB UCSR3B
+# define UART_SRC UCSR3C
+# define UART_SRL UBRR3L
+# define UART_UDR UDR3
+#endif
+
 /* main program starts here */
 int main(void) {
   uint8_t ch;
@@ -353,10 +403,10 @@ int main(void) {
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
   UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #else
-  UCSR0A = _BV(U2X0); //Double speed mode USART0
-  UCSR0B = _BV(RXEN0) | _BV(TXEN0);
-  UCSR0C = _BV(UCSZ00) | _BV(UCSZ01);
-  UBRR0L = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+  UART_SRA = _BV(U2X0); //Double speed mode USART0
+  UART_SRB = _BV(RXEN0) | _BV(TXEN0);
+  UART_SRC = _BV(UCSZ00) | _BV(UCSZ01);
+  UART_SRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #endif
 #endif
 
@@ -556,8 +606,8 @@ int main(void) {
 
 void putch(char ch) {
 #ifndef SOFT_UART
-  while (!(UCSR0A & _BV(UDRE0)));
-  UDR0 = ch;
+  while (!(UART_SRA & _BV(UDRE0)));
+  UART_UDR = ch;
 #else
   __asm__ __volatile__ (
     "   com %[ch]\n" // ones complement, carry set
@@ -620,9 +670,9 @@ uint8_t getch(void) {
       "r25"
 );
 #else
-  while(!(UCSR0A & _BV(RXC0)))
+  while(!(UART_SRA & _BV(RXC0)))
     ;
-  if (!(UCSR0A & _BV(FE0))) {
+  if (!(UART_SRA & _BV(FE0))) {
       /*
        * A Framing Error indicates (probably) that something is talking
        * to us at the wrong bit rate.  Assume that this is because it
@@ -634,7 +684,7 @@ uint8_t getch(void) {
     watchdogReset();
   }
   
-  ch = UDR0;
+  ch = UART_UDR;
 #endif
 
 #ifdef LED_DATA_FLASH
