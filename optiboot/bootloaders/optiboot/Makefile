@@ -30,10 +30,20 @@ PROGRAM    = optiboot
 # OS ?= windows
 
 
-# enter the parameters for the avrdude isp tool
+# enter the parameters for the avrdude isp tool  -b19200
+#
+# These are the parameters for a usb-based STK500v2 programmer.
+# Exact type unknown.  (historical Makefile values.)
 ISPTOOL	   = stk500v2
-ISPPORT	   = usb
+ISPPORT	   =  usb
 ISPSPEED   = -b 115200
+#
+#
+# These are parameters for using an Arduino with the ArduinoISP sketch
+#  as the programmer.  On a mac, for a particular Uno as programmer.
+#ISPTOOL	= stk500v1 -C /Applications/arduino/arduino-0022/hardware/tools/avr/etc/avrdude.conf
+#ISPPORT	= /dev/tty.usbmodemfd3141 
+#ISPSPEED	= -b19200
 
 MCU_TARGET = atmega168
 LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
@@ -220,7 +230,7 @@ diecimila_isp: isp
 atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200'
-atmega328: AVR_FREQ = 16000000L
+atmega328: AVR_FREQ ?= 16000000L
 atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
 atmega328: $(PROGRAM)_atmega328.hex
 atmega328: $(PROGRAM)_atmega328.lst
@@ -240,7 +250,7 @@ atmega1284: TARGET = atmega1284p
 atmega1284: MCU_TARGET = atmega1284p
 atmega1284: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
 atmega1284: AVR_FREQ = 16000000L
-atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00
+atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
 atmega1284: $(PROGRAM)_atmega1284p.hex
 atmega1284: $(PROGRAM)_atmega1284p.lst
 
@@ -261,7 +271,7 @@ sanguino: TARGET = atmega644p
 sanguino: MCU_TARGET = atmega644p
 sanguino: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
 sanguino: AVR_FREQ = 16000000L
-sanguino: LDSECTIONS  = -Wl,--section-start=.text=0xfc00
+sanguino: LDSECTIONS  = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
 sanguino: $(PROGRAM)_atmega644p.hex
 sanguino: $(PROGRAM)_atmega644p.lst
 
@@ -278,23 +288,23 @@ sanguino_isp: isp
 
 # Mega has a minimum boot size of 1024 bytes, so enable extra functions
 #mega: TARGET = atmega1280
-mega: MCU_TARGET = atmega1280
-mega: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
-mega: AVR_FREQ = 16000000L
-mega: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00
-mega: $(PROGRAM)_atmega1280.hex
-mega: $(PROGRAM)_atmega1280.lst
+mega1280: MCU_TARGET = atmega1280
+mega1280: CFLAGS += '-DLED_START_FLASHES=3' '-DBAUD_RATE=115200' '-DBIGBOOT'
+mega1280: AVR_FREQ = 16000000L
+mega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
+mega1280: $(PROGRAM)_atmega1280.hex
+mega1280: $(PROGRAM)_atmega1280.lst
 
-mega_isp: mega
-mega_isp: TARGET = atmega1280
-mega_isp: MCU_TARGET = atmega1280
+mega1280_isp: mega
+mega1280_isp: TARGET = atmega1280
+mega1280_isp: MCU_TARGET = atmega1280
 # 1024 byte boot
-mega_isp: HFUSE = DE
+mega1280_isp: HFUSE = DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
-mega_isp: LFUSE = FF
+mega1280_isp: LFUSE = FF
 # 2.7V brownout
-mega_isp: EFUSE = FD
-mega_isp: isp
+mega1280_isp: EFUSE = FD
+mega1280_isp: isp
 
 # ATmega8
 #
@@ -409,7 +419,7 @@ atmega328_pro8_isp: HFUSE = DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_pro8_isp: LFUSE = FF
 # 2.7V brownout
-atmega328_pro8_isp: EFUSE = 05
+atmega328_pro8_isp: EFUSE = DE
 atmega328_pro8_isp: isp
 
 # 1MHz clocked platforms
