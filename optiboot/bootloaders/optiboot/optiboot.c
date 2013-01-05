@@ -144,6 +144,8 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Jan 2013						  */
+/* 4.6 WestfW/dkinzer: use autoincrement lpm for read     */
 /* Mar 2012                                               */
 /* 4.5 WestfW: add infrastructure for non-zero UARTS.     */
 /* 4.5 WestfW: fix SIGNATURE_2 for m644 (bad in avr-libc) */
@@ -176,7 +178,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 4
-#define OPTIBOOT_MINVER 5
+#define OPTIBOOT_MINVER 6
 
 #define MAKESTR(a) #a
 #define MAKEVER(a, b) MAKESTR(a*256+b)
@@ -553,8 +555,8 @@ int main(void) {
       getch();
 
       verifySpace();
-#ifdef VIRTUAL_BOOT_PARTITION
       do {
+#ifdef VIRTUAL_BOOT_PARTITION
         // Undo vector patch in bottom page so verify passes
         if (address == 0)       ch=rstVect & 0xff;
         else if (address == 1)  ch=rstVect >> 8;
@@ -562,25 +564,19 @@ int main(void) {
         else if (address == 9) ch=wdtVect >> 8;
         else ch = pgm_read_byte_near(address);
         address++;
+#elif defined(RAMPZ)
+        // Since RAMPZ should already be set, we need to use EPLM directly.
+        // Also, we can use the autoincrement version of lpm to update "address"
+        //      do putch(pgm_read_byte_near(address++));
+        //      while (--length);
+        // read a Flash and increment the address (may increment RAMPZ)
+        __asm__ ("elpm %0,Z+\n" : "=r" (ch), "=z" (address): "1" (address));
+#else
+        // read a Flash byte and increment the address
+        __asm__ ("lpm %0,Z+\n" : "=r" (ch), "=z" (address): "1" (address));
+#endif
         putch(ch);
       } while (--length);
-#else
-#ifdef RAMPZ
-// Since RAMPZ should already be set, we need to use EPLM directly.
-//      do putch(pgm_read_byte_near(address++));
-//      while (--length);
-      do {
-        uint8_t result;
-        __asm__ ("elpm %0,Z\n":"=r"(result):"z"(address));
-        putch(result);
-        address++;
-      }
-      while (--length);
-#else
-      do putch(pgm_read_byte_near(address++));
-      while (--length);
-#endif
-#endif
     }
 
     /* Get device signature bytes  */
