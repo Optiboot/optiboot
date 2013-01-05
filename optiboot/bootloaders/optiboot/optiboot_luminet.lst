@@ -3,27 +3,27 @@ optiboot_luminet.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000260  00001d00  00001d00  00000054  2**1
+  0 .text         00000262  00001d00  00001d00  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .version      00000002  00001efe  00001efe  000002b4  2**0
+  1 .version      00000002  00001efe  00001efe  000002b6  2**0
                   CONTENTS, READONLY
-  2 .debug_aranges 00000028  00000000  00000000  000002b6  2**0
+  2 .debug_aranges 00000028  00000000  00000000  000002b8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_pubnames 0000006d  00000000  00000000  000002de  2**0
+  3 .debug_pubnames 0000006d  00000000  00000000  000002e0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_info   000002bc  00000000  00000000  0000034b  2**0
+  4 .debug_info   000002d2  00000000  00000000  0000034d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_abbrev 00000176  00000000  00000000  00000607  2**0
+  5 .debug_abbrev 00000176  00000000  00000000  0000061f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_line   000004b8  00000000  00000000  0000077d  2**0
+  6 .debug_line   000004c0  00000000  00000000  00000795  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_frame  00000090  00000000  00000000  00000c38  2**2
+  7 .debug_frame  00000090  00000000  00000000  00000c58  2**2
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_str    00000149  00000000  00000000  00000cc8  2**0
+  8 .debug_str    00000152  00000000  00000000  00000ce8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_loc    000002a1  00000000  00000000  00000e11  2**0
+  9 .debug_loc    000002b4  00000000  00000000  00000e3a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_ranges 00000098  00000000  00000000  000010b2  2**0
+ 10 .debug_ranges 00000098  00000000  00000000  000010ee  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -45,7 +45,7 @@ int main(void) {
     1d02:	84 b7       	in	r24, 0x34	; 52
   MCUSR = 0;
     1d04:	14 be       	out	0x34, r1	; 52
-  if (!(ch & _BV(EXTRF))) appStart();
+  if (!(ch & _BV(EXTRF))) appStart(ch);
     1d06:	81 ff       	sbrs	r24, 1
     1d08:	26 d1       	rcall	.+588    	; 0x1f56 <appStart>
 
@@ -641,15 +641,18 @@ void getNch(uint8_t count) {
     1f54:	08 95       	ret
 
 00001f56 <appStart>:
-  WDTCSR = _BV(WDCE) | _BV(WDE);
-  WDTCSR = x;
-}
 
-void appStart() {
+void appStart(uint8_t rstFlags) {
+  // save the reset flags in the designated register
+  //  This can be saved in a main program by putting code in .init0 (which
+  //  executes before normal c init code) to save R2 to a global variable.
+  __asm__ __volatile__ ("mov r2, %0\n" :: "r" (rstFlags));
+    1f56:	28 2e       	mov	r2, r24
+
   watchdogConfig(WATCHDOG_OFF);
-    1f56:	80 e0       	ldi	r24, 0x00	; 0
-    1f58:	ea df       	rcall	.-44     	; 0x1f2e <watchdogConfig>
+    1f58:	80 e0       	ldi	r24, 0x00	; 0
+    1f5a:	e9 df       	rcall	.-46     	; 0x1f2e <watchdogConfig>
   __asm__ __volatile__ (
-    1f5a:	e4 e0       	ldi	r30, 0x04	; 4
-    1f5c:	ff 27       	eor	r31, r31
-    1f5e:	09 94       	ijmp
+    1f5c:	e4 e0       	ldi	r30, 0x04	; 4
+    1f5e:	ff 27       	eor	r31, r31
+    1f60:	09 94       	ijmp

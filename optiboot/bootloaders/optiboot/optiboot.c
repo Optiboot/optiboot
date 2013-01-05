@@ -146,6 +146,7 @@
 /*							  */
 /* Jan 2013						  */
 /* 4.6 WestfW/dkinzer: use autoincrement lpm for read     */
+/* 4.6 WestfW/dkinzer: pass reset cause to app in R2      */
 /* Mar 2012                                               */
 /* 4.5 WestfW: add infrastructure for non-zero UARTS.     */
 /* 4.5 WestfW: fix SIGNATURE_2 for m644 (bad in avr-libc) */
@@ -279,7 +280,7 @@ void watchdogConfig(uint8_t x);
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
 #endif
-void appStart() __attribute__ ((naked));
+void appStart(uint8_t rstFlags) __attribute__ ((naked));
 
 /*
  * NRWW memory
@@ -392,7 +393,7 @@ int main(void) {
   // Adaboot no-wait mod
   ch = MCUSR;
   MCUSR = 0;
-  if (!(ch & _BV(EXTRF))) appStart();
+  if (!(ch & _BV(EXTRF))) appStart(ch);
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
@@ -755,7 +756,12 @@ void watchdogConfig(uint8_t x) {
   WDTCSR = x;
 }
 
-void appStart() {
+void appStart(uint8_t rstFlags) {
+  // save the reset flags in the designated register
+  //  This can be saved in a main program by putting code in .init0 (which
+  //  executes before normal c init code) to save R2 to a global variable.
+  __asm__ __volatile__ ("mov r2, %0\n" :: "r" (rstFlags));
+
   watchdogConfig(WATCHDOG_OFF);
   __asm__ __volatile__ (
 #ifdef VIRTUAL_BOOT_PARTITION
