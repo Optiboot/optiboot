@@ -259,8 +259,8 @@ atmega1284_isp: TARGET = atmega1284p
 atmega1284_isp: MCU_TARGET = atmega1284p
 # 1024 byte boot
 atmega1284_isp: HFUSE = DE
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega1284_isp: LFUSE = FF
+# Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega1284_isp: LFUSE = F7
 # 2.7V brownout
 atmega1284_isp: EFUSE = FD
 atmega1284_isp: isp
@@ -280,8 +280,8 @@ sanguino_isp: TARGET = atmega644p
 sanguino_isp: MCU_TARGET = atmega644p
 # 1024 byte boot
 sanguino_isp: HFUSE = DE
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-sanguino_isp: LFUSE = FF
+# Full swing xtal (16MHz) 16KCK/14CK+65ms
+sanguino_isp: LFUSE = F7
 # 2.7V brownout
 sanguino_isp: EFUSE = FD
 sanguino_isp: isp
@@ -295,7 +295,7 @@ mega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.
 mega1280: $(PROGRAM)_atmega1280.hex
 mega1280: $(PROGRAM)_atmega1280.lst
 
-mega1280_isp: mega
+mega1280_isp: mega1280
 mega1280_isp: TARGET = atmega1280
 mega1280_isp: MCU_TARGET = atmega1280
 # 1024 byte boot
@@ -319,9 +319,9 @@ atmega8: $(PROGRAM)_atmega8.lst
 atmega8_isp: atmega8
 atmega8_isp: TARGET = atmega8
 atmega8_isp: MCU_TARGET = atmega8
-# SPIEN, CKOPT, Bootsize=512B
+# SPIEN, CKOPT (for full swing xtal), Bootsize=512B
 atmega8_isp: HFUSE = CC
-# 2.7V brownout, Low power xtal (16MHz) 16KCK/14CK+65ms
+# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
 atmega8_isp: LFUSE = BF
 atmega8_isp: isp
 
