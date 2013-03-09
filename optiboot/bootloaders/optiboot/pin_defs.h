@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#if defined(__AVR_ATmega8__)
+#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega32__)
   //Name conversion R.Wiersma
   #define UCSR0A	UCSRA
   #define UDR0 		UDR
@@ -24,6 +24,9 @@
   #define FE0           FE
   #define TIFR1 	TIFR
   #define WDTCSR	WDTCR
+#endif
+#if defined(__AVR_ATmega32__)
+  #define WDCE		WDTOE
 #endif
 
 /* Luminet support */
@@ -43,8 +46,8 @@
 #endif
 #endif
 
-/* Sanguino support */
-#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
+/* Sanguino support (and other 40pin DIP cpus) */
+#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega32__)
 /* Onboard LED is connected to pin PB0 on Sanguino */ 
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB

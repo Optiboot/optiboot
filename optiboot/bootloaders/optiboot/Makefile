@@ -346,6 +346,22 @@ atemga88_isp: LFUSE = FF
 atmega88_isp: EFUSE = 04
 atmega88_isp: isp
 
+atmega32: TARGET = atmega32
+atmega32: MCU_TARGET = atmega32
+atmega32: CFLAGS += '-DLED_START_FLASHES=2' '-DBAUD_RATE=115200' '-DLED_DATA_FLASH'
+atmega32: AVR_FREQ = 11059200L
+atmega32: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega32: $(PROGRAM)_atmega32.hex
+atmega32: $(PROGRAM)_atmega32.lst
+
+atmega32_isp: atmega32
+atmega32_isp: TARGET = atmega32
+atmega32_isp: MCU_TARGET = atmega32
+# No OCD or JTAG, SPIEN, CKOPT (for full swing xtal), Bootsize=512B
+atmega32_isp: HFUSE = CE
+# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
+atemga32_isp: LFUSE = BF
+atmega32_isp: isp
 
 # 8MHz clocked platforms
 #
