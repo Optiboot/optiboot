@@ -421,8 +421,10 @@ int main(void) {
   // Set up watchdog to trigger after 500ms
   watchdogConfig(WATCHDOG_1S);
 
+#if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);
+#endif
 
 #ifdef SOFT_UART
   /* Set TX pin as output */
