@@ -193,8 +193,8 @@
 /* 4.1 WestfW: put version number in binary.		  */
 /**********************************************************/
 
-#define OPTIBOOT_MAJVER 4
-#define OPTIBOOT_MINVER 6
+#define OPTIBOOT_MAJVER 5
+#define OPTIBOOT_MINVER 0
 
 #define MAKESTR(a) #a
 #define MAKEVER(a, b) MAKESTR(a*256+b)

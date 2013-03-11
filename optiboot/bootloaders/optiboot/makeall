@@ -3,7 +3,6 @@ make clean
 #
 #  buildable platforms of somewhat questionable support level
 make lilypad
-make lilypad_resonator
 make pro8
 make pro16
 make pro20
@@ -12,6 +11,7 @@ make sanguino
 make mega
 make atmega88
 make luminet
+make diecimila
 #
 # The "big three" standard bootloaders.
 # These need to be built AFTER the platforms, or they'll get removed

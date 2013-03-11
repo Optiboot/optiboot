@@ -1,6 +1,7 @@
 # Optiboot Arduino support
 # http://optiboot.googlecode.com
 # Peter Knight, 2010
+# Bill Westfield, 2013 - now includes build.variant for 1.0.2 and later
 
 ##############################################################
 
@@ -18,12 +19,13 @@ atmega328o.bootloader.lock_bits=0x0F
 atmega328o.build.mcu=atmega328p
 atmega328o.build.f_cpu=16000000L
 atmega328o.build.core=arduino:arduino
+atmega328o.build.variant=arduino:standard
 
 ##############################################################
 
 diecimilao.name=[Optiboot] Arduino Diecimila, Duemilanove, Nano, NG w/ ATmega168
 diecimilao.upload.protocol=stk500
-diecimilao.upload.maximum_size=15360
+diecimilao.upload.maximum_size=15872
 diecimilao.upload.speed=115200
 diecimilao.bootloader.low_fuses=0xff
 diecimilao.bootloader.high_fuses=0xdd
@@ -35,12 +37,13 @@ diecimilao.bootloader.lock_bits=0x0F
 diecimilao.build.mcu=atmega168
 diecimilao.build.f_cpu=16000000L
 diecimilao.build.core=arduino:arduino
+diecimilao.build.variant=arduino:standard
 
 ##############################################################
 
 minio.name=[Optiboot] Arduino Mini
 minio.upload.protocol=stk500
-minio.upload.maximum_size=15360
+minio.upload.maximum_size=15872
 minio.upload.speed=115200
 minio.bootloader.low_fuses=0xff
 minio.bootloader.high_fuses=0xdd
@@ -52,12 +55,13 @@ minio.bootloader.lock_bits=0x0F
 minio.build.mcu=atmega168
 minio.build.f_cpu=16000000L
 minio.build.core=arduino:arduino
+minio.build.variant=arduino:eightanaloginputs
 
 ##############################################################
 
 lilypad328o.name=[Optiboot] LilyPad Arduino w/ ATmega328
 lilypad328o.upload.protocol=stk500
-lilypad328o.upload.maximum_size=31744
+lilypad328o.upload.maximum_size=32256
 lilypad328o.upload.speed=115200
 lilypad328o.bootloader.low_fuses=0xff
 lilypad328o.bootloader.high_fuses=0xdc
@@ -69,12 +73,13 @@ lilypad328o.bootloader.lock_bits=0x0F
 lilypad328o.build.mcu=atmega328p
 lilypad328o.build.f_cpu=8000000L
 lilypad328o.build.core=arduino:arduino
+lilypad328o.build.variant=arduino:standard
 
 ##############################################################
 
 lilypado.name=[Optiboot] LilyPad Arduino w/ ATmega168
 lilypado.upload.protocol=stk500
-lilypado.upload.maximum_size=14336
+lilypado.upload.maximum_size=15872
 lilypado.upload.speed=115200
 lilypado.bootloader.low_fuses=0xe2
 lilypado.bootloader.high_fuses=0xdd
@@ -86,12 +91,13 @@ lilypado.bootloader.lock_bits=0x0F
 lilypado.build.mcu=atmega168
 lilypado.build.f_cpu=8000000L
 lilypado.build.core=arduino:arduino
+lilypado.build.variant=arduino:standard
 
 ##############################################################
 
 pro328o.name=[Optiboot] Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
 pro328o.upload.protocol=stk500
-pro328o.upload.maximum_size=30720
+pro328o.upload.maximum_size=32256
 pro328o.upload.speed=115200
 pro328o.bootloader.low_fuses=0xff
 pro328o.bootloader.high_fuses=0xdc
@@ -103,12 +109,13 @@ pro328o.bootloader.lock_bits=0x0F
 pro328o.build.mcu=atmega328p
 pro328o.build.f_cpu=8000000L
 pro328o.build.core=arduino:arduino
+pro328o.build.variant=arduino:standard
 
 ##############################################################
 
 proo.name=[Optiboot] Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
 proo.upload.protocol=stk500
-proo.upload.maximum_size=14336
+proo.upload.maximum_size=15872
 proo.upload.speed=115200
 proo.bootloader.low_fuses=0xc6
 proo.bootloader.high_fuses=0xdd
@@ -120,10 +127,11 @@ proo.bootloader.lock_bits=0x0F
 proo.build.mcu=atmega168
 proo.build.f_cpu=8000000L
 proo.build.core=arduino:arduino
+proo.build.variant=arduino:standard
 
 ##############################################################
 
-megao.name=[Optiboot] Arduino Mega
+megao.name=[Optiboot] Arduino Mega1280
 megao.upload.protocol=stk500
 megao.upload.maximum_size=130048
 megao.upload.speed=115200
@@ -137,6 +145,7 @@ megao.bootloader.lock_bits=0x0F
 megao.build.mcu=atmega1280
 megao.build.f_cpu=16000000L
 megao.build.core=arduino:arduino
+megao.build.variant=arduino:mega
 
 atmega8o.name=[Optiboot] Arduino NG or older w/ ATmega8
 atmega8o.upload.protocol=stk500
@@ -151,6 +160,7 @@ atmega8o.bootloader.lock_bits=0x0F
 atmega8o.build.mcu=atmega8
 atmega8o.build.f_cpu=16000000L
 atmega8o.build.core=arduino:arduino
+atmega8o.build.variant=arduino:standard
 
 atmega88o.name=[Optiboot] Arduino NG or older w/ ATmega88
 atmega88o.upload.protocol=stk500
@@ -166,6 +176,7 @@ atmega88o.bootloader.lock_bits=0x0F
 atmega88o.build.mcu=atmega88
 atmega88o.build.f_cpu=16000000L
 atmega88o.build.core=arduino:arduino
+atmega88o.build.variant=arduino:standard
 
 ##############################################################
 #
@@ -183,6 +194,7 @@ atmega88o.build.core=arduino:arduino
 # sanguinoo.build.mcu=atmega644p
 # sanguinoo.build.f_cpu=16000000L
 # sanguinoo.build.core=sanguino:sanguino
+# sanguinoo.build.variant=sanguino:sanguino
 
 ##############################################################
 #
@@ -198,3 +210,38 @@ atmega88o.build.core=arduino:arduino
 # lumineto.build.mcu=attiny84
 # lumineto.build.f_cpu=1000000L
 # lumineto.build.core=luminet:luminet
+
+##############################################################
+
+atmega32o.name=[Optiboot] ATmega32 based board
+atmega32o.upload.protocol=stk500
+atmega32o.upload.maximum_size=32256
+atmega32o.upload.speed=115200
+atmega32o.bootloader.low_fuses=0xff
+atmega32o.bootloader.high_fuses=0xde
+atmega32o.bootloader.path=optiboot
+atmega32o.bootloader.file=optiboot_atmega32.hex
+atmega32o.bootloader.unlock_bits=0x3F
+atmega32o.bootloader.lock_bits=0x0F
+atmega32o.build.mcu=atmega32
+atmega32o.build.f_cpu=16000000L
+atmega32o.build.core=arduino:arduino
+atmega32o.build.variant=arduino:standard
+
+##############################################################
+
+atmega1284o.name=[Optiboot] ATmega1284p
+atmega1284o.upload.protocol=stk500
+atmega1284o.upload.maximum_size=130048
+atmega1284o.upload.speed=115200
+atmega1284o.bootloader.low_fuses=0xf7
+atmega1284o.bootloader.high_fuses=0xde
+atmega1284o.bootloader.extended_fuses=0x05
+atmega1284o.bootloader.path=optiboot
+atmega1284o.bootloader.file=optiboot_atmega1284p.hex
+atmega1284o.bootloader.unlock_bits=0x3F
+atmega1284o.bootloader.lock_bits=0x0F
+atmega1284o.build.mcu=atmega1284p
+atmega1284o.build.f_cpu=16000000L
+atmega1284o.build.core=arduino:arduino
+atmega1284o.build.variant=arduino:standard
