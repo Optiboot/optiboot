@@ -138,7 +138,9 @@
 /*  repository and was distributed with Arduino 0022.     */
 /* Version 4 starts with the arduino repository commit    */
 /*  that brought the arduino repository up-to-date with   */
-/* the optiboot source tree changes since v3.             */
+/*  the optiboot source tree changes since v3.            */
+/* Version 5 was created at the time of the new Makefile  */
+/*  structure (Mar, 2013), even though no binaries changed*/
 /* It would be good if versions implemented outside the   */
 /*  official repository used an out-of-seqeunce version   */
 /*  number (like 104.6 if based on based on 4.5) to       */
@@ -149,6 +151,14 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Mar 2013                                               */
+/* 4.6 WestfW: Major Makefile restructuring.              */
+/*             See Makefile and pin_defs.h                */
+/*             (no binary changes)                        */
+/*                                                        */
+/* 4.6 WestfW/Pito: Add ATmega32 support                  */
+/* 4.6 WestfW/radoni: Don't set LED_PIN as an output if   */
+/*                    not used. (LED_START_FLASHES = 0)   */
 /* Jan 2013						  */
 /* 4.6 WestfW/dkinzer: use autoincrement lpm for read     */
 /* 4.6 WestfW/dkinzer: pass reset cause to app in R2      */
@@ -349,18 +359,27 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 # define UART_SRL UBRR0L
 # define UART_UDR UDR0
 #elif UART == 1
+#if !defined(UDR1)
+#error UART == 1, but no UART1 on device
+#endif
 # define UART_SRA UCSR1A
 # define UART_SRB UCSR1B
 # define UART_SRC UCSR1C
 # define UART_SRL UBRR1L
 # define UART_UDR UDR1
 #elif UART == 2
+#if !defined(UDR2)
+#error UART == 2, but no UART2 on device
+#endif
 # define UART_SRA UCSR2A
 # define UART_SRB UCSR2B
 # define UART_SRC UCSR2C
 # define UART_SRL UBRR2L
 # define UART_UDR UDR2
 #elif UART == 3
+#if !defined(UDR1)
+#error UART == 3, but no UART3 on device
+#endif
 # define UART_SRA UCSR3A
 # define UART_SRB UCSR3B
 # define UART_SRC UCSR3C

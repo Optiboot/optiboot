@@ -1,13 +1,7 @@
 #!/bin/bash
 make clean
 #
-# The "big three" standard bootloaders.
-make atmega8
-make atmega168
-make atmega328
-#
-# additional buildable platforms of
-#  somewhat questionable support level
+#  buildable platforms of somewhat questionable support level
 make lilypad
 make lilypad_resonator
 make pro8
@@ -18,3 +12,9 @@ make sanguino
 make mega
 make atmega88
 make luminet
+#
+# The "big three" standard bootloaders.
+# These need to be built AFTER the platforms, or they'll get removed
+make atmega8
+make atmega168
+make atmega328
