@@ -242,6 +242,20 @@ asm("  .section .version\n"
 #define UART 0
 #endif
 
+#define BAUD_SETTING (( (F_CPU + BAUD_RATE * 4L) / ((BAUD_RATE * 8L))) - 1 )
+#define BAUD_ACTUAL (F_CPU/(8 * ((BAUD_SETTING)+1)))
+#define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
+
+#if BAUD_ERROR >= 5
+#error BAUD_RATE error greater than 5%
+#elif BAUD_ERROR <= -5
+#error BAUD_RATE error greater than -5%
+#elif BAUD_ERROR >= 2
+#warning BAUD_RATE error greater than 2%
+#elif BAUD_ERROR <= -2
+#warning BAUD_RATE error greater than -2%
+#endif
+
 #if 0
 /* Switch in soft UART for hard baud rates */
 /*

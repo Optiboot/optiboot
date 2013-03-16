@@ -601,6 +601,10 @@ luminet_isp: isp
 
 FORCE:
 
+baudcheck: FORCE
+	@$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
+	@sh baudcheck.tmp.sh
+
 isp: $(TARGET)
 	$(MAKE) -f Makefile.isp isp TARGET=$(TARGET)
 
@@ -608,12 +612,12 @@ isp-stk500: $(PROGRAM)_$(TARGET).hex
 	$(STK500-1)
 	$(STK500-2)
 
-%.elf: $(OBJ) $(dummy)
+%.elf: $(OBJ) baudcheck $(dummy)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS)
 	$(SIZE) $@
 
 clean:
-	rm -rf *.o *.elf *.lst *.map *.sym *.lss *.eep *.srec *.bin *.hex
+	rm -rf *.o *.elf *.lst *.map *.sym *.lss *.eep *.srec *.bin *.hex *.tmp.sh
 
 %.lst: %.elf
 	$(OBJDUMP) -h -S $< > $@
