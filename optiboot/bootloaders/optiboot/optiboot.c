@@ -152,7 +152,7 @@
 /* Edit History:					  */
 /*							  */
 /* Mar 2013                                               */
-/* 4.6 WestfW: Major Makefile restructuring.              */
+/* 5.0 WestfW: Major Makefile restructuring.              */
 /*             See Makefile and pin_defs.h                */
 /*             (no binary changes)                        */
 /*                                                        */
