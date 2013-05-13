@@ -6,7 +6,7 @@
 ##############################################################
 
 atmega328o.name=[Optiboot] Arduino Duemilanove or Nano w/ ATmega328
-atmega328o.upload.protocol=stk500
+atmega328o.upload.protocol=arduino
 atmega328o.upload.maximum_size=32256
 atmega328o.upload.speed=115200
 atmega328o.bootloader.low_fuses=0xff
@@ -24,7 +24,7 @@ atmega328o.build.variant=arduino:standard
 ##############################################################
 
 diecimilao.name=[Optiboot] Arduino Diecimila, Duemilanove, Nano, NG w/ ATmega168
-diecimilao.upload.protocol=stk500
+diecimilao.upload.protocol=arduino
 diecimilao.upload.maximum_size=15872
 diecimilao.upload.speed=115200
 diecimilao.bootloader.low_fuses=0xff
@@ -42,7 +42,7 @@ diecimilao.build.variant=arduino:standard
 ##############################################################
 
 minio.name=[Optiboot] Arduino Mini
-minio.upload.protocol=stk500
+minio.upload.protocol=arduino
 minio.upload.maximum_size=15872
 minio.upload.speed=115200
 minio.bootloader.low_fuses=0xff
@@ -60,7 +60,7 @@ minio.build.variant=arduino:eightanaloginputs
 ##############################################################
 
 lilypad328o.name=[Optiboot] LilyPad Arduino w/ ATmega328
-lilypad328o.upload.protocol=stk500
+lilypad328o.upload.protocol=arduino
 lilypad328o.upload.maximum_size=32256
 lilypad328o.upload.speed=115200
 lilypad328o.bootloader.low_fuses=0xff
@@ -78,7 +78,7 @@ lilypad328o.build.variant=arduino:standard
 ##############################################################
 
 lilypado.name=[Optiboot] LilyPad Arduino w/ ATmega168
-lilypado.upload.protocol=stk500
+lilypado.upload.protocol=arduino
 lilypado.upload.maximum_size=15872
 lilypado.upload.speed=115200
 lilypado.bootloader.low_fuses=0xe2
@@ -96,7 +96,7 @@ lilypado.build.variant=arduino:standard
 ##############################################################
 
 pro328o.name=[Optiboot] Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega328
-pro328o.upload.protocol=stk500
+pro328o.upload.protocol=arduino
 pro328o.upload.maximum_size=32256
 pro328o.upload.speed=115200
 pro328o.bootloader.low_fuses=0xff
@@ -114,7 +114,7 @@ pro328o.build.variant=arduino:standard
 ##############################################################
 
 proo.name=[Optiboot] Arduino Pro or Pro Mini (3.3V, 8 MHz) w/ ATmega168
-proo.upload.protocol=stk500
+proo.upload.protocol=arduino
 proo.upload.maximum_size=15872
 proo.upload.speed=115200
 proo.bootloader.low_fuses=0xc6
@@ -132,7 +132,7 @@ proo.build.variant=arduino:standard
 ##############################################################
 
 megao.name=[Optiboot] Arduino Mega1280
-megao.upload.protocol=stk500
+megao.upload.protocol=arduino
 megao.upload.maximum_size=130048
 megao.upload.speed=115200
 megao.bootloader.low_fuses=0xff
@@ -148,7 +148,7 @@ megao.build.core=arduino:arduino
 megao.build.variant=arduino:mega
 
 atmega8o.name=[Optiboot] Arduino NG or older w/ ATmega8
-atmega8o.upload.protocol=stk500
+atmega8o.upload.protocol=arduino
 atmega8o.upload.maximum_size=7680
 atmega8o.upload.speed=115200
 atmega8o.bootloader.low_fuses=0xbf
@@ -163,7 +163,7 @@ atmega8o.build.core=arduino:arduino
 atmega8o.build.variant=arduino:standard
 
 atmega88o.name=[Optiboot] Arduino NG or older w/ ATmega88
-atmega88o.upload.protocol=stk500
+atmega88o.upload.protocol=arduino
 atmega88o.upload.maximum_size=7680
 atmega88o.upload.speed=115200
 atmega88o.bootloader.low_fuses=0xff
@@ -181,7 +181,7 @@ atmega88o.build.variant=arduino:standard
 ##############################################################
 #
 # sanguinoo.name=[Optiboot] Sanguino (work in progress)
-# sanguinoo.upload.protocol=stk500
+# sanguinoo.upload.protocol=arduino
 # sanguinoo.upload.maximum_size=63488
 # sanguinoo.upload.speed=115200
 # sanguinoo.bootloader.low_fuses=0xff
@@ -199,7 +199,7 @@ atmega88o.build.variant=arduino:standard
 ##############################################################
 #
 # lumineto.name=[Optiboot] Luminet (work in progress)
-# lumineto.upload.protocol=stk500
+# lumineto.upload.protocol=arduino
 # lumineto.upload.maximum_size=7424
 # lumineto.upload.speed=9600
 # lumineto.bootloader.low_fuses=0x62
@@ -214,7 +214,7 @@ atmega88o.build.variant=arduino:standard
 ##############################################################
 
 atmega32o.name=[Optiboot] ATmega32 based board
-atmega32o.upload.protocol=stk500
+atmega32o.upload.protocol=arduino
 atmega32o.upload.maximum_size=32256
 atmega32o.upload.speed=115200
 atmega32o.bootloader.low_fuses=0xff
@@ -231,7 +231,7 @@ atmega32o.build.variant=arduino:standard
 ##############################################################
 
 atmega1284o.name=[Optiboot] ATmega1284p
-atmega1284o.upload.protocol=stk500
+atmega1284o.upload.protocol=arduino
 atmega1284o.upload.maximum_size=130048
 atmega1284o.upload.speed=115200
 atmega1284o.bootloader.low_fuses=0xf7
