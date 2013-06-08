@@ -113,7 +113,8 @@ CC         = $(GCCROOT)avr-gcc
 # Override is only needed by avr-lib build system.
 
 override CFLAGS        = -g -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) -DF_CPU=$(AVR_FREQ) $(DEFS)
-override LDFLAGS       = $(LDSECTIONS) -Wl,--relax -Wl,--gc-sections -nostartfiles -nostdlib
+override LDFLAGS       = $(LDSECTIONS) -Wl,--relax -nostartfiles -nostdlib
+#-Wl,--gc-sections
 
 OBJCOPY        = $(GCCROOT)avr-objcopy
 OBJDUMP        = $(call fixpath,$(GCCROOT)avr-objdump)
@@ -141,18 +142,18 @@ LED_START_FLASHES_CMD = -DLED_START_FLASHES=3
 endif
 
 # BIG_BOOT: Include extra features, up to 1K.
-ifdef BIG_BOOT
-BIG_BOOT_CMD = -DBIG_BOOT
+ifdef BIGBOOT
+BIGBOOT_CMD = -DBIGBOOT=1
 dummy = FORCE
 endif
 
 ifdef SOFT_UART
-SOFT_UART_CMD = -DSOFT_UART
+SOFT_UART_CMD = -DSOFT_UART=1
 dummy = FORCE
 endif
 
 ifdef LED_DATA_FLASH
-LED_DATA_FLASH_CMD = -DLED_DATA_FLASH
+LED_DATA_FLASH_CMD = -DLED_DATA_FLASH=1
 dummy = FORCE
 endif
 
@@ -161,8 +162,12 @@ LED_CMD = -DLED=$(LED)
 dummy = FORCE
 endif
 
-COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIG_BOOT_CMD)
-COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD)
+ifdef SINGLESPEED
+SSCMD = -DSINGLESPEED=1
+endif
+
+COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
+COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SSCMD)
 
 #UART is handled separately and only passed for devices with more than one.
 ifdef UART
@@ -602,8 +607,8 @@ luminet_isp: isp
 FORCE:
 
 baudcheck: FORCE
-	@$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
-	@sh baudcheck.tmp.sh
+	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
+	- @sh baudcheck.tmp.sh
 
 isp: $(TARGET)
 	$(MAKE) -f Makefile.isp isp TARGET=$(TARGET)
