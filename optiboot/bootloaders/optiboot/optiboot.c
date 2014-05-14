@@ -151,6 +151,8 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* May 2014                                               */
+/* 5.0 WestfW: Add support for 1Mbps UART                 */
 /* Mar 2013                                               */
 /* 5.0 WestfW: Major Makefile restructuring.              */
 /*             See Makefile and pin_defs.h                */
@@ -274,7 +276,9 @@ asm("  .section .version\n"
 #error Unachievable baud rate (too slow) BAUD_RATE 
 #endif // baud rate slow check
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 < 3
+#if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
 #error Unachievable baud rate (too fast) BAUD_RATE 
+#endif
 #endif // baud rate fastn check
 #endif
 
