@@ -17,6 +17,11 @@
 # etc...
 #
 # Edit History
+# 201406xx: WestfW: More Makefile restructuring.
+#                   Split off Makefile.1284, Makefile.extras, Makefile.custom
+#                   So that in theory, the main Makefile contains only the
+#                   official platforms, and does not need to be modified to
+#                   add "less supported" chips and boards.
 # 201303xx: WestfW: Major Makefile restructuring.
 #                   Allows options on Make command line "make xx LED=B3"
 #                   (see also pin_defs.h)
@@ -59,12 +64,21 @@ LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3f
 
 # default
 fixpath = $(1)
+SH := bash
 
 ifeq ($(ENV), arduino)
 # For Arduino, we assume that we're connected to the optiboot directory
 # included with the arduino distribution, which means that the full set
 # of avr-tools are "right up there" in standard places.
-TOOLROOT = ../../../tools
+# (except that in 1.5.x, there's an additional level of "up")
+TESTDIR := $(firstword $(wildcard ../../../tools/*))
+ifeq (,$(TESTDIR))
+# Arduino 1.5.x tool location compared to optiboot dir
+  TOOLROOT = ../../../../tools
+else
+# Arduino 1.0 (and earlier) tool location
+  TOOLROOT = ../../../tools
+endif
 GCCROOT = $(TOOLROOT)/avr/bin/
 
 ifeq ($(OS), windows)
@@ -74,6 +88,7 @@ ifeq ($(OS), windows)
 # is used even if a unix shell is installed (ie as part of WINAVR)
 fixpath = $(subst /,\,$1)
 SHELL = cmd.exe
+SH = sh
 endif
 
 else ifeq ($(ENV), arduinodev)
@@ -103,10 +118,15 @@ STK500-2 = $(STK500) -d$(MCU_TARGET) -ms -q -lCF -LCF -cUSB -I200kHz -s -wt
 
 
 OBJ        = $(PROGRAM).o
-OPTIMIZE = -Os -fno-inline-small-functions -fno-split-wide-types -mshort-calls
+OPTIMIZE = -Os -fno-split-wide-types -mrelax
 
 DEFS       = 
-LIBS       =
+
+#
+# platforms support EEPROM and large bootloaders need the eeprom functions that
+# are defined in libc, even though we explicity remove it with -nostdlib because
+# of the space-savings.
+LIBS       =  -lc
 
 CC         = $(GCCROOT)avr-gcc
 
@@ -187,6 +207,8 @@ endif
 # endif
 #
 
+#.PRECIOUS: %.elf
+
 #---------------------------------------------------------------------------
 # "Chip-level Platform" targets.
 # A "Chip-level Platform" compiles for a particular chip, but probably does
@@ -258,37 +280,6 @@ atmega328_isp: LFUSE ?= FF
 atmega328_isp: EFUSE ?= FD
 atmega328_isp: isp
 
-atmega644p: TARGET = atmega644p
-atmega644p: MCU_TARGET = atmega644p
-atmega644p: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(LED_CMD)
-atmega644p: AVR_FREQ ?= 16000000L
-atmega644p: LDSECTIONS  = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
-atmega644p: CFLAGS += $(UARTCMD)
-atmega644p: $(PROGRAM)_atmega644p.hex
-atmega644p: $(PROGRAM)_atmega644p.lst
-
-atmega1284: TARGET = atmega1284p
-atmega1284: MCU_TARGET = atmega1284p
-atmega1284: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(LED_CMD)
-atmega1284: AVR_FREQ ?= 16000000L
-atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
-atmega1284: CFLAGS += $(UARTCMD)
-atmega1284: $(PROGRAM)_atmega1284p.hex
-atmega1284: $(PROGRAM)_atmega1284p.lst
-
-atmega1284p: atmega1284
-
-atmega1284_isp: atmega1284
-atmega1284_isp: TARGET = atmega1284p
-atmega1284_isp: MCU_TARGET = atmega1284p
-# 1024 byte boot
-atmega1284_isp: HFUSE ?= DE
-# Full Swing xtal (16MHz) 16KCK/14CK+65ms
-atmega1284_isp: LFUSE ?= F7
-# 2.7V brownout
-atmega1284_isp: EFUSE ?= FD
-atmega1284_isp: isp
-
 #Atmega1280
 atmega1280: MCU_TARGET = atmega1280
 atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
@@ -316,45 +307,6 @@ atmega8_isp: HFUSE ?= CC
 # 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
 atmega8_isp: LFUSE ?= BF
 atmega8_isp: isp
-
-# ATmega88
-#
-atmega88: TARGET = atmega88
-atmega88: MCU_TARGET = atmega88
-atmega88: CFLAGS += $(COMMON_OPTIONS)
-atmega88: AVR_FREQ ?= 16000000L 
-atmega88: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
-atmega88: $(PROGRAM)_atmega88.hex
-atmega88: $(PROGRAM)_atmega88.lst
-
-atmega88_isp: atmega88
-atmega88_isp: TARGET = atmega88
-atmega88_isp: MCU_TARGET = atmega88
-# 2.7V brownout
-atmega88_isp: HFUSE ?= DD
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atemga88_isp: LFUSE ?= FF
-# 512 byte boot
-atmega88_isp: EFUSE ?= 04
-atmega88_isp: isp
-
-atmega32: TARGET = atmega32
-atmega32: MCU_TARGET = atmega32
-atmega32: CFLAGS += $(COMMON_OPTIONS)
-atmega32: AVR_FREQ ?= 11059200L
-atmega32: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-atmega32: $(PROGRAM)_atmega32.hex
-atmega32: $(PROGRAM)_atmega32.lst
-
-atmega32_isp: atmega32
-atmega32_isp: TARGET = atmega32
-atmega32_isp: MCU_TARGET = atmega32
-# No OCD or JTAG, SPIEN, CKOPT (for full swing xtal), Bootsize=512B
-atmega32_isp: HFUSE ?= CE
-# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
-atemga32_isp: LFUSE ?= BF
-atmega32_isp: isp
-
 
 
 #---------------------------------------------------------------------------
@@ -426,68 +378,11 @@ diecimila_isp: LFUSE ?= FF
 diecimila_isp: EFUSE ?= 04
 diecimila_isp: isp
 
-# Sanguino has a minimum boot size of 1024 bytes, so enable extra functions
-#
-sanguino: TARGET = $@
-sanguino: CHIP = atmega644p
-sanguino:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B0
-	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
-	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
-
-sanguino_isp: sanguino
-sanguino_isp: TARGET = sanguino
-sanguino_isp: MCU_TARGET = atmega644p
-# 1024 byte boot
-sanguino_isp: HFUSE ?= DE
-# Full swing xtal (16MHz) 16KCK/14CK+65ms
-sanguino_isp: LFUSE ?= F7
-# 2.7V brownout
-sanguino_isp: EFUSE ?= FD
-sanguino_isp: isp
-
-mighty1284: TARGET = $@
-mighty1284: CHIP = atmega1284p
-mighty1284:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B7
-	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
-	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
-
-mighty1284_isp: mighty1284
-mighty1284_isp: TARGET = mighty1284
-mighty1284_isp: MCU_TARGET = atmega1284p
-# 1024 byte boot
-mighty1284_isp: HFUSE ?= DE
-# Full swing xtal (16MHz) 16KCK/14CK+65ms
-mighty1284_isp: LFUSE ?= F7
-# 2.7V brownout
-mighty1284_isp: EFUSE ?= FD
-mighty1284_isp: isp
-
-bobuino: TARGET = $@
-bobuino: CHIP = atmega1284p
-bobuino:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B5
-	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
-	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
-
-bobuino_isp: bobuino
-bobuino_isp: TARGET = bobuino
-bobuino_isp: MCU_TARGET = atmega1284p
-# 1024 byte boot
-bobuino_isp: HFUSE ?= DE
-# Full swing xtal (16MHz) 16KCK/14CK+65ms
-bobuino_isp: LFUSE ?= F7
-# 2.7V brownout
-bobuino_isp: EFUSE ?= FD
-bobuino_isp: isp
-
 # MEGA1280 Board (this is different from the atmega1280 chip platform)
 # Mega has a minimum boot size of 1024 bytes, so enable extra functions
 # Note that optiboot does not (can not) work on the MEGA2560
 #mega: TARGET = atmega1280
 mega1280: atmega1280
-
 
 mega1280_isp: mega1280
 mega1280_isp: TARGET = atmega1280
@@ -573,30 +468,11 @@ atmega328_pro8_isp: LFUSE ?= FF
 atmega328_pro8_isp: EFUSE ?= DE
 atmega328_pro8_isp: isp
 
-# 1MHz clocked platforms
 #
-# These are capable of 9600 baud
-#
-
-luminet: TARGET = luminet
-luminet: MCU_TARGET = attiny84
-luminet: CFLAGS += $(COMMON_OPTIONS) '-DSOFT_UART' '-DBAUD_RATE=9600'
-luminet: CFLAGS += '-DVIRTUAL_BOOT_PARTITION'
-luminet: AVR_FREQ ?= 1000000L
-luminet: LDSECTIONS = -Wl,--section-start=.text=0x1d00 -Wl,--section-start=.version=0x1efe
-luminet: $(PROGRAM)_luminet.hex
-luminet: $(PROGRAM)_luminet.lst
-
-luminet_isp: luminet
-luminet_isp: TARGET = luminet
-luminet_isp: MCU_TARGET = attiny84
-# Brownout disabled
-luminet_isp: HFUSE ?= DF
-# 1MHz internal oscillator, slowly rising power
-luminet_isp: LFUSE ?= 62
-# Self-programming enable
-luminet_isp: EFUSE ?= FE
-luminet_isp: isp
+# Include additional platforms
+include Makefile.extras
+include Makefile.1284
+include Makefile.custom
 
 
 #---------------------------------------------------------------------------
@@ -607,8 +483,9 @@ luminet_isp: isp
 FORCE:
 
 baudcheck: FORCE
+	- @$(CC) --version
 	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
-	- @sh baudcheck.tmp.sh
+	- @$(SH) baudcheck.tmp.sh
 
 isp: $(TARGET)
 	$(MAKE) -f Makefile.isp isp TARGET=$(TARGET)

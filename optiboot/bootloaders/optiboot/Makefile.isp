@@ -38,7 +38,7 @@ AVRDUDE_CONF ?= -C$(TOOLROOT)/avr/etc/avrdude.conf
 # These are parameters for using an Arduino with the ArduinoISP sketch
 #  as the programmer.  On a mac, for a particular Uno as programmer.
 ISPTOOL	?= stk500v1
-ISPPORT	?= /dev/tty.usbmodemfd3141 
+ISPPORT	?= /dev/tty.usbserial-FTD61T6Q
 ISPSPEED ?= -b19200
 
 
@@ -49,6 +49,19 @@ ifdef EFUSE
 EFUSE_CMD= -U efuse:w:0x$(EFUSE):m
 endif
 
+#
+# avrdude commands to erase chip, unlock memory, and program fuses.
+#
+ISPFUSES =	-e -u -U lock:w:0x3f:m $(EFUSE_CMD) \
+	 	-U hfuse:w:0x$(HFUSE):m -U lfuse:w:0x$(LFUSE):m
+
+
+#
+# avrdude commands to program the new bootloader, and protect the bootloader
+# space from accidental SPM writes.  Note: "2f" allows boot section to be read
+# by the application, which is different than the arduino default.
+#
+ISPFLASH =	-U flash:w:$(PROGRAM)_$(TARGET).hex -U lock:w:0x2f:m
 
 # There are certain complicated caused by the fact that the default state
 # of a fuse is a "1" rather than a "0", especially with respect to fuse bits
@@ -65,16 +78,8 @@ endif
 # lock it), but since the high two bits of the lock byte are
 # unused, avrdude would get confused.
 
-#  Set fuses and unlock memory
-ISPFUSES    = $(AVRDUDE_ROOT)avrdude $(AVRDUDE_CONF) -c $(ISPTOOL) \
-              -p $(MCU_TARGET) -P $(ISPPORT) $(ISPSPEED) \
-              -e -u -U lock:w:0x3f:m $(EFUSE_CMD) \
-              -U hfuse:w:0x$(HFUSE):m -U lfuse:w:0x$(LFUSE):m
-# program flash and lock memory.
-ISPFLASH    = $(AVRDUDE_ROOT)avrdude $(AVRDUDE_CONF) -c $(ISPTOOL) \
-              -p $(MCU_TARGET) -P $(ISPPORT) $(ISPSPEED) \
-              -U flash:w:$(PROGRAM)_$(TARGET).hex -U lock:w:0x2f:m
-
 isp: $(PROGRAM)_$(TARGET).hex
-	$(ISPFUSES)
+	$(AVRDUDE_ROOT)avrdude $(AVRDUDE_CONF) -c $(ISPTOOL) \
+              -p $(MCU_TARGET) -P $(ISPPORT) $(ISPSPEED) \
+	$(ISPFUSES) \
 	$(ISPFLASH)
