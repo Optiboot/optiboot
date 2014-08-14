@@ -24,10 +24,21 @@ atmega88_isp: MCU_TARGET = atmega88
 # 2.7V brownout
 atmega88_isp: HFUSE ?= DD
 # Low power xtal (16MHz) 16KCK/14CK+65ms
-atemga88_isp: LFUSE ?= FF
+atmega88_isp: LFUSE ?= FF
 # 512 byte boot
 atmega88_isp: EFUSE ?= 04
 atmega88_isp: isp
+
+atmega88p_isp: atmega88
+atmega88p_isp: TARGET = atmega88
+atmega88p_isp: MCU_TARGET = atmega88p
+# 2.7V brownout
+atmega88p_isp: HFUSE ?= DD
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega88p_isp: LFUSE ?= FF
+# 512 byte boot
+atmega88p_isp: EFUSE ?= 04
+atmega88p_isp: isp
 
 
 atmega32: TARGET = atmega32
@@ -44,7 +55,7 @@ atmega32_isp: MCU_TARGET = atmega32
 # No OCD or JTAG, SPIEN, CKOPT (for full swing xtal), Bootsize=512B
 atmega32_isp: HFUSE ?= CE
 # 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
-atemga32_isp: LFUSE ?= BF
+atmega32_isp: LFUSE ?= BF
 atmega32_isp: isp
 
 attiny84: TARGET = attiny84

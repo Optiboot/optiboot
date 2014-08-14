@@ -150,6 +150,11 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Aug 2014						  */
+/* 6.1 WestfW: Fix OPTIBOOT_CUSTOMVER (send it!)	  */
+/*             Make no-wait mod less picky about	  */
+/*               skipping the bootloader.		  */
+/*             Remove some dead code			  */
 /* Jun 2014						  */
 /* 6.0 WestfW: Modularize memory read/write functions	  */
 /*             Remove serial/flash overlap		  */
@@ -213,7 +218,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 6
-#define OPTIBOOT_MINVER 0
+#define OPTIBOOT_MINVER 1
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -225,17 +230,8 @@
 #define OPTIBOOT_CUSTOMVER 0
 #endif
 
-#if 0
-#define MAKESTR(a) #a
-#define MAKEVER(a, b) MAKESTR(a*256+b)
-
-asm("  .section .version\n"
-    "optiboot_version:  .word " MAKEVER(OPTIBOOT_MAJVER, OPTIBOOT_MINVER) "\n"
-    "  .section .text\n");
-#else
-unsigned int __attribute__((section(".version"))) 
-optiboot_version = 256*OPTIBOOT_MAJVER + OPTIBOOT_MINVER + OPTIBOOT_CUSTOMVER;
-#endif
+unsigned const int __attribute__((section(".version"))) 
+optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
 
 #include <inttypes.h>
@@ -300,20 +296,6 @@ optiboot_version = 256*OPTIBOOT_MAJVER + OPTIBOOT_MINVER + OPTIBOOT_CUSTOMVER;
 #warning BAUD_RATE error greater than -2%
 #endif
 
-#if 0
-/* Switch in soft UART for hard baud rates */
-/*
- * I don't understand what this was supposed to accomplish, where the
- * constant "280" came from, or why automatically (and perhaps unexpectedly)
- * switching to a soft uart is a good thing, so I'm undoing this in favor
- * of a range check using the same calc used to config the BRG...
- */
-#if (F_CPU/BAUD_RATE) > 280 // > 57600 for 16MHz
-#ifndef SOFT_UART
-#define SOFT_UART
-#endif
-#endif
-#else // 0
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 > 250
 #error Unachievable baud rate (too slow) BAUD_RATE 
 #endif // baud rate slow check
@@ -322,7 +304,6 @@ optiboot_version = 256*OPTIBOOT_MAJVER + OPTIBOOT_MINVER + OPTIBOOT_CUSTOMVER;
 #error Unachievable baud rate (too fast) BAUD_RATE 
 #endif
 #endif // baud rate fastn check
-#endif
 
 /* Watchdog settings */
 #define WATCHDOG_OFF    (0)
@@ -420,10 +401,16 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
-  // Adaboot no-wait mod
+  /*
+   * modified Adaboot no-wait mod.
+   * Pass the reset reason to app.  Also, it appears that an Uno poweron
+   * can leave multiple reset flags set; we only want the bootloader to
+   * run on an 'external reset only' status
+   */
   ch = MCUSR;
   MCUSR = 0;
-  if (!(ch & _BV(EXTRF))) appStart(ch);
+  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
+      appStart(ch);
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
@@ -470,13 +457,14 @@ int main(void) {
     if(ch == STK_GET_PARAMETER) {
       unsigned char which = getch();
       verifySpace();
+      /*
+       * Send optiboot version as "SW version"
+       * Note that the references to memory are optimized away.
+       */
       if (which == 0x82) {
-	/*
-	 * Send optiboot version as "minor SW version"
-	 */
-	putch(OPTIBOOT_MINVER);
+	  putch(optiboot_version & 0xFF);
       } else if (which == 0x81) {
-	  putch(OPTIBOOT_MAJVER);
+	  putch(optiboot_version >> 8);
       } else {
 	/*
 	 * GET PARAMETER returns a generic 0x03 reply for

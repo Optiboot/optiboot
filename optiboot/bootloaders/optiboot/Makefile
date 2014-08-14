@@ -255,8 +255,8 @@ atmega168_isp: atmega168
 atmega168_isp: TARGET = atmega168
 # 2.7V brownout
 atmega168_isp: HFUSE ?= DD
-# Low power xtal (16MHz) 16KCK/14CK+65ms
-atmega168_isp: LFUSE ?= FF
+# Full swing (16MHz) 16KCK/14CK+65ms
+atmega168_isp: LFUSE ?= F7
 # 512 byte boot
 atmega168_isp: EFUSE ?= 04
 atmega168_isp: isp
@@ -277,7 +277,7 @@ atmega328_isp: HFUSE ?= DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_isp: LFUSE ?= FF
 # 2.7V brownout
-atmega328_isp: EFUSE ?= FD
+atmega328_isp: EFUSE ?= 05
 atmega328_isp: isp
 
 #Atmega1280
@@ -331,10 +331,10 @@ pro20:
 
 pro20_isp: pro20
 pro20_isp: TARGET = pro_20mhz
-# 2.7V brownout
-pro20_isp: HFUSE ?= DD
+# 4.3V brownout (for max speed!)
+pro20_isp: HFUSE ?= DC
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-pro20_isp: LFUSE ?= C6
+pro20_isp: LFUSE ?= F7
 # 512 byte boot
 pro20_isp: EFUSE ?= 04
 pro20_isp: isp
@@ -356,7 +356,7 @@ pro16_isp: TARGET = pro_16MHz
 # 2.7V brownout
 pro16_isp: HFUSE ?= DD
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
-pro16_isp: LFUSE ?= C6
+pro16_isp: LFUSE ?= F7
 # 512 byte boot
 pro16_isp: EFUSE ?= 04
 pro16_isp: isp
@@ -373,7 +373,7 @@ diecimila_isp: TARGET = diecimila
 # 2.7V brownout
 diecimila_isp: HFUSE ?= DD
 # Low power xtal (16MHz) 16KCK/14CK+65ms
-diecimila_isp: LFUSE ?= FF
+diecimila_isp: LFUSE ?= F7
 # 512 byte boot
 diecimila_isp: EFUSE ?= 04
 diecimila_isp: isp
@@ -465,7 +465,7 @@ atmega328_pro8_isp: HFUSE ?= DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_pro8_isp: LFUSE ?= FF
 # 2.7V brownout
-atmega328_pro8_isp: EFUSE ?= DE
+atmega328_pro8_isp: EFUSE ?= 05
 atmega328_pro8_isp: isp
 
 #
