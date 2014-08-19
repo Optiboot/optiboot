@@ -16,7 +16,6 @@
 /*                                                        */
 /* Enhancements:                                          */
 /*   Fits in 512 bytes, saving 1.5K of code space         */
-/*   Background page erasing speeds up programming        */
 /*   Higher baud rate speeds up programming               */
 /*   Written almost entirely in C                         */
 /*   Customisable timeout with accurate timeconstant      */
@@ -151,6 +150,9 @@
 /* Edit History:					  */
 /*							  */
 /* Aug 2014						  */
+/* 6.2 WestfW: make size of length variables dependent    */
+/*              on the SPM_PAGESIZE.  This saves space    */
+/*              on the chips where it's most important.   */
 /* 6.1 WestfW: Fix OPTIBOOT_CUSTOMVER (send it!)	  */
 /*             Make no-wait mod less picky about	  */
 /*               skipping the bootloader.		  */
@@ -218,7 +220,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 6
-#define OPTIBOOT_MINVER 1
+#define OPTIBOOT_MINVER 2
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -320,6 +322,20 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 #endif
 
+
+/*
+ * We can never load flash with more than 1 page at a time, so we can save
+ * some code space on parts with smaller pagesize by using a smaller int.
+ */
+#if SPM_PAGESIZE > 255
+typedef uint16_t pagelen_t ;
+#define GETLENGTH(len) len = getch()<<8; len |= getch()
+#else
+typedef uint8_t pagelen_t;
+#define GETLENGTH(len) (void) getch() /* skip high byte */; len = getch()
+#endif
+
+
 /* Function Prototypes
  * The main() function is in init9, which removes the interrupt vector table
  * we don't need. It is also 'OS_main', which means the compiler does not
@@ -338,9 +354,9 @@ static inline void getNch(uint8_t);
 static inline void flash_led(uint8_t);
 static inline void watchdogReset();
 static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
-			       uint16_t address, uint16_t len);
+			       uint16_t address, pagelen_t len);
 static inline void read_mem(uint8_t memtype,
-			    uint16_t address, uint16_t len);
+			    uint16_t address, pagelen_t len);
 
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
@@ -350,7 +366,7 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
  * lot of peripheral registers.  Let 0x100 be the default
- * Note that RAMSTART need not be exactly at the start of RAM.
+ * Note that RAMSTART (for optiboot) need not be exactly at the start of RAM.
  */
 #if !defined(RAMSTART)  // newer versions of gcc avr-libc define RAMSTART
 #define RAMSTART 0x100
@@ -385,7 +401,7 @@ int main(void) {
    *  necessary, and uses 4 bytes of flash.)
    */
   register uint16_t address = 0;
-  register uint16_t  length;
+  register pagelen_t  length;
 
   // After the zero init loop, this is the first code to run.
   //
@@ -504,10 +520,9 @@ int main(void) {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t desttype;
       uint8_t *bufPtr;
-      uint16_t savelength;
+      pagelen_t savelength;
 
-      length = getch()<<8;			/* getlen() */
-      length |= getch();
+      GETLENGTH(length);
       savelength = length;
       desttype = getch();
 
@@ -545,8 +560,8 @@ int main(void) {
     /* Read memory block mode, length is big endian.  */
     else if(ch == STK_READ_PAGE) {
       uint8_t desttype;
-      length = getch()<<8;			/* getlen() */
-      length |= getch();
+      GETLENGTH(length);
+
       desttype = getch();
 
       verifySpace();
@@ -755,7 +770,7 @@ void appStart(uint8_t rstFlags) {
  * void writebuffer(memtype, buffer, address, length)
  */
 static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
-			       uint16_t address, uint16_t len)
+			       uint16_t address, pagelen_t len)
 {
     switch (memtype) {
     case 'E': // EEPROM
@@ -818,7 +833,7 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
     } // switch
 }
 
-static inline void read_mem(uint8_t memtype, uint16_t address, uint16_t length)
+static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 {
     uint8_t ch;
 

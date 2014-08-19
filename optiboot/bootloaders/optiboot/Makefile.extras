@@ -62,8 +62,8 @@ attiny84: TARGET = attiny84
 attiny84: MCU_TARGET = attiny84
 attiny84: CFLAGS += $(COMMON_OPTIONS) -DSOFT_UART -DVIRTUAL_BOOT_PARTITION
 attiny84: LDSECTIONS = -Wl,--section-start=.text=0x1d00 -Wl,--section-start=.version=0x1ffe
-attiny84: $(PROGRAM)_attiny84p.hex
-attiny84: $(PROGRAM)_attiny84p.lst
+attiny84: $(PROGRAM)_attiny84.hex
+attiny84: $(PROGRAM)_attiny84.lst
 
 
 

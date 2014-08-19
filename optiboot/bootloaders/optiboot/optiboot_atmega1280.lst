@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   5 .debug_pubnames 00000074  00000000  00000000  0000053f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   000003e4  00000000  00000000  000005b3  2**0
+  6 .debug_info   000003f0  00000000  00000000  000005b3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000001f1  00000000  00000000  00000997  2**0
+  7 .debug_abbrev 000001fe  00000000  00000000  000009a3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000045b  00000000  00000000  00000b88  2**0
+  8 .debug_line   0000044b  00000000  00000000  00000ba1  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000080  00000000  00000000  00000fe4  2**2
+  9 .debug_frame  00000080  00000000  00000000  00000fec  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000172  00000000  00000000  00001064  2**0
+ 10 .debug_str    0000017c  00000000  00000000  0000106c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000003b3  00000000  00000000  000011d6  2**0
+ 11 .debug_loc    000003b3  00000000  00000000  000011e8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000d0  00000000  00000000  00001589  2**0
+ 12 .debug_ranges 000000d0  00000000  00000000  0000159b  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -183,7 +183,7 @@ void watchdogReset() {
    1fc6e:	12 38       	cpi	r17, 0x82	; 130
    1fc70:	11 f4       	brne	.+4      	; 0x1fc76 <main+0x76>
 	  putch(optiboot_version & 0xFF);
-   1fc72:	81 e0       	ldi	r24, 0x01	; 1
+   1fc72:	82 e0       	ldi	r24, 0x02	; 2
    1fc74:	05 c0       	rjmp	.+10     	; 0x1fc80 <main+0x80>
       } else if (which == 0x81) {
    1fc76:	11 38       	cpi	r17, 0x81	; 129
@@ -273,14 +273,13 @@ void watchdogReset() {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t desttype;
       uint8_t *bufPtr;
-      uint16_t savelength;
+      pagelen_t savelength;
 
-      length = getch()<<8;			/* getlen() */
+      GETLENGTH(length);
    1fcd4:	89 d0       	rcall	.+274    	; 0x1fde8 <getch>
    1fcd6:	90 e0       	ldi	r25, 0x00	; 0
    1fcd8:	18 2f       	mov	r17, r24
    1fcda:	00 27       	eor	r16, r16
-      length |= getch();
    1fcdc:	85 d0       	rcall	.+266    	; 0x1fde8 <getch>
    1fcde:	90 e0       	ldi	r25, 0x00	; 0
    1fce0:	08 2b       	or	r16, r24
@@ -311,7 +310,7 @@ void watchdogReset() {
  * void writebuffer(memtype, buffer, address, length)
  */
 static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
-			       uint16_t address, uint16_t len)
+			       uint16_t address, pagelen_t len)
 {
     switch (memtype) {
    1fcfe:	f5 e4       	ldi	r31, 0x45	; 69
@@ -334,7 +333,7 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
    1fd18:	97 d0       	rcall	.+302    	; 0x1fe48 <__eewr_byte_m1280>
    1fd1a:	01 50       	subi	r16, 0x01	; 1
    1fd1c:	10 40       	sbci	r17, 0x00	; 0
-			       uint16_t address, uint16_t len)
+			       uint16_t address, pagelen_t len)
 {
     switch (memtype) {
     case 'E': // EEPROM
@@ -431,16 +430,16 @@ int main(void) {
    1fd78:	84 37       	cpi	r24, 0x74	; 116
    1fd7a:	f1 f4       	brne	.+60     	; 0x1fdb8 <main+0x1b8>
       uint8_t desttype;
-      length = getch()<<8;			/* getlen() */
+      GETLENGTH(length);
    1fd7c:	35 d0       	rcall	.+106    	; 0x1fde8 <getch>
    1fd7e:	90 e0       	ldi	r25, 0x00	; 0
    1fd80:	d8 2f       	mov	r29, r24
    1fd82:	cc 27       	eor	r28, r28
-      length |= getch();
    1fd84:	31 d0       	rcall	.+98     	; 0x1fde8 <getch>
    1fd86:	90 e0       	ldi	r25, 0x00	; 0
    1fd88:	c8 2b       	or	r28, r24
    1fd8a:	d9 2b       	or	r29, r25
+
       desttype = getch();
    1fd8c:	2d d0       	rcall	.+90     	; 0x1fde8 <getch>
    1fd8e:	18 2f       	mov	r17, r24
@@ -448,7 +447,7 @@ int main(void) {
       verifySpace();
    1fd90:	3d d0       	rcall	.+122    	; 0x1fe0c <verifySpace>
 
-static inline void read_mem(uint8_t memtype, uint16_t address, uint16_t length)
+static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 {
     uint8_t ch;
 
