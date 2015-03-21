@@ -34,6 +34,10 @@
 #                   Set many variables with ?= so they can be overridden
 #                   Use arduinoISP settings as default for ISP targets
 #
+#
+# * Copyright 2013-2015 by Bill Westfield.  Part of Optiboot.
+# * This software is licensed under version 2 of the Gnu Public Licence.
+# * See optiboot.c for details.
 
 #----------------------------------------------------------------------
 #

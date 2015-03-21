@@ -1,4 +1,9 @@
-/* STK500 constants list, from AVRDUDE */
+/* STK500 constants list, from AVRDUDE
+ *
+ * Trivial set of constants derived from Atmel App Note AVR061
+ * Not copyrighted.  Released to the public domain.
+ */
+
 #define STK_OK              0x10
 #define STK_FAILED          0x11  // Not used
 #define STK_UNKNOWN         0x12  // Not used

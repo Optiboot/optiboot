@@ -66,6 +66,10 @@
 /*   Adaboot               http://www.ladyada.net/library/arduino/bootloader.html */
 /*   AVR305                Atmel Application Note         */
 /*                                                        */
+
+/* Copyright 2013-2015 by Bill Westfield.                 */
+/* Copyright 2010 by Peter Knight.                        */
+/*                                                        */
 /* This program is free software; you can redistribute it */
 /* and/or modify it under the terms of the GNU General    */
 /* Public License as published by the Free Software       */

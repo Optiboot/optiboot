@@ -1,3 +1,16 @@
+/*
+ * pin_defs.h
+ * optiboot helper defining the default pin assignments (LED, SOFT_UART)
+ * for the various chips that are supported.  This also has some ugly macros
+ * for selecting among various UARTs and LED possibilities using command-line
+ * defines like "UART=2 LED=B5"
+ *
+ * Copyright 2013-2015 by Bill Westfield.
+ * Copyright 2010 by Peter Knight.
+ * This software is licensed under version 2 of the Gnu Public Licence.
+ * See optiboot.c for details.
+ */
+
 /*------------------------------------------------------------------------ */
 #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
 /*------------------------------------------------------------------------ */

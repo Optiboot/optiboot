@@ -11,6 +11,10 @@
  * writes the desired output...
  *
  * Note that the C-style comments are stripped by the C preprocessor.
+ *
+ * Copyright 2013-2015 by Bill Westfield.
+ * This software is licensed under version 2 of the Gnu Public Licence.
+ * See optiboot.c for details.
  */
 
 /*

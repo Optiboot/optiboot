@@ -1,6 +1,10 @@
 #
 # Makefile for "other" implemented platforms.
 #
+# * Copyright 2013-2015 by Bill Westfield.  Part of Optiboot.
+# * This software is licensed under version 2 of the Gnu Public Licence.
+# * See optiboot.c for details.
+#
 
 #
 # Extra chips (maybe) supported by optiboot
