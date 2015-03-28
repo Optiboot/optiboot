@@ -238,11 +238,23 @@ endif
 # Virtual boot block test
 virboot328: TARGET = atmega328
 virboot328: MCU_TARGET = atmega328p
-virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT'
+virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION'
 virboot328: AVR_FREQ ?= 16000000L
-virboot328: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-virboot328: $(PROGRAM)_atmega328.hex
-virboot328: $(PROGRAM)_atmega328.lst
+virboot328: LDSECTIONS  = -Wl,--section-start=.text=0x7d80 -Wl,--section-start=.version=0x7ffe
+virboot328: $(PROGRAM)_virboot328.hex
+virboot328: $(PROGRAM)_virboot328.lst
+
+virboot328_isp: virboot328
+virboot328_isp: TARGET = virboot328
+virboot328_isp: MCU_TARGET = atmega328p
+# no boot section, SPIEN
+virboot328_isp: HFUSE ?= DF
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+virboot328_isp: LFUSE ?= FF
+# 2.7V brownout
+virboot328_isp: EFUSE ?= 05
+virboot328_isp: isp
+
 
 # Diecimila, Duemilanove with m168, and NG use identical bootloaders
 # Call it "atmega168" for generality and clarity, keep "diecimila" for

@@ -389,9 +389,28 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 /* This allows us to drop the zero init code, saving us memory */
 #define buff    ((uint8_t*)(RAMSTART))
 #ifdef VIRTUAL_BOOT_PARTITION
-#define rstVect (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2+4))
-#define wdtVect (*(uint16_t*)(RAMSTART+SPM_PAGESIZE*2+6))
+#define rstVect0_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+4))
+#define rstVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+5))
+#define wdtVect0_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+6))
+#define wdtVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+7))
+#if FLASHEND > 8192
+// AVRs with more than 8k of flash have 4-byte vectors, and use jmp.
+#define rstVect0 2
+#define rstVect1 3
+#define wdtVect0 (WDT_vect_num*4+2)
+#define wdtVect1 (WDT_vect_num*4+3)
+#define appstart_vec (WDT_vect_num*2)
+#else
+// AVRs with up to 8k of flash have 2-byte vectors, and use rjmp.
+#define rstVect0 0
+#define rstVect1 1
+#define wdtVect0 (WDT_vect_num*2)
+#define wdtVect1 (WDT_vect_num*2+1)
+#define appstart_vec (WDT_vect_num)
 #endif
+#else
+#define appstart_vec (0)
+#endif // VIRTUAL_BOOT_PARTITION
 
 
 /* main program starts here */
@@ -451,7 +470,7 @@ int main(void) {
 #endif
 #endif
 
-  // Set up watchdog to trigger after 500ms
+  // Set up watchdog to trigger after 1s
   watchdogConfig(WATCHDOG_1S);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
@@ -539,23 +558,56 @@ int main(void) {
       verifySpace();
 
 #ifdef VIRTUAL_BOOT_PARTITION
-      if ((uint16_t)(void*)address == 0) {
-        // This is the reset vector page. We need to live-patch the code so the
-        // bootloader runs.
-        //
-        // Move RESET vector to WDT vector
-        uint16_t vect = buff[0] | (buff[1]<<8);
-        rstVect = vect;
-        wdtVect = buff[8] | (buff[9]<<8);
-        vect -= 4; // Instruction is a relative jump (rjmp), so recalculate.
-        buff[8] = vect & 0xff;
-        buff[9] = vect >> 8;
+#if FLASHEND > 8192
+/*
+ * AVR with 4-byte ISR Vectors and "jmp"
+ */
+      if (address == 0) {
+	// This is the reset vector page. We need to live-patch the
+	// code so the bootloader runs first.
+	//
+	// Save jmp targets (for "Verify")
+	rstVect0_sav = buff[rstVect0];
+	rstVect1_sav = buff[rstVect1];
+	wdtVect0_sav = buff[wdtVect0];
+	wdtVect1_sav = buff[wdtVect1];
+
+        // Move RESET jmp target to WDT vector
+        buff[wdtVect0] = rstVect0_sav;
+        buff[wdtVect1] = rstVect1_sav;
 
         // Add jump to bootloader at RESET vector
-        buff[0] = 0x7f;
-        buff[1] = 0xce; // rjmp 0x1d00 instruction
+        buff[rstVect0] = ((uint16_t)main) & 0xFF;
+        buff[rstVect1] = ((uint16_t)main) >> 8;
       }
-#endif
+
+#else
+/*
+ * AVR with 2-byte ISR Vectors and rjmp
+ */
+      if ((uint16_t)(void*)address == rstVect0) {
+        // This is the reset vector page. We need to live-patch
+        // the code so the bootloader runs first.
+        //
+        // Move RESET vector to WDT vector
+	// Save jmp targets (for "Verify")
+	rstVect0_sav = buff[rstVect0];
+	rstVect1_sav = buff[rstVect1];
+	wdtVect0_sav = buff[wdtVect0];
+	wdtVect1_sav = buff[wdtVect1];
+
+	// Instruction is a relative jump (rjmp), so recalculate.
+	uint16_t vect=rstVect0_sav+(rstVect1_sav<<8);
+        vect -= WDT_vect_num;
+        // Move RESET jmp target to WDT vector
+        buff[wdtVect0] = vect & 0xff;
+        buff[wdtVect1] = vect >> 8;
+        // Add rjump to bootloader at RESET vector
+        buff[0] = (((uint16_t)main) & 0xFFF) & 0xFF; // rjmp 0x1d00 instruction
+	buff[1] =  ((((uint16_t)main) & 0xFFF) >> 8) | 0xC0;
+      }
+#endif // FLASHEND
+#endif // VBP
 
       writebuffer(desttype, buff, address, savelength);
 
@@ -569,7 +621,7 @@ int main(void) {
       desttype = getch();
 
       verifySpace();
-	  
+
       read_mem(desttype, address, length);
     }
 
@@ -673,7 +725,7 @@ uint8_t getch(void) {
        */
     watchdogReset();
   }
-  
+
   ch = UART_UDR;
 #endif
 
@@ -756,17 +808,13 @@ void appStart(uint8_t rstFlags) {
   __asm__ __volatile__ ("mov r2, %0\n" :: "r" (rstFlags));
 
   watchdogConfig(WATCHDOG_OFF);
+  // Note that appstart_vec is defined so that this works with either
+  // real or virtual boot partitions.
   __asm__ __volatile__ (
-#ifdef VIRTUAL_BOOT_PARTITION
-    // Jump to WDT vector
-    "ldi r30,4\n"
+    // Jump to WDT or RST vector
+    "ldi r30,%[rstvec]\n"
     "clr r31\n"
-#else
-    // Jump to RST vector
-    "clr r30\n"
-    "clr r31\n"
-#endif
-    "ijmp\n"
+    "ijmp\n"::[rstvec] "M"(appstart_vec)
   );
 }
 
@@ -854,10 +902,10 @@ static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 	do {
 #ifdef VIRTUAL_BOOT_PARTITION
         // Undo vector patch in bottom page so verify passes
-	    if (address == 0)       ch=rstVect & 0xff;
-	    else if (address == 1)  ch=rstVect >> 8;
-	    else if (address == 8)  ch=wdtVect & 0xff;
-	    else if (address == 9) ch=wdtVect >> 8;
+	    if (address == rstVect0) ch = rstVect0_sav;
+	    else if (address == rstVect1) ch = rstVect1_sav;
+	    else if (address == wdtVect0) ch = wdtVect0_sav;
+	    else if (address == wdtVect1) ch = wdtVect1_sav;
 	    else ch = pgm_read_byte_near(address);
 	    address++;
 #elif defined(RAMPZ)
