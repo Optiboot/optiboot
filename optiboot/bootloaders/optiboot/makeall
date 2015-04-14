@@ -16,6 +16,7 @@ make wildfirev2
 make atmega1284
 make atmega32
 make atmega88
+make atmega168p
 
 #
 # The "big three" standard bootloaders.

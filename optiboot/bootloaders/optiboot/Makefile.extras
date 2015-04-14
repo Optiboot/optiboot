@@ -44,7 +44,29 @@ atmega88p_isp: LFUSE ?= FF
 atmega88p_isp: EFUSE ?= 04
 atmega88p_isp: isp
 
+#
+# ATmega168p [QFN32]
+#
+atmega168p: TARGET = atmega168p
+atmega168p: MCU_TARGET = atmega168p
+atmega168p: CFLAGS += $(COMMON_OPTIONS)
+atmega168p: AVR_FREQ ?= 16000000L 
+atmega168p: $(PROGRAM)_atmega168p_16MHz.hex
+atmega168p: $(PROGRAM)_atmega168p_16MHz.lst
 
+atmega168p_isp: atmega168p
+atmega168p_isp: TARGET = atmega168p
+# 2.7V brownout
+atmega168p_isp: HFUSE ?= DD
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega168p_isp: LFUSE ?= FF
+# 512 byte boot
+atmega168p_isp: EFUSE ?= 04
+atmega168p_isp: isp
+
+#
+# ATmega32
+#
 atmega32: TARGET = atmega32
 atmega32: MCU_TARGET = atmega32
 atmega32: CFLAGS += $(COMMON_OPTIONS)
@@ -62,6 +84,11 @@ atmega32_isp: HFUSE ?= CE
 atmega32_isp: LFUSE ?= BF
 atmega32_isp: isp
 
+
+
+#
+# ATtiny84
+#
 attiny84: TARGET = attiny84
 attiny84: MCU_TARGET = attiny84
 attiny84: CFLAGS += $(COMMON_OPTIONS) -DSOFT_UART -DVIRTUAL_BOOT_PARTITION
