@@ -38,8 +38,16 @@
  */
 #if UART == 0
 # define UART_SRA UCSR0A
+# define UART_SRA_UDRE UDRE0
+# define UART_SRA_RXC RXC0
+# define UART_SRA_FE FE0
+# define UART_SRA_U2X U2X0
 # define UART_SRB UCSR0B
+# define UART_SRB_RXEN RXEN0
+# define UART_SRB_TXEN TXEN0
 # define UART_SRC UCSR0C
+# define UART_SRC_SZn0 UCSZ00
+# define UART_SRC_SZn1 UCSZ01
 # define UART_SRL UBRR0L
 # define UART_UDR UDR0
 #elif UART == 1
@@ -47,8 +55,16 @@
 #error UART == 1, but no UART1 on device
 #endif
 # define UART_SRA UCSR1A
+# define UART_SRA_UDRE UDRE1
+# define UART_SRA_RXC RXC1
+# define UART_SRA_FE FE1
+# define UART_SRA_U2X U2X1
 # define UART_SRB UCSR1B
+# define UART_SRB_RXEN RXEN1
+# define UART_SRB_TXEN TXEN1
 # define UART_SRC UCSR1C
+# define UART_SRC_SZn0 UCSZ10
+# define UART_SRC_SZn1 UCSZ11
 # define UART_SRL UBRR1L
 # define UART_UDR UDR1
 #elif UART == 2
@@ -56,8 +72,16 @@
 #error UART == 2, but no UART2 on device
 #endif
 # define UART_SRA UCSR2A
+# define UART_SRA_UDRE UDRE2
+# define UART_SRA_RXC RXC2
+# define UART_SRA_FE FE2
+# define UART_SRA_U2X U2X2
 # define UART_SRB UCSR2B
-# define UART_SRC UCSR2C
+# define UART_SRB_RXEN RXEN2
+# define UART_SRB_TXEN TXEN2
+# define UART_SRC UCSR0C
+# define UART_SRC_SZn0 UCSZ20
+# define UART_SRC_SZn1 UCSZ21
 # define UART_SRL UBRR2L
 # define UART_UDR UDR2
 #elif UART == 3
@@ -65,8 +89,16 @@
 #error UART == 3, but no UART3 on device
 #endif
 # define UART_SRA UCSR3A
+# define UART_SRA_UDRE UDRE3
+# define UART_SRA_RXC RXC3
+# define UART_SRA_FE FE3
+# define UART_SRA_U2X U2X3
 # define UART_SRB UCSR3B
+# define UART_SRB_RXEN RXEN3
+# define UART_SRB_TXEN TXEN3
 # define UART_SRC UCSR3C
+# define UART_SRC_SZn0 UCSZ30
+# define UART_SRC_SZn1 UCSZ31
 # define UART_SRL UBRR3L
 # define UART_UDR UDR3
 #endif
