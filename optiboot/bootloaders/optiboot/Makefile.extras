@@ -121,4 +121,11 @@ luminet_isp: LFUSE ?= 62
 luminet_isp: EFUSE ?= FE
 luminet_isp: isp
 
-
+# atmega32u4 for Pro Micro and Leonardo
+atmega32u4: TARGET = atmega32u4
+atmega32u4: MCU_TARGET = atmega32u4
+atmega32u4: CFLAGS += $(COMMON_OPTIONS) -DUART=1
+atmega32u4: AVR_FREQ ?= 16000000L
+atmega32u4: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega32u4: $(PROGRAM)_atmega32u4.hex
+atmega32u4: $(PROGRAM)_atmega32u4.lst
