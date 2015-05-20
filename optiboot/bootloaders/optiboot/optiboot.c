@@ -129,7 +129,7 @@
 /* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
 /**********************************************************/
-
+
 /**********************************************************/
 /* Version Numbers!                                       */
 /*                                                        */
@@ -153,6 +153,9 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* May 2015                                               */
+/* 6.3 Lambert: corrections for HW UARTS 1, 2, and 3      */
+/*              and add ATmega32U4
 /* Aug 2014						  */
 /* 6.2 WestfW: make size of length variables dependent    */
 /*              on the SPM_PAGESIZE.  This saves space    */
@@ -224,7 +227,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 6
-#define OPTIBOOT_MINVER 2
+#define OPTIBOOT_MINVER 3
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -239,7 +242,7 @@
 unsigned const int __attribute__((section(".version"))) 
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
-
+
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -463,9 +466,9 @@ int main(void) {
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
   UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #else
-  UART_SRA = _BV(U2X0); //Double speed mode USART0
-  UART_SRB = _BV(RXEN0) | _BV(TXEN0);
-  UART_SRC = _BV(UCSZ00) | _BV(UCSZ01);
+  UART_SRA = _BV(UART_SRA_U2X); //Double speed mode USART0
+  UART_SRB = _BV(UART_SRB_RXEN) | _BV(UART_SRB_TXEN);
+  UART_SRC = _BV(UART_SRC_SZn0) | _BV(UART_SRC_SZn1);
   UART_SRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #endif
 #endif
@@ -648,7 +651,7 @@ int main(void) {
 
 void putch(char ch) {
 #ifndef SOFT_UART
-  while (!(UART_SRA & _BV(UDRE0)));
+  while (!(UART_SRA & _BV(UART_SRA_UDRE)));
   UART_UDR = ch;
 #else
   __asm__ __volatile__ (
@@ -712,9 +715,9 @@ uint8_t getch(void) {
       "r25"
 );
 #else
-  while(!(UART_SRA & _BV(RXC0)))
+  while(!(UART_SRA & _BV(UART_SRA_RXC)))
     ;
-  if (!(UART_SRA & _BV(FE0))) {
+  if (!(UART_SRA & _BV(UART_SRA_FE))) {
       /*
        * A Framing Error indicates (probably) that something is talking
        * to us at the wrong bit rate.  Assume that this is because it
