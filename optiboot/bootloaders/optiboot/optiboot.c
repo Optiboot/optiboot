@@ -688,6 +688,7 @@ uint8_t getch(void) {
 #endif
 
 #ifdef SOFT_UART
+    watchdogReset();
   __asm__ __volatile__ (
     "1: sbic  %[uartPin],%[uartBit]\n"  // Wait for start edge
     "   rjmp  1b\n"
