@@ -1,0 +1,241 @@
+#
+# Boards.txt file for Optiboot platforms, in format for Arduino 1.5.x and later.
+#
+# See: http://github.com/Arduino/arduino/
+
+
+##############################################################
+##  Optiboot on 28-pin processors (atmega8/88/168/328/etc)
+
+menu.cpu=Processor
+menu.mhz=CPU Speed
+
+optiboot28.name=Optiboot on 28-pin cpus
+
+optiboot28.upload.tool=arduino:avrdude
+optiboot28.upload.protocol=arduino
+optiboot28.upload.speed=115200
+
+optiboot28.bootloader.tool=arduino:avrdude
+optiboot28.bootloader.low_fuses=0xFF
+optiboot28.bootloader.unlock_bits=0x2F
+optiboot28.bootloader.lock_bits=0x0F
+
+optiboot28.menu.mhz.16MHz=16MHz
+optiboot28.menu.mhz.16MHz.upload.speed=115200
+optiboot28.menu.mhz.8MHz=8MHz (int)
+optiboot28.menu.mhz.8MHz.build.f_cpu=8000000L
+optiboot28.menu.mhz.8MHz.upload.speed=57600
+optiboot28.menu.mhz.1MHz=1MHz (int)
+optiboot28.menu.mhz.1MHz.build.f_cpu=1000000L
+optiboot28.menu.mhz.1MHz.upload.speed=9600
+
+# optiboot platforms should be UNO-like more than anything else.
+optiboot28.build.board=AVR_UNO
+optiboot28.build.core=arduino:arduino
+optiboot28.build.variant=arduino:standard
+
+
+## Optiboot for ATmega328p
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega328p=ATmega328p
+optiboot28.menu.cpu.atmega328p.upload.maximum_size=32256
+optiboot28.menu.cpu.atmega328p.upload.maximum_data_size=2048
+
+optiboot28.menu.cpu.atmega328p.bootloader.high_fuses=0xDA
+optiboot28.menu.cpu.atmega328p.bootloader.extended_fuses=0x05
+optiboot28.menu.cpu.atmega328p.bootloader.file=optiboot/optiboot_atmega328.hex
+
+optiboot28.menu.cpu.atmega328p.build.mcu=atmega328p
+
+## Optiboot for ATmega328
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega328=ATmega328
+optiboot28.menu.cpu.atmega328.upload.maximum_size=32256
+optiboot28.menu.cpu.atmega328.upload.maximum_data_size=2048
+
+
+optiboot28.menu.cpu.atmega328.bootloader.high_fuses=0xDA
+optiboot28.menu.cpu.atmega328.bootloader.extended_fuses=0x05
+optiboot28.menu.cpu.atmega328.bootloader.file=optiboot/optiboot_atmega328.hex
+# lie!  Arduino wise, these are compatible
+optiboot28.menu.cpu.atmega328.build.mcu=atmega328p
+
+
+## Optiboot ATmega168
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega168=ATmega168
+
+optiboot28.menu.cpu.atmega168.upload.maximum_size=15872
+optiboot28.menu.cpu.atmega168.upload.maximum_data_size=1024
+
+optiboot28.menu.cpu.atmega168.bootloader.high_fuses=0xdd
+optiboot28.menu.cpu.atmega168.bootloader.extended_fuses=0x00
+optiboot28.menu.cpu.atmega168.bootloader.file=optiboot/optiboot_optiboot168.hex
+
+optiboot28.menu.cpu.atmega168.build.mcu=atmega168
+
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega168p=ATmega168p
+
+optiboot28.menu.cpu.atmega168p.upload.maximum_size=15872
+optiboot28.menu.cpu.atmega168p.upload.maximum_data_size=1024
+
+optiboot28.menu.cpu.atmega168p.bootloader.high_fuses=0xdd
+optiboot28.menu.cpu.atmega168p.bootloader.extended_fuses=0x00
+optiboot28.menu.cpu.atmega168p.bootloader.file=optiboot/optiboot_optiboot168p.hex
+
+optiboot28.menu.cpu.atmega168p.build.mcu=atmega168p
+
+
+## optiboot for ATmega8
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega8=ATmega8
+
+optiboot28.menu.cpu.atmega8.upload.maximum_size=7680
+optiboot28.menu.cpu.atmega8.upload.maximum_data_size=1024
+
+optiboot28.menu.cpu.atmega8.bootloader.high_fuses=0xdd
+optiboot28.menu.cpu.atmega8.bootloader.extended_fuses=0x00
+optiboot28.menu.cpu.atmega8.bootloader.file=optiboot/optiboot_atmega8.hex
+
+optiboot28.menu.cpu.atmega8.build.mcu=atmega8
+
+## Atmega88
+## ---------------------------------------------
+optiboot28.menu.cpu.atmega88=ATmega88
+
+optiboot28.menu.cpu.atmega88.upload.maximum_size=7680
+optiboot28.menu.cpu.atmega88.upload.maximum_data_size=1024
+
+optiboot28.menu.cpu.atmega88.bootloader.high_fuses=0xdd
+optiboot28.menu.cpu.atmega88.bootloader.extended_fuses=0x00
+optiboot28.menu.cpu.atmega88.bootloader.file=optiboot/optiboot_atmega88.hex
+
+optiboot28.menu.cpu.atmega88.build.mcu=atmega88p
+
+
+##############################################################
+## Other optiboot platforms
+##############################################################
+
+optiboot1280.name=Optiboot on Mega1280
+
+optiboot1280.upload.tool=arduino:avrdude
+optiboot1280.upload.protocol=arduino
+optiboot1280.upload.speed=115200
+
+optiboot1280.bootloader.tool=arduino:avrdude
+optiboot1280.bootloader.low_fuses=0xFF
+optiboot1280.bootloader.unlock_bits=0x3F
+optiboot1280.bootloader.lock_bits=0x2F
+
+optiboot1280.build.f_cpu=16000000L
+
+optiboot1280.build.board=AVR_MEGA
+optiboot1280.build.core=arduino:arduino
+optiboot1280.build.variant=arduino:mega
+
+optiboot1280.upload.maximum_size=130048
+optiboot1280.upload.maximum_data_size=8192
+
+optiboot1280.bootloader.high_fuses=0xDA
+optiboot1280.bootloader.extended_fuses=0x05
+optiboot1280.bootloader.file=optiboot/optiboot_atmega1280.hex
+
+optiboot1280.build.mcu=atmega1280
+
+##############################################################
+
+
+optiboot1284.name=Optiboot on (generic) Mega1284
+
+optiboot1284.upload.tool=arduino:avrdude
+optiboot1284.upload.protocol=arduino
+optiboot1284.upload.speed=115200
+
+optiboot1284.bootloader.tool=arduino:avrdude
+optiboot1284.bootloader.low_fuses=0xFF
+optiboot1284.bootloader.unlock_bits=0x3F
+optiboot1284.bootloader.lock_bits=0x2F
+
+optiboot1284.build.f_cpu=16000000L
+
+optiboot1284.build.board=AVR_M1284
+optiboot1284.build.core=arduino:arduino
+optiboot1284.build.variant=arduino:standard
+
+optiboot1284.upload.maximum_size=130048
+optiboot1284.upload.maximum_data_size=16384
+
+optiboot1284.bootloader.high_fuses=0xDA
+optiboot1284.bootloader.extended_fuses=0x05
+optiboot1284.bootloader.file=optiboot/optiboot_atmega1284p.hex
+
+optiboot1284.build.mcu=atmega1284p
+
+##############################################################
+
+
+optiboot32.name=Optiboot on Mega32
+
+optiboot32.upload.tool=arduino:avrdude
+optiboot32.upload.protocol=arduino
+optiboot32.upload.speed=115200
+
+optiboot32.bootloader.tool=arduino:avrdude
+optiboot32.bootloader.low_fuses=0xFF
+optiboot32.bootloader.unlock_bits=0x3F
+optiboot32.bootloader.lock_bits=0x2F
+
+optiboot32.build.f_cpu=16000000L
+
+optiboot32.build.board=AVR_M32
+optiboot32.build.core=arduino:arduino
+optiboot32.build.variant=arduino:standard
+
+optiboot32.upload.maximum_size=130048
+optiboot32.upload.maximum_data_size=8192
+
+optiboot32.bootloader.high_fuses=0xDA
+optiboot32.bootloader.extended_fuses=0x05
+optiboot32.bootloader.file=optiboot/optiboot_atmega32.hex
+
+optiboot32.build.mcu=atmega32
+
+
+##############################################################
+
+optiboott84.name=Optiboot on Tiny84
+
+optiboott84.menu.mhz.8MHz=8MHz (int)
+optiboott84.menu.mhz.8MHz.build.f_cpu=8000000L
+optiboott84.menu.mhz.8MHz.upload.speed=57600
+optiboott84.bootloader.file=optiboot/optiboot_attiny84_8mhz.hex
+optiboott84.menu.mhz.1MHz=1MHz (int)
+optiboott84.menu.mhz.1MHz.build.f_cpu=1000000L
+optiboott84.menu.mhz.1MHz.upload.speed=9600
+optiboott84.bootloader.file=optiboot/optiboot_attiny84.hex
+
+optiboott84.upload.tool=arduino:avrdude
+optiboott84.upload.protocol=arduino
+optiboott84.upload.speed=9600
+
+optiboott84.bootloader.tool=arduino:avrdude
+optiboott84.bootloader.low_fuses=0xFF
+optiboott84.bootloader.unlock_bits=0x3F
+optiboott84.bootloader.lock_bits=0x2F
+
+optiboott84.build.f_cpu=1000000L
+
+optiboott84.build.board=AVR_TINY
+optiboott84.build.core=tiny:tiny
+optiboott84.build.variant=tiny:tiny
+
+optiboott84.upload.maximum_size=7600
+optiboott84.upload.maximum_data_size=512
+
+optiboott84.bootloader.high_fuses=0xDA
+optiboott84.bootloader.extended_fuses=0x05
+
+optiboott84.build.mcu=attiny84
