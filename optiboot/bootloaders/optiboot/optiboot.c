@@ -395,14 +395,22 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 #define rstVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+5))
 #define saveVect0_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+6))
 #define saveVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+7))
-// Vector to save original reset jump - SPM Ready is least probably used
+// Vector to save original reset jump:
+//   SPM Ready is least probably used, so it's default
+//   if not, use old way WDT_vect_num,
+//   or simply set custom save_vect_num in Makefile using vector name
+//   or even raw number.
+#if !defined (save_vect_num)
 #if defined (SPM_RDY_vect_num)
 #define save_vect_num (SPM_RDY_vect_num)
 #elif defined (SPM_READY_vect_num)
 #define save_vect_num (SPM_READY_vect_num)
+#elif defined (WDT_vect_num)
+#define save_vect_num (WDT_vect_num)
 #else
-#error Cant find SPM interrupt vector for this CPU
+#error Cant find SPM or WDT interrupt vector for this CPU
 #endif
+#endif //save_vect_num
 // check if it's on the same page (code assumes that)
 #if (SPM_PAGESIZE <= save_vect_num)
 #error Save vector not in the same page as reset!
