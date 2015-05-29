@@ -1,0 +1,43 @@
+{
+  "packages": [
+    {
+      "name": "Optiboot-additional",
+      "maintainer": "westfw",
+      "websiteURL": "https://github.com/optboot/optiboot",
+      "email": "",
+      "help": {
+        "online": ""
+      },
+      "platforms": [
+        {
+          "name": "Additional chips with optiboot",
+          "architecture": "avr",
+          "version": "6.2.0",
+          "category": "Optiboot",
+          "help": {
+            "online": ""
+          },
+          "url": "https://github.com/Optiboot/optiboot/raw/master/optiboot/optiboot.zip",
+          "archiveFileName": "optiboot.zip",
+          "checksum": "SHA-256:ab00d9fcf91fe1d81c4fb75058d6b3544d1981a3c95a45eb643e7f0830bbdfc7",
+          "size": "14446",
+          "boards": [
+            {"name": "Optiboot Bootloader"},
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
+        },
+      ]
+    }
+  ]
+}
