@@ -22,6 +22,8 @@ optiboot28.bootloader.tool=arduino:avrdude
 optiboot28.bootloader.low_fuses=0xF7
 optiboot28.bootloader.unlock_bits=0x0F
 optiboot28.bootloader.lock_bits=0x2F
+optiboot28.build.f_cpu=16000000L
+
 
 #
 # Other Clock speeds.
@@ -139,6 +141,7 @@ optiboot32.bootloader.tool=arduino:avrdude
 optiboot32.bootloader.low_fuses=0xF7
 optiboot32.bootloader.unlock_bits=0x2F
 optiboot32.bootloader.lock_bits=0x0F
+optiboot32.build.f_cpu=16000000L
 
 #
 # Other Clock speeds.
