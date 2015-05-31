@@ -236,6 +236,15 @@ endif
 
 # Test platforms
 # Virtual boot block test
+virboot8: TARGET = atmega8
+virboot8: MCU_TARGET = atmega8
+virboot8: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-Dsave_vect_num=EE_RDY_vect_num'
+virboot8: AVR_FREQ ?= 16000000L 
+virboot8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe
+virboot8: $(PROGRAM)_virboot8.hex
+virboot8: $(PROGRAM)_virboot8.lst
+
+
 virboot328: TARGET = atmega328
 virboot328: MCU_TARGET = atmega328p
 virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION'
