@@ -13,6 +13,9 @@ Optiboot is an easy to install upgrade to the Arduino bootloader within Arduino 
 
 Optiboot is now installed by default on the Arduino Uno. It can be installed on all older mega8, 168 or 328 based Arduinos.
 
+## Additional Documentation
+More detailed documentation is being added (slowly) to the [repository wiki](https://github.com/Optiboot/optiboot/wiki).
+
 ## To install into the Arduino software ##
   1. Download the latest using Git or the Zip download feature of GutHub.  If you download as a zip, also extract it.
   1. You will need to be using a recent version of the [Arduino environment](http://arduino.cc), version 18 or later.
