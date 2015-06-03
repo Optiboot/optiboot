@@ -245,3 +245,36 @@ atmega1284o.build.mcu=atmega1284p
 atmega1284o.build.f_cpu=16000000L
 atmega1284o.build.core=arduino:arduino
 atmega1284o.build.variant=arduino:standard
+
+##############################################################
+# Pro Micro, change variant from sparkfun:promicro to arduino:leonardo
+# for Leonardo or if Sparkfun hardware directory is not installed
+# Note, USB will not be available for upload when Optiboot installed
+atmega32u4o.name=[Optiboot] ATmega32u4 Pro Micro
+atmega32u4o.build.board=AVR_PROMICRO16
+atmega32u4o.build.vid=0x1B4F
+atmega32u4o.build.pid=0x9206
+atmega32u4o.build.vid.0=0x1B4F
+atmega32u4o.build.pid.0=0x9205
+atmega32u4o.build.vid.1=0x1B4F
+atmega32u4o.build.pid.1=0x9206
+atmega32u4o.upload.tool=arduino:avrdude
+atmega32u4o.upload.protocol=arduino
+atmega32u4o.upload.maximum_size=32256
+atmega32u4o.upload.speed=115200
+atmega32u4o.upload.disable_flushing=false
+atmega32u4o.upload.use_1200bps_touch=false
+atmega32u4o.upload.wait_for_upload_port=false
+atmega32u4o.bootloader.tool=arduino:avrdude
+atmega32u4o.bootloader.low_fuses=0xff
+atmega32u4o.bootloader.high_fuses=0xde
+atmega32u4o.bootloader.extended_fuses=0xcb
+atmega32u4o.bootloader.file=optiboot_atmega32u4.hex
+atmega32u4o.bootloader.unlock_bits=0x3F
+atmega32u4o.bootloader.lock_bits=0x0F
+atmega32u4o.build.mcu=atmega32u4
+atmega32u4o.build.f_cpu=16000000L
+atmega32u4o.build.usb_product="SparkFun Pro Micro"
+atmega32u4o.build.core=arduino:arduino
+atmega32u4o.build.variant=sparkfun:promicro
+atmega32u4o.build.extra_flags={build.usb_flags}

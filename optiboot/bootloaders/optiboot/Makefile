@@ -307,7 +307,7 @@ atmega328_isp: isp
 
 #Atmega1280
 atmega1280: MCU_TARGET = atmega1280
-atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
+atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UARTCMD)
 atmega1280: AVR_FREQ ?= 16000000L
 atmega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
 atmega1280: $(PROGRAM)_atmega1280.hex
