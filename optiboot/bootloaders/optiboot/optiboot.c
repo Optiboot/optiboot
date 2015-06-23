@@ -362,7 +362,7 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 			       uint16_t address, pagelen_t len);
 static inline void read_mem(uint8_t memtype,
 			    uint16_t address, pagelen_t len);
-static void __attribute((noinline)) do_spm(uint16_t address, uint8_t command, uint16_t data);
+static void __attribute__((noinline)) do_spm(uint16_t address, uint8_t command, uint16_t data);
 
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
@@ -440,7 +440,7 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 
 /* everything that needs to run VERY early */
 void pre_main(void) {
-  // Allow convinient way of calling do_spm function - jump table,
+  // Allow convenient way of calling do_spm function - jump table,
   //   so entry to this function will always be here, indepedent of compilation,
   //   features etc
   asm volatile (
