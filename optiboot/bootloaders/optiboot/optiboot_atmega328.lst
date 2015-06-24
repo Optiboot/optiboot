@@ -13,11 +13,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .debug_aranges 00000028  00000000  00000000  00000297  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000595  00000000  00000000  000002bf  2**0
+  5 .debug_info   00000596  00000000  00000000  000002bf  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000025a  00000000  00000000  00000854  2**0
+  6 .debug_abbrev 0000025a  00000000  00000000  00000855  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000340  00000000  00000000  00000aae  2**0
+  7 .debug_line   00000340  00000000  00000000  00000aaf  2**0
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000094  00000000  00000000  00000df0  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -89,14 +89,14 @@ int main(void) {
 #endif
 
   // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
-    7e32:	8e e0       	ldi	r24, 0x0E	; 14
+  watchdogConfig(WATCHDOG_4S);
+    7e32:	88 e2       	ldi	r24, 0x28	; 40
     7e34:	c2 d0       	rcall	.+388    	; 0x7fba <watchdogConfig>
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);
-    7e36:	25 9a       	sbi	0x04, 5	; 4
+    7e36:	54 9a       	sbi	0x0a, 4	; 10
     7e38:	26 e0       	ldi	r18, 0x06	; 6
 }
 
@@ -125,7 +125,7 @@ void flash_led(uint8_t count) {
     LED_PORT ^= _BV(LED);
 #else
     LED_PIN |= _BV(LED);
-    7e4e:	1d 9a       	sbi	0x03, 5	; 3
+    7e4e:	4c 9a       	sbi	0x09, 4	; 9
 }
 #endif
 
