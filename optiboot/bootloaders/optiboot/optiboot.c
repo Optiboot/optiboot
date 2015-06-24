@@ -512,6 +512,11 @@ int main(void) {
   flash_led(LED_START_FLASHES * 2);
 #endif
 
+  // configure the direction for the txEnable pin
+  DDRC |= _BV(PC0);
+  //turn off the txEnable pin
+  PORTC &= ~_BV(PC0);
+
   /* Forever loop: exits by causing WDT reset */
   for (;;) {
     /* get character from UART */
@@ -674,6 +679,10 @@ int main(void) {
 }
 
 void putch(char ch) {
+
+  // turn on the txEnable pin
+  PORTC |= _BV(PC0);
+
 #ifndef SOFT_UART
   while (!(UART_SRA & _BV(UDRE0)));
   UART_UDR = ch;
@@ -701,10 +710,16 @@ void putch(char ch) {
       "r25"
   );
 #endif
+  while (!(UCSR0A & (1 << UDRE0)));  // Wait for empty transmit buffer
+  UCSR0A |= (1 << TXC0);  // mark transmission not complete
+  while (!(UCSR0A & (1 << TXC0)));   // Wait for the transmission to complete
 }
 
 uint8_t getch(void) {
   uint8_t ch;
+
+  //turn off the txEnable pin
+  PORTC &= ~_BV(PC0);
 
 #ifdef LED_DATA_FLASH
 #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
