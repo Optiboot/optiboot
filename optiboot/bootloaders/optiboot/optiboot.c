@@ -465,16 +465,21 @@ int main(void) {
 #endif
 
   /*
-   * modified Adaboot no-wait mod.
-   * Pass the reset reason to app.  Also, it appears that an Uno poweron
-   * can leave multiple reset flags set; we only want the bootloader to
-   * run on an 'external reset only' status
+   * Protect as much from MCUSR as possible for application
+   * and still skip bootloader if not necessary
+   * 
+   * Code by MarkG55
+   * see discusion in https://github.com/Optiboot/optiboot/issues/97
    */
   ch = MCUSR;
-  MCUSR = 0;
-  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
+  if (ch != 0) {
+    if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) { // To run the boot loader, External Reset Flag must be set and the Watchdog Flag MUST be cleared!  Otherwise jump straight to user code.
+      if (ch & _BV(EXTRF)) 
+          MCUSR = ~(_BV(WDRF));  // Clear WDRF because it was actually caused by bootloader
       appStart(ch);
-
+    }
+  }
+  
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
