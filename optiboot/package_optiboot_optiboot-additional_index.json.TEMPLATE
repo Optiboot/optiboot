@@ -23,7 +23,7 @@
           "name": "Optiboot %VERSION%",
           "architecture": "avr",
           "version": "0.%VERSION%",
-          "category": "Optiboot",
+          "category": "Contributed",
           "help": {
             "online": ""
           },
