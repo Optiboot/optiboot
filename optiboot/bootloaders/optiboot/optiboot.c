@@ -437,6 +437,175 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 #endif // VIRTUAL_BOOT_PARTITION
 
 
+/******************* SPI FLASH Code **********************************/
+// This code will handle the reading/erasing the external SPI FLASH memory
+// assumed to have the SPI_CS on D8 on Moteino (Atmega328P)
+#define SPI_MODE0 0x00
+#define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
+#define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
+#define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
+#define SPI_CLOCK_DIV2 0x04
+
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+  #define FLASHSS_DDR     DDRB
+  #define FLASHSS_PORT    PORTB
+  #define FLASHSS         PINB0
+  #define SS              PINB2
+#elif defined (__AVR_ATmega1284P__) || defined (__AVR_ATmega644P__)
+  #define FLASHSS_DDR     DDRC
+  #define FLASHSS_PORT    PORTC
+  #define FLASHSS         PINC7
+  #define SS              PINB4
+#endif
+
+#define FLASH_SELECT   { FLASHSS_PORT &= ~(_BV(FLASHSS)); }
+#define FLASH_UNSELECT { FLASHSS_PORT |= _BV(FLASHSS); }
+
+#define SPIFLASH_STATUSWRITE      0x01        // write status register
+#define SPIFLASH_STATUSREAD       0x05        // read status register
+#define SPIFLASH_WRITEENABLE      0x06        // write enable
+#define SPIFLASH_ARRAYREADLOWFREQ 0x03        // read array (low frequency)
+#define SPIFLASH_BLOCKERASE_32K   0x52        // erase one 32K block of flash memory
+#define SPIFLASH_BLOCKERASE_64K   0xD8        // erase one 32K block of flash memory
+#define SPIFLASH_JEDECID          0x9F        // read JEDEC ID
+//#define DEBUG_ON                            // uncomment to enable Serial debugging
+                                              // (will output different characters depending on which path the bootloader takes)
+
+uint8_t SPI_transfer(uint8_t _data) {
+  SPDR = _data;
+  while (!(SPSR & _BV(SPIF)));
+  return SPDR;
+}
+
+uint8_t FLASH_busy()
+{
+  FLASH_SELECT;
+  SPI_transfer(SPIFLASH_STATUSREAD);
+  uint8_t status = SPI_transfer(0);
+  FLASH_UNSELECT;
+  return status & 1;
+}
+
+void FLASH_command(uint8_t cmd, uint8_t isWrite){
+  if (isWrite)
+  {
+    FLASH_command(SPIFLASH_WRITEENABLE, 0); // Write Enable
+    FLASH_UNSELECT;
+  }
+  while(FLASH_busy()); //wait for chip to become available
+  FLASH_SELECT;
+  SPI_transfer(cmd);
+}
+
+uint8_t FLASH_readByte(uint32_t addr) {
+  FLASH_command(SPIFLASH_ARRAYREADLOWFREQ, 0);
+  SPI_transfer(addr >> 16);
+  SPI_transfer(addr >> 8);
+  SPI_transfer(addr);
+  //SPI.transfer(0); //"dont care", needed with SPIFLASH_ARRAYREAD command only
+  uint8_t result = SPI_transfer(0);
+  FLASH_UNSELECT;
+  return result;
+}
+
+void CheckFlashImage() {
+#ifdef DEBUG_ON
+  putch('F');
+#endif
+  watchdogConfig(WATCHDOG_OFF);
+
+  //SPI INIT
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+  DDRB |= _BV(FLASHSS) | _BV(SS) | _BV(PB3) | _BV(PB5); //OUTPUTS for FLASH_SS and SS, MOSI, SCK
+  FLASH_UNSELECT; //unselect FLASH chip
+  PORTB |= _BV(SS); //set SS HIGH
+#elif defined (__AVR_ATmega1284P__) || defined (__AVR_ATmega644P__)
+  DDRC |= _BV(FLASHSS); //OUTPUT for FLASH_SS
+  DDRB |= _BV(SS) | _BV(PB5) | _BV(PB7); //OUTPUTS for SS, MOSI, SCK
+  FLASH_UNSELECT; //unselect FLASH chip
+  PORTB |= _BV(SS); //set SS HIGH
+#endif
+
+  // Warning: if the SS pin ever becomes a LOW INPUT then SPI automatically switches to Slave, so the data direction of the SS pin MUST be kept as OUTPUT.
+  SPCR |= _BV(MSTR) | _BV(SPE); //enable SPI and set SPI to MASTER mode
+
+  //read first byte of JEDECID, if chip is present it should return a non-0 and non-FF value
+  FLASH_SELECT;
+  SPI_transfer(SPIFLASH_JEDECID);
+  uint8_t deviceId = SPI_transfer(0);
+  FLASH_UNSELECT;
+  if (deviceId==0 || deviceId==0xFF) return;
+
+  //global unprotect
+  FLASH_command(SPIFLASH_STATUSWRITE, 1);
+  SPI_transfer(0);
+  FLASH_UNSELECT;
+
+  //check if any flash image exists on external FLASH chip
+  if (FLASH_readByte(0)=='F' && FLASH_readByte(1)=='L' && FLASH_readByte(2)=='X' && FLASH_readByte(6)==':' && FLASH_readByte(9)==':')
+  {
+#ifdef DEBUG_ON
+    putch('L');
+#endif
+
+    uint16_t imagesize = (FLASH_readByte(7)<<8) | FLASH_readByte(8);
+    if (imagesize%2!=0) return; //basic check that we got even # of bytes
+
+    uint16_t b, i, nextAddress=0;
+
+    LED_PIN |= _BV(LED);
+    for (i=0; i<imagesize; i+=2)
+    {
+#ifdef DEBUG_ON
+      putch('*');
+#endif
+
+      //read 2 bytes (16 bits) from flash image, transfer them to page buffer
+      b = FLASH_readByte(i+10); // flash image starts at position 10 on the external flash memory: FLX:XX:FLASH_IMAGE_BYTES_HERE...... (XX = two size bytes)
+      b |= FLASH_readByte(i+11) << 8; //bytes are stored big endian on external flash, need to flip the bytes to little endian for transfer to internal flash
+      __boot_page_fill_short((uint16_t)(void*)i,b);
+
+      //when 1 page is full (or we're on the last page), write it to the internal flash memory
+      if ((i+2)%SPM_PAGESIZE==0 || (i+2==imagesize))
+      {
+        __boot_page_erase_short((uint16_t)(void*)nextAddress); //(i+2-SPM_PAGESIZE)
+        boot_spm_busy_wait();
+        // Write from programming buffer
+        __boot_page_write_short((uint16_t)(void*)nextAddress ); //(i+2-SPM_PAGESIZE)
+        boot_spm_busy_wait();
+        nextAddress += SPM_PAGESIZE;
+      }
+    }
+    LED_PIN &= ~_BV(LED);
+
+#if defined(RWWSRE)
+    // Reenable read access to flash
+    boot_rww_enable();
+#endif
+
+#ifdef DEBUG_ON
+    putch('E');
+#endif
+
+    //erase the first 32/64K block where flash image resided (atmega328 should be less than 31K, and atmega1284 can be up to 64K)
+    if (imagesize+10<=32768) FLASH_command(SPIFLASH_BLOCKERASE_32K, 1);
+    else FLASH_command(SPIFLASH_BLOCKERASE_64K, 1);
+    SPI_transfer(0);
+    SPI_transfer(0);
+    SPI_transfer(0);
+    FLASH_UNSELECT;
+
+    //now trigger a watchdog reset
+    watchdogConfig(WATCHDOG_16MS);  // short WDT timeout
+    while (1);                      // and busy-loop so that WD causes a reset and app start
+  }
+#ifdef DEBUG_ON
+  putch('X');
+#endif
+}
+/******************* END SPI FLASH Code ****************************/
+
+
 /* main program starts here */
 int main(void) {
   uint8_t ch;
@@ -472,8 +641,20 @@ int main(void) {
    */
   ch = MCUSR;
   MCUSR = 0;
+
+#ifdef DEBUG_ON
+    putch('S');
+#endif
+
   if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
-      appStart(ch);
+  {
+    if (ch & _BV(WDRF)) //if reset by watchdog
+      CheckFlashImage();
+#ifdef DEBUG_ON
+    putch('A');
+#endif
+    appStart(ch);
+  }
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
