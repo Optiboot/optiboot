@@ -1,0 +1,4 @@
+baudcheck.tmp.sh
+*.hex
+*.lst
+*.elf
