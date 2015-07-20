@@ -81,7 +81,7 @@ optiboot28.menu.cpu.atmega168.upload.maximum_data_size=1024
 
 optiboot28.menu.cpu.atmega168.bootloader.high_fuses=0xDD
 optiboot28.menu.cpu.atmega168.bootloader.extended_fuses=0xFC
-optiboot28.menu.cpu.atmega168.bootloader.file=optiboot/optiboot_optiboot168.hex
+optiboot28.menu.cpu.atmega168.bootloader.file=optiboot/optiboot_atmega168.hex
 
 optiboot28.menu.cpu.atmega168.build.mcu=atmega168
 
@@ -93,7 +93,7 @@ optiboot28.menu.cpu.atmega168p.upload.maximum_data_size=1024
 
 optiboot28.menu.cpu.atmega168p.bootloader.high_fuses=0xDD
 optiboot28.menu.cpu.atmega168p.bootloader.extended_fuses=0xFC
-optiboot28.menu.cpu.atmega168p.bootloader.file=optiboot/optiboot_optiboot168p.hex
+optiboot28.menu.cpu.atmega168p.bootloader.file=optiboot/optiboot_atmega168.hex
 
 optiboot28.menu.cpu.atmega168p.build.mcu=atmega168p
 
@@ -199,7 +199,7 @@ optiboot32.menu.cpu.atmega168.upload.maximum_data_size=1024
 
 optiboot32.menu.cpu.atmega168.bootloader.high_fuses=0xDD
 optiboot32.menu.cpu.atmega168.bootloader.extended_fuses=0xFC
-optiboot32.menu.cpu.atmega168.bootloader.file=optiboot/optiboot_optiboot168.hex
+optiboot32.menu.cpu.atmega168.bootloader.file=optiboot/optiboot_atmega168.hex
 
 optiboot32.menu.cpu.atmega168.build.mcu=atmega168
 
@@ -211,7 +211,7 @@ optiboot32.menu.cpu.atmega168p.upload.maximum_data_size=1024
 
 optiboot32.menu.cpu.atmega168p.bootloader.high_fuses=0xDD
 optiboot32.menu.cpu.atmega168p.bootloader.extended_fuses=0xFC
-optiboot32.menu.cpu.atmega168p.bootloader.file=optiboot/optiboot_optiboot168p.hex
+optiboot32.menu.cpu.atmega168p.bootloader.file=optiboot/optiboot_atmega168.hex
 
 optiboot32.menu.cpu.atmega168p.build.mcu=atmega168p
 
