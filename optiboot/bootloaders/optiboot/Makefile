@@ -496,7 +496,8 @@ atmega328_pro8_isp: isp
 # The Product Health Battery Sensor
 batterysensor: TARGET = batterysensor
 batterysensor: MCU_TARGET = atmega328p
-batterysensor: CFLAGS += $(COMMON_OPTIONS) -DDUAL_BOOT
+batterysensor: RS485 ?= 1
+batterysensor: CFLAGS += $(COMMON_OPTIONS) -DDUAL_BOOT -DRS485=$(RS485)
 batterysensor: AVR_FREQ ?= 16000000L
 batterysensor: LDSECTIONS  = -Wl,--section-start=.text=0x7800 -Wl,--section-start=.version=0x7ffe
 batterysensor: $(PROGRAM)_batterysensor.hex

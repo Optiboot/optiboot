@@ -701,10 +701,12 @@ int main(void) {
   flash_led(LED_START_FLASHES * 2);
 #endif
 
+#if RS485==1
   // configure the direction for the txEnable pin
   DDRC |= _BV(PC0);
   //turn off the txEnable pin
   PORTC &= ~_BV(PC0);
+#endif
 
   /* Forever loop: exits by causing WDT reset */
   for (;;) {
@@ -868,9 +870,10 @@ int main(void) {
 }
 
 void putch(char ch) {
-
+#if RS485==1
   // turn on the txEnable pin
   PORTC |= _BV(PC0);
+#endif
 
 #ifndef SOFT_UART
   while (!(UART_SRA & _BV(UDRE0)));
@@ -907,8 +910,10 @@ void putch(char ch) {
 uint8_t getch(void) {
   uint8_t ch;
 
+#if RS485==1
   //turn off the txEnable pin
   PORTC &= ~_BV(PC0);
+#endif
 
 #ifdef LED_DATA_FLASH
 #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
