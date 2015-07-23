@@ -560,6 +560,7 @@ void CheckFlashImage() {
 
     uint16_t b, i, nextAddress=0;
 
+    // Turn on the LED pin
     LED_PIN |= _BV(LED);
     for (i=0; i<imagesize; i+=2)
     {
@@ -583,6 +584,7 @@ void CheckFlashImage() {
         nextAddress += SPM_PAGESIZE;
       }
     }
+    // Turn off the LED pin
     LED_PIN &= ~_BV(LED);
 
 #if defined(RWWSRE)
