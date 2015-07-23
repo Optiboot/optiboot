@@ -437,6 +437,181 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 #endif // VIRTUAL_BOOT_PARTITION
 
 
+/******************* SPI FLASH Code **********************************/
+// This code is borrowed from https://github.com/LowPowerLab/DualOptiboot
+// Modified slightly for our purposes
+// This code will handle the reading/erasing the external SPI FLASH memory
+// assumed to have the SPI_CS on D8 on Moteino (Atmega328P)
+#ifdef DUAL_BOOT
+#define SPI_MODE0 0x00
+#define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
+#define SPI_CLOCK_MASK 0x03  // SPR1 = bit 1, SPR0 = bit 0 on SPCR
+#define SPI_2XCLOCK_MASK 0x01  // SPI2X = bit 0 on SPSR
+#define SPI_CLOCK_DIV2 0x04
+
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+  #define FLASHSS_DDR     DDRB
+  #define FLASHSS_PORT    PORTB
+  #define FLASHSS         PINB2
+  #define SS              PINB2
+#elif defined (__AVR_ATmega1284P__) || defined (__AVR_ATmega644P__)
+  #define FLASHSS_DDR     DDRC
+  #define FLASHSS_PORT    PORTC
+  #define FLASHSS         PINC7
+  #define SS              PINB4
+#endif
+
+#define FLASH_SELECT   { FLASHSS_PORT &= ~(_BV(FLASHSS)); }
+#define FLASH_UNSELECT { FLASHSS_PORT |= _BV(FLASHSS); }
+
+#define SPIFLASH_STATUSREAD        0x05        // read status register
+#define SPIFLASH_WRITEENABLE       0x06        // write enable
+#define SPIFLASH_ARRAYREAD         0x03        // read array (low frequency)
+#define SPIFLASH_ARRAYWRITE        0x02        // write array (low frequency)
+//#define DEBUG_ON                             // uncomment to enable Serial debugging
+                                               // (will output different characters depending on which path the bootloader takes)
+#define HEADER_LEN                 10          // the length of the header on the flash
+
+
+uint8_t SPI_transfer(uint8_t _data) {
+  SPDR = _data;
+  while (!(SPSR & _BV(SPIF)));
+  return SPDR;
+}
+
+uint8_t FLASH_busy()
+{
+  FLASH_SELECT;
+  SPI_transfer(SPIFLASH_STATUSREAD);
+  uint8_t status = SPI_transfer(0xFF);
+  FLASH_UNSELECT;
+  return status & 1;
+}
+
+void FLASH_command(uint8_t cmd){
+  while(FLASH_busy()); //wait for chip to become available
+  FLASH_SELECT;
+  SPI_transfer(cmd);
+}
+
+uint8_t FLASH_readByte(uint32_t addr) {
+  FLASH_command(SPIFLASH_ARRAYREAD);
+  SPI_transfer(addr >> 16);
+  SPI_transfer(addr >> 8);
+  SPI_transfer(addr);
+  //SPI.transfer(0); //"dont care", needed with SPIFLASH_ARRAYREAD command only
+  uint8_t result = SPI_transfer(0xFF);
+  FLASH_UNSELECT;
+  return result;
+}
+
+void FLASH_writeByte(uint32_t addr, uint8_t data) {
+  FLASH_command(SPIFLASH_WRITEENABLE); // Write Enable
+  FLASH_UNSELECT;
+  FLASH_command(SPIFLASH_ARRAYWRITE);
+  SPI_transfer(addr >> 16);
+  SPI_transfer(addr >> 8);
+  SPI_transfer(addr);
+  //SPI.transfer(0); //"dont care", needed with SPIFLASH_ARRAYREAD command only
+  SPI_transfer(data);
+  FLASH_UNSELECT;
+}
+
+void CheckFlashImage() {
+#ifdef DEBUG_ON
+  putch('F');
+#endif
+  watchdogConfig(WATCHDOG_OFF);
+
+  //SPI INIT
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+  DDRB |= _BV(FLASHSS) | _BV(SS) | _BV(PB3) | _BV(PB5); //OUTPUTS for FLASH_SS and SS, MOSI, SCK
+  FLASH_UNSELECT; //unselect FLASH chip
+#elif defined (__AVR_ATmega1284P__) || defined (__AVR_ATmega644P__)
+  DDRC |= _BV(FLASHSS); //OUTPUT for FLASH_SS
+  DDRB |= _BV(SS) | _BV(PB5) | _BV(PB7); //OUTPUTS for SS, MOSI, SCK
+  FLASH_UNSELECT; //unselect FLASH chip
+  PORTB |= _BV(SS); //set SS HIGH
+#endif
+
+  // Warning: if the SS pin ever becomes a LOW INPUT then SPI automatically switches to Slave, so the data direction of the SS pin MUST be kept as OUTPUT.
+  SPCR |= _BV(MSTR) | _BV(SPE); //enable SPI and set SPI to MASTER mode
+
+  uint8_t header[HEADER_LEN] = {0};
+
+  uint8_t i;
+  for(i = 0; i< HEADER_LEN; i++){
+    header[i] = FLASH_readByte(i); //get data byte
+  }
+  //check if any flash image exists on external FLASH chip
+  if (header[0]=='P' && header[1]=='H' && header[2]=='U' && header[3]=='P' &&
+      // Make sure the checksum matches
+      header[4]==header[6] && header[5]==header[7] && 
+      // Make sure it's not in an uninitialised state
+      header[4] !=0 && header[5] !=0  && header[4] !=0xFF && header[5] !=0xFF)
+  {
+#ifdef DEBUG_ON
+    putch('L');
+#endif
+
+    uint16_t imagesize = (header[8]<<8) | header[9];
+    if (imagesize%2!=0) return; //basic check that we got even # of bytes
+    if (imagesize>31744) return; //basic check that we've not got too many bytes (31k)
+
+    uint16_t b, i, nextAddress=0;
+
+    // Turn on the LED pin
+    LED_PIN |= _BV(LED);
+    for (i=0; i<imagesize; i+=2)
+    {
+#ifdef DEBUG_ON
+      putch('*');
+#endif
+
+      //read 2 bytes (16 bits) from flash image, transfer them to page buffer
+      b = FLASH_readByte(i+10); // flash image starts at position 10 on the external flash memory: PHUP XX XX XX FLASH_IMAGE_BYTES_HERE...... (XX = two size bytes)
+      b |= FLASH_readByte(i+11) << 8; //bytes are stored big endian on external flash, need to flip the bytes to little endian for transfer to internal flash
+      __boot_page_fill_short((uint16_t)(void*)i,b);
+
+      //when 1 page is full (or we're on the last page), write it to the internal flash memory
+      if ((i+2)%SPM_PAGESIZE==0 || (i+2==imagesize))
+      {
+        __boot_page_erase_short((uint16_t)(void*)nextAddress); //(i+2-SPM_PAGESIZE)
+        boot_spm_busy_wait();
+        // Write from programming buffer
+        __boot_page_write_short((uint16_t)(void*)nextAddress ); //(i+2-SPM_PAGESIZE)
+        boot_spm_busy_wait();
+        nextAddress += SPM_PAGESIZE;
+      }
+    }
+    // Turn off the LED pin
+    LED_PIN &= ~_BV(LED);
+
+#if defined(RWWSRE)
+    // Reenable read access to flash
+    boot_rww_enable();
+#endif
+
+#ifdef DEBUG_ON
+    putch('E');
+#endif
+
+    //erase the secondary checksum so we don't flash again
+    FLASH_writeByte(4, 0);
+    FLASH_writeByte(5, 0);
+
+    //now trigger a watchdog reset
+    watchdogConfig(WATCHDOG_16MS);  // short WDT timeout
+    while (1);                      // and busy-loop so that WD causes a reset and app start
+  }
+#ifdef DEBUG_ON
+  putch('X');
+#endif
+}
+#endif //DUAL_BOOT
+/******************* END SPI FLASH Code ****************************/
+
+
 /* main program starts here */
 int main(void) {
   uint8_t ch;
@@ -464,22 +639,6 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
-  /*
-   * modified Adaboot no-wait mod.
-   * Pass the reset reason to app.  Also, it appears that an Uno poweron
-   * can leave multiple reset flags set; we only want the bootloader to
-   * run on an 'external reset only' status
-   */
-  ch = MCUSR;
-  MCUSR = 0;
-  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
-      appStart(ch);
-
-#if LED_START_FLASHES > 0
-  // Set up Timer 1 for timeout counter
-  TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
-#endif
-
 #ifndef SOFT_UART
 #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
   UCSRA = _BV(U2X); //Double speed mode USART
@@ -494,8 +653,40 @@ int main(void) {
 #endif
 #endif
 
-  // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
+  /*
+   * modified Adaboot no-wait mod.
+   * Pass the reset reason to app.  Also, it appears that an Uno poweron
+   * can leave multiple reset flags set; we only want the bootloader to
+   * run on an 'external reset only' status
+   */
+  ch = MCUSR;
+  MCUSR = 0;
+  
+#ifdef DEBUG_ON
+    putch('S');
+#endif
+#ifdef DUAL_BOOT
+  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
+  {
+    if (ch & _BV(WDRF)) //if reset by watchdog
+      CheckFlashImage();
+#ifdef DEBUG_ON
+    putch('A');
+#endif
+    appStart(ch);
+  }
+#else //DUAL_BOOT
+  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
+      appStart(ch);
+#endif //DUAL_BOOT
+
+#if LED_START_FLASHES > 0
+  // Set up Timer 1 for timeout counter
+  TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
+#endif
+
+  // Set up watchdog to trigger after 4s
+  watchdogConfig(WATCHDOG_4S);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
   /* Set LED pin as output */
@@ -510,6 +701,13 @@ int main(void) {
 #if LED_START_FLASHES > 0
   /* Flash onboard LED to signal entering of bootloader */
   flash_led(LED_START_FLASHES * 2);
+#endif
+
+#if RS485==1
+  // configure the direction for the txEnable pin
+  DDRC |= _BV(PC0);
+  //turn off the txEnable pin
+  PORTC &= ~_BV(PC0);
 #endif
 
   /* Forever loop: exits by causing WDT reset */
@@ -674,6 +872,11 @@ int main(void) {
 }
 
 void putch(char ch) {
+#if RS485==1
+  // turn on the txEnable pin
+  PORTC |= _BV(PC0);
+#endif
+
 #ifndef SOFT_UART
   while (!(UART_SRA & _BV(UDRE0)));
   UART_UDR = ch;
@@ -701,10 +904,18 @@ void putch(char ch) {
       "r25"
   );
 #endif
+  while (!(UCSR0A & (1 << UDRE0)));  // Wait for empty transmit buffer
+  UCSR0A |= (1 << TXC0);  // mark transmission not complete
+  while (!(UCSR0A & (1 << TXC0)));   // Wait for the transmission to complete
 }
 
 uint8_t getch(void) {
   uint8_t ch;
+
+#if RS485==1
+  //turn off the txEnable pin
+  PORTC &= ~_BV(PC0);
+#endif
 
 #ifdef LED_DATA_FLASH
 #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)

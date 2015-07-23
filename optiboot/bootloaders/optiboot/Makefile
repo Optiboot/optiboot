@@ -493,6 +493,32 @@ atmega328_pro8_isp: LFUSE ?= FF
 atmega328_pro8_isp: EFUSE ?= 05
 atmega328_pro8_isp: isp
 
+# The Product Health Battery Sensor
+batterysensor: TARGET = batterysensor
+batterysensor: MCU_TARGET = atmega328p
+batterysensor: RS485 ?= 1
+batterysensor: LED_CMD = -DLED=D4
+batterysensor: CFLAGS += $(COMMON_OPTIONS) -DDUAL_BOOT -DRS485=$(RS485)
+batterysensor: AVR_FREQ ?= 16000000L
+batterysensor: LDSECTIONS  = -Wl,--section-start=.text=0x7800 -Wl,--section-start=.version=0x7ffe
+batterysensor: $(PROGRAM)_batterysensor.hex
+batterysensor: $(PROGRAM)_batterysensor.lst
+
+batterysensor_isp: batterysensor
+batterysensor_isp: TARGET = batterysensor
+batterysensor_isp: MCU_TARGET = atmega328p
+# 512 byte boot, SPIEN
+#batterysensor_isp: HFUSE ?= DE
+# 1024 byte boot, SPIEN
+#batterysensor_isp: HFUSE ?= DC
+# 2048 byte boot, SPIEN
+batterysensor_isp: HFUSE ?= DA
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+batterysensor_isp: LFUSE ?= FF
+# 2.7V brownout
+batterysensor_isp: EFUSE ?= 05
+batterysensor_isp: isp
+
 #
 # Include additional platforms
 include Makefile.extras
