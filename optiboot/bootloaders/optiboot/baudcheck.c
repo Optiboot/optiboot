@@ -23,8 +23,10 @@
  */
 bpsx=BAUD_RATE
 bps=${bpsx/L/}
+bps=${bps/U/}
 fcpux=F_CPU
 fcpu=${fcpux/L/}
+fcpu=${fcpu/U/}
 
 // echo f_cpu = $fcpu, baud = $bps
 /*
@@ -39,8 +41,8 @@ BAUD_SETTING=$(( ( ($fcpu + $bps * 4) / (($bps * 8))) - 1 ))
  * the tenths part of the error separately.
  */
 BAUD_ACTUAL=$(( ($fcpu/(8 * (($BAUD_SETTING)+1))) ))
-BAUD_ERROR=$(( (( 100*($bps - $BAUD_ACTUAL) ) / $bps) ))
-ERR_TS=$(( ((( 1000*($bps - $BAUD_ACTUAL) ) / $bps) - $BAUD_ERROR * 10) ))
+BAUD_ERROR=$(( (( 100*($BAUD_ACTUAL - $bps) ) / $bps) ))
+ERR_TS=$(( ((( 1000*($BAUD_ACTUAL - $bps) ) / $bps) - $BAUD_ERROR * 10) ))
 ERR_TENTHS=$(( ERR_TS > 0 ? ERR_TS: -ERR_TS ))
 
 /*
