@@ -320,7 +320,7 @@ atmega8: TARGET = atmega8
 atmega8: MCU_TARGET = atmega8
 atmega8: CFLAGS += $(COMMON_OPTIONS)
 atmega8: AVR_FREQ ?= 16000000L 
-atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
+atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
 atmega8: $(PROGRAM)_atmega8.hex
 atmega8: $(PROGRAM)_atmega8.lst
 
