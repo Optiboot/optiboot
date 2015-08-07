@@ -275,9 +275,9 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #ifndef BAUD_RATE
 #if F_CPU >= 8000000L
 #define BAUD_RATE   115200L // Highest rate Avrdude win32 will support
-#elsif F_CPU >= 1000000L
+#elif F_CPU >= 1000000L
 #define BAUD_RATE   9600L   // 19200 also supported, but with significant error
-#elsif F_CPU >= 128000L
+#elif F_CPU >= 128000L
 #define BAUD_RATE   4800L   // Good for 128kHz internal RC
 #else
 #define BAUD_RATE 1200L     // Good even at 32768Hz
