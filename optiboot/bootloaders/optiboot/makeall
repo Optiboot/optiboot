@@ -24,3 +24,9 @@ make atmega168p
 make atmega8
 make atmega168
 make atmega328
+
+#
+# Atmel development board targets
+make xplained168pb
+make xplained328p
+make xplained328pb
