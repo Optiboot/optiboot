@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "xplained168pb", "xplained168pb.cproj", "{02F0BC88-77BD-42CC-A94C-4CC452F0F909}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.ActiveCfg = Debug|AVR
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.Build.0 = Debug|AVR
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Release|AVR.ActiveCfg = Release|AVR
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
