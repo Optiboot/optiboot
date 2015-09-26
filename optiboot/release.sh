@@ -16,9 +16,23 @@ rm -Rf /tmp/optiboot-release
 # Note that the structure under "packages" (handed by boards manager)
 # is different than the structure under "sketchbook/hardware" would be.
 
-mkdir -p /tmp/optiboot-release/Optiboot/bootloaders/optiboot
 TOP=/tmp/optiboot-release/Optiboot/
+#
+# Bootloaders directory
+mkdir -p $TOP/bootloaders/optiboot
+# cores, variants, libraries
+# mkdir -p $TOP/variants/
+mkdir -p $TOP/libraries/
+# Less common: firmware, system.
+# mkdir -p $TOP/firmwares/
+# mkdir -p $TOP/system/
+
+#
+# Copy files from whereever into the release director 
 cp ../../boards-1.6.txt $TOP/boards.txt
+#cp -R ../../examples $TOP/libraries/
+#cp -R ../../variants $TOP/
+#cp -R ../../system $TOP/
 
 #
 # Create platform.tx, because it contains the "group" name for the boards menu
@@ -50,9 +64,10 @@ pushd /tmp/optiboot-release
 zip -r Optiboot.zip Optiboot
 HASH=`openssl dgst -sha256 Optiboot.zip | sed -e 's/.* //'`
 SIZE=`stat -f %z Optiboot.zip`
-echo size = $SIZE
-echo hash = $HASH
 popd
-echo sed -e "s/%HASH%/$HASH/" -e "s/%VERSION%/$1/" -e "s/%SIZE%/$SIZE/" ../../package_optiboot_optiboot-additional_index.json.TEMPLATE
 sed -e "s/#.*//" -e "s/%HASH%/$HASH/" -e "s/%VERSION%/$1/" -e "s/%SIZE%/$SIZE/" ../../package_optiboot_optiboot-additional_index.json.TEMPLATE > /tmp/optiboot-release/package_optiboot_optiboot-additional_index.json
+
+#
+# This leaves the .zip and the .json file in /tmp/optiboot-release
+# where it can be copied to a suitable network location.
 

@@ -1,0 +1,24 @@
+# Diecimila, Duemilanove with m168, and NG use identical bootloaders
+# Call it "atmega168" for generality and clarity, keep "diecimila" for
+# backward compatibility of makefile
+#
+xplained168pb: TARGET = $@
+xplained168pb: CHIP = atmega168
+xplained168pb:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L BAUD_RATE=57600
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
+xplained328pb: TARGET = $@
+xplained328pb: CHIP = atmega328
+xplained328pb:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L BAUD_RATE=57600
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
+xplained328p: TARGET = $@
+xplained328p: CHIP = atmega328
+xplained328p:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L BAUD_RATE=57600
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
