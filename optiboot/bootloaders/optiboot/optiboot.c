@@ -361,6 +361,7 @@ void __attribute__((noinline)) watchdogConfig(uint8_t x);
 static inline void getNch(uint8_t);
 static inline void flash_led(uint8_t);
 static inline void watchdogReset();
+static inline void appStart(void);
 static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 			       uint16_t address, pagelen_t len);
 static inline void read_mem(uint8_t memtype,
@@ -369,7 +370,6 @@ static inline void read_mem(uint8_t memtype,
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
 #endif
-void appStart(uint8_t rstFlags) __attribute__ ((naked));
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
@@ -440,6 +440,13 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 #define appstart_vec (0)
 #endif // VIRTUAL_BOOT_PARTITION
 
+// Calculate the start address of this bootloader
+#if defined(BIGBOOT)
+#define BOOTSTART (FLASHEND-1024u+1)
+#else
+#define BOOTSTART (FLASHEND-512u+1)
+#endif
+
 
 /* main program starts here */
 int main(void) {
@@ -468,16 +475,28 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
-  /*
-   * modified Adaboot no-wait mod.
-   * Pass the reset reason to app.  Also, it appears that an Uno poweron
-   * can leave multiple reset flags set; we only want the bootloader to
-   * run on an 'external reset only' status
-   */
   ch = MCUSR;
   MCUSR = 0;
+  /*
+   * Copy the reset flags to r2, unless the reset was triggered by
+   * the WDT here in the bootloader. In main() of your application,
+   * you can copy these flags to a static variable with:
+   *   static uint8_t mcusr;
+   *   __asm__("sts %0,r2\n" : "=m"(mcusr));
+   * If we would copy the flags unconditionally, an external reset
+   * would look like a watchdog reset to the application.
+   * The following test requires that SP points to RAMEND so that
+   * a call will modify the last two bytes. The test will not work
+   * when gcc sets up a stack frame for main().
+   */
+  if (!((ch & _BV(WDRF)) && *(uint8_t*)(RAMEND-1) >= (BOOTSTART >> 9)))
+      __asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
+  /*
+   * Only continue with the bootloader after an external reset.
+   * For all other reset causes, start the application directly.
+   */
   if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
-      appStart(ch);
+      appStart();
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
@@ -523,6 +542,19 @@ int main(void) {
 
     if(ch == STK_GET_PARAMETER) {
       unsigned char which = getch();
+      /*
+       * The following clobber is to work around a problem in recent
+       * gcc versions (4.7/4.8) where a stack frame is created to
+       * save the return value of getch() during the call to
+       * verifySpace(), instead of moving it to a free register.
+       * Not only does this increase the code size, but it also
+       * conflicts with the conditional assignment of the reset flags
+       * to r2 above. Another problem is that the (conditional)
+       * assignment SP=RAMEND will wipe away the stack frame,
+       * resulting in an incorrect version number of 3.3 being
+       * reported.
+       */
+      __asm__("" : : : "r24");
       verifySpace();
       /*
        * Send optiboot version as "SW version"
@@ -651,6 +683,7 @@ int main(void) {
 
       desttype = getch();
 
+      __asm__("" : : : "r24"); /* see comment at previous __asm__ */
       verifySpace();
 
       read_mem(desttype, address, length);
@@ -833,12 +866,7 @@ void watchdogConfig(uint8_t x) {
   WDTCSR = x;
 }
 
-void appStart(uint8_t rstFlags) {
-  // save the reset flags in the designated register
-  //  This can be saved in a main program by putting code in .init0 (which
-  //  executes before normal c init code) to save R2 to a global variable.
-  __asm__ __volatile__ ("mov r2, %0\n" :: "r" (rstFlags));
-
+void appStart(void) {
   watchdogConfig(WATCHDOG_OFF);
   // Note that appstart_vec is defined so that this works with either
   // real or virtual boot partitions.
