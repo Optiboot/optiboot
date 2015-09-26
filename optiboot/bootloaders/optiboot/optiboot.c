@@ -528,9 +528,9 @@ int main(void) {
        * Send optiboot version as "SW version"
        * Note that the references to memory are optimized away.
        */
-      if (which == 0x82) {
+      if (which == STK_SW_MINOR) {
 	  putch(optiboot_version & 0xFF);
-      } else if (which == 0x81) {
+      } else if (which == STK_SW_MAJOR) {
 	  putch(optiboot_version >> 8);
       } else {
 	/*
