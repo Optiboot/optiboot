@@ -476,10 +476,30 @@ int main(void) {
    * see discusion in https://github.com/Optiboot/optiboot/issues/97
    */
   ch = MCUSR;
+  // Skip all logic and run bootloader if MCUSR is cleared (application request)
   if (ch != 0) {
-    if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) { // To run the boot loader, External Reset Flag must be set and the Watchdog Flag MUST be cleared!  Otherwise jump straight to user code.
-      if (ch & _BV(EXTRF)) 
-          MCUSR = ~(_BV(WDRF));  // Clear WDRF because it was actually caused by bootloader
+    /*
+     * To run the boot loader, External Reset Flag must be set.
+     * If not, we could make shortcut and jump directly to application code.
+     * Also WDRF set with EXTRF is a result of Optiboot timeout, so we
+     * shouldn't run bootloader in loop :-) That's why:
+     *  1. application is running if WDRF is cleared
+     *  2. we clear WDRF if it's set with EXTRF to avoid loops
+     * One problematic scenario: broken application code sets watchdog timer 
+     * without clearing MCUSR before and triggers it quickly. But it's
+     * recoverable by power-on with pushed reset button.
+     */
+    if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) { 
+      if (ch & _BV(EXTRF)) {
+        /*
+         * Clear WDRF because it was most probably set by wdr in bootloader.
+         * It's also needed to avoid loop by broken application which could
+         * prevent entering bootloader.
+         * '&' operation is skipped to spare few bytes as bits in MCUSR
+         * can only be cleared.
+         */
+        MCUSR = ~(_BV(WDRF));  
+      }
       appStart(ch);
     }
   }
@@ -504,7 +524,7 @@ int main(void) {
 #endif
 
   // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
+  watchdogConfig(WATCHDOG_2S);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
   /* Set LED pin as output */
