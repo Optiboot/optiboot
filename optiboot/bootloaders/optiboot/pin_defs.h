@@ -125,7 +125,7 @@
 
 /*------------------------------------------------------------------------ */
 /* Mega support */
-#if defined(__AVR_ATmega1280__)
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB7 on Arduino Mega */ 
 #if !defined(LED)
