@@ -42,3 +42,6 @@
 #define STK_READ_OSCCAL     0x76  // 'v'
 #define STK_READ_FUSE_EXT   0x77  // 'w'
 #define STK_READ_OSCCAL_EXT 0x78  // 'x'
+
+/* AVR raw commands sent via STK_UNIVERSAL */
+#define AVR_OP_LOAD_EXT_ADDR  0x4d
