@@ -75,7 +75,7 @@ void setup() {
   // Erasing FLASH page
   Serial.println("Erasing buffer");
   delay(100); // wait for sending all text via serial
-  optiboot_page_erase((uint16_t)(void*) &flash_buffer[0]);
+  optiboot_page_erase((optiboot_addr_t)(void*) &flash_buffer[0]);
 
   // Copy ram buffer to temporary flash buffer
   Serial.println("Writing to temporary flash buffer");
@@ -85,14 +85,14 @@ void setup() {
       w = ram_buffer[i];
     } else {
       w += (ram_buffer[i] << 8);
-      optiboot_page_fill((uint16_t)(void*) &flash_buffer[i],w);
+      optiboot_page_fill((optiboot_addr_t)(void*) &flash_buffer[i],w);
     }
   }
   
   // Writing temporary buffer to FLASH
   Serial.println("Writing buffer to flash");
   delay(100); // wait for sending all text via serial
-  optiboot_page_write((uint16_t)(void*) &flash_buffer[0]);
+  optiboot_page_write((optiboot_addr_t)(void*) &flash_buffer[0]);
 
   Serial.println("Write done, thank you!");
   Serial.println("Now you can reset or power cycle board and check for new contents!");
