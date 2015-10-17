@@ -71,7 +71,7 @@
 # define UART_UDR UDR3
 #endif
 
-#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   //Name conversion R.Wiersma
   #define UCSR0A	UCSRA
   #define UDR0 		UDR
@@ -81,7 +81,7 @@
   #define TIFR1 	TIFR
   #define WDTCSR	WDTCR
 #endif
-#if defined(__AVR_ATmega32__)
+#if defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   #define WDCE		WDTOE
 #endif
 
@@ -106,7 +106,7 @@
 
 /*------------------------------------------------------------------------ */
 /* Sanguino support (and other 40pin DIP cpus) */
-#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega32__)
+#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega32__) || defined (__AVR_ATmega16__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB0 on Sanguino */ 
 #if !defined(LED)
