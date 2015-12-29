@@ -36,47 +36,48 @@ void resetFlagsInit(void)
 
 void setup() {
   Serial.begin(9600);  // Initialize serial port
-}
-
-void loop() {
+  
   Serial.println("Reset flag test");
-  while (Serial.read() < 0)
-    ;  // wait for some type-in
-
+  
   Serial.print("Have reset flag value 0x");
   Serial.print(resetFlags, HEX);
+  
   /*
    * check for the usual bits.  Note that the symnbols defined in wdt.h are
    * bit numbers, so they have to be shifted before comparison.
    */
-  switch (resetFlags) {
-    case 1<<WDRF:
-      Serial.println(" (Watchdog)\n");
-      break;
-    case 1<<BORF:
-      Serial.println(" (Brownout)\n");
-      break;
-    case 1<<EXTRF:
-      Serial.println(" (External Reset)\n");
-      break;
-    case  1<<PORF:
-    case ((1<<PORF) | (1<<BORF)):
-      // A poweron can frequently result in both PORF and BORF being set, as the
-      //  power switch bounces or the voltage rises slowly.
-      Serial.println(" (PowerOn)\n");
-      break;
-    default:
-      // Multiple bits can be set under various circumstances.  For example, the
-      //  "hold down reset while powering up" trick used to recover from certain
-      //  problems can leave both PORF and EXTRF set.
-      Serial.println(" (Unknown)\n");
-      break;
+  if (resetFlags & (1<<WDRF))
+  {
+    Serial.print(" Watchdog");
+    resetFlags &= ~(1<<WDRF);
   }
-  /*
-   * Now we'll let the Watchdog reset the chip, and see if that cause is reported
-   * correctly.  Older versions of optiboot could not easily distinguish between
-   * WDRF and EXTRF resets, since the WDT was used inside the bootloader.
-   */
-  wdt_enable(WDTO_1S);
+  if (resetFlags & (1<<BORF))
+  {
+    Serial.print(" Brownout");
+    resetFlags &= ~(1<<BORF);
+  }
+  if (resetFlags & (1<<EXTRF))
+  {
+    Serial.print(" External");
+    resetFlags &= ~(1<<EXTRF);
+  }
+  if (resetFlags & (1<<PORF))
+  {
+    Serial.print(" PowerOn");
+    resetFlags &= ~(1<<PORF);
+  }
+  if (resetFlags != 0x00)
+  {
+    // It should never enter here
+    Serial.print(" Unknown");
+  }
+  Serial.println("");
+}
+
+void loop() {
+  Serial.println("Send something to reset through watchdog peripheral");
+  while (Serial.read() < 0) ;
+  wdt_enable(WDTO_15MS);
+  while (1); // To prevent the loop to start again before WDT resets the board
 }
 
