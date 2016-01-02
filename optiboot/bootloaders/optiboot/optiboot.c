@@ -505,7 +505,7 @@ int main(void) {
 #if !defined(__AVR_ATmega16__)
         MCUSR = ~(_BV(WDRF));  
 #else
-        MCUSR = ~(_BV(WDRF));  
+        MCUCSR = ~(_BV(WDRF));  
 #endif
       }
       appStart(ch);
