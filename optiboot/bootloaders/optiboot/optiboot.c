@@ -464,7 +464,7 @@ int main(void) {
   // If not, uncomment the following instructions:
   // cli();
   asm volatile ("clr __zero_reg__");
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
@@ -475,7 +475,11 @@ int main(void) {
    * Code by MarkG55
    * see discusion in https://github.com/Optiboot/optiboot/issues/97
    */
+#if !defined(__AVR_ATmega16__)
   ch = MCUSR;
+#else
+  ch = MCUCSR;
+#endif
   // Skip all logic and run bootloader if MCUSR is cleared (application request)
   if (ch != 0) {
     /*
@@ -498,7 +502,11 @@ int main(void) {
          * '&' operation is skipped to spare few bytes as bits in MCUSR
          * can only be cleared.
          */
+#if !defined(__AVR_ATmega16__)
         MCUSR = ~(_BV(WDRF));  
+#else
+        MCUSR = ~(_BV(WDRF));  
+#endif
       }
       appStart(ch);
     }
@@ -510,7 +518,7 @@ int main(void) {
 #endif
 
 #ifndef SOFT_UART
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   UCSRA = _BV(U2X); //Double speed mode USART
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
@@ -736,7 +744,7 @@ uint8_t getch(void) {
   uint8_t ch;
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -787,7 +795,7 @@ uint8_t getch(void) {
 #endif
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -836,7 +844,7 @@ void flash_led(uint8_t count) {
     TCNT1 = -(F_CPU/(1024*16));
     TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
-#if defined(__AVR_ATmega8__)  || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
     LED_PORT ^= _BV(LED);
 #else
     LED_PIN |= _BV(LED);
