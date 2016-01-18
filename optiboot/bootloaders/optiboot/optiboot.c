@@ -236,7 +236,7 @@
 #define OPTIBOOT_CUSTOMVER 0
 #endif
 
-unsigned const int __attribute__((section(".version"))) 
+unsigned const int __attribute__((section(".version")))
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
 
@@ -288,8 +288,14 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #define UART 0
 #endif
 
+#if defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
+#define BAUD_SETTING ( (F_CPU)/(BAUD_RATE * 8L) - 1 )
+#define BAUD_ACTUAL (F_CPU/(8 * ((BAUD_SETTING)+1)))
+#else
 #define BAUD_SETTING (( (F_CPU + BAUD_RATE * 4L) / ((BAUD_RATE * 8L))) - 1 )
 #define BAUD_ACTUAL (F_CPU/(8 * ((BAUD_SETTING)+1)))
+#endif
+
 #if BAUD_ACTUAL <= BAUD_RATE
   #define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
   #if BAUD_ERROR >= 5
@@ -306,14 +312,26 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
   #endif
 #endif
 
+#if defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
+// don't know how to choose the numbers
+#if BAUD_SETTING > ( (1 << 12) - 1 )
+#error Unachievable baud rate (too slow) BAUD_RATE
+#endif // baud rate slow check
+#if BAUD_SETTING < 3
+#if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
+#error Unachievable baud rate (too fast) BAUD_RATE
+#endif
+#endif // baud rate fastn check
+#else
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 > 250
-#error Unachievable baud rate (too slow) BAUD_RATE 
+#error Unachievable baud rate (too slow) BAUD_RATE
 #endif // baud rate slow check
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 < 3
 #if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
-#error Unachievable baud rate (too fast) BAUD_RATE 
+#error Unachievable baud rate (too fast) BAUD_RATE
 #endif
 #endif // baud rate fastn check
+#endif
 
 /* Watchdog settings */
 #define WATCHDOG_OFF    (0)
@@ -495,6 +513,12 @@ int main(void) {
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
   UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+#elif defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
+  // USART 8N1, enable RX and TX
+  LINCR = (0 << LCONF1) | (0 << LCONF0) | (1 << LENA) | (1 << LCMD2) | (1 << LCMD1) | (1 << LCMD0);
+  LINENIR = 0; // disable interrupts
+  LINBTR = (0 << LDISR) | 8; // 8 samples per bit
+  LINBRR = (uint16_t)( F_CPU/(8*BAUD_RATE)-1);
 #else
   UART_SRA = _BV(U2X0); //Double speed mode USART0
   UART_SRB = _BV(RXEN0) | _BV(TXEN0);
@@ -684,8 +708,13 @@ int main(void) {
 
 void putch(char ch) {
 #ifndef SOFT_UART
+#if defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
+  while (!(LINSIR & _BV(LTXOK)));
+  LINDAT = ch;
+#else
   while (!(UART_SRA & _BV(UDRE0)));
   UART_UDR = ch;
+#endif
 #else
   __asm__ __volatile__ (
     "   com %[ch]\n" // ones complement, carry set
@@ -749,6 +778,23 @@ uint8_t getch(void) {
       "r25"
 );
 #else
+#if defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
+while(!(LINSIR & _BV(LRXOK)))
+  ;
+if (!(LINERR & _BV(LFERR))) {
+    /*
+     * A Framing Error indicates (probably) that something is talking
+     * to us at the wrong bit rate.  Assume that this is because it
+     * expects to be talking to the application, and DON'T reset the
+     * watchdog.  This should cause the bootloader to abort and run
+     * the application "soon", if it keeps happening.  (Note that we
+     * don't care that an invalid char is returned...)
+     */
+  watchdogReset();
+}
+
+ch = LINDAT;
+#else
   while(!(UART_SRA & _BV(RXC0)))
     ;
   if (!(UART_SRA & _BV(FE0))) {
@@ -764,6 +810,7 @@ uint8_t getch(void) {
   }
 
   ch = UART_UDR;
+#endif
 #endif
 
 #ifdef LED_DATA_FLASH

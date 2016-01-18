@@ -13,3 +13,31 @@ wildfire:
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
+atmega16m1: MCU_TARGET = atmega16m1
+atmega16m1: CFLAGS += $(COMMON_OPTIONS)
+atmega16m1: AVR_FREQ = 16000000L
+atmega16m1: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffc
+atmega16m1: $(PROGRAM)_atmega16m1.hex
+atmega16m1: $(PROGRAM)_atmega16m1.lst
+
+antu: TARGET = antu
+antu: CHIP = atmega16m1
+antu:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=D0
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
+antu_isp: antu
+antu_isp: TARGET = antu
+antu_isp: MCU_TARGET = atmega16m1
+antu_isp: HFUSE = DE
+antu_isp: LFUSE = F7
+antu_isp: EFUSE = FB
+# por defecto se usa un arduino programado con el sketch isp
+antu_isp: ISPTOOL = stk500v1
+#antu_isp: ISPPORT = COM1
+antu_isp: ISPPORT = /dev/ttyUSB0
+antu_isp: ISPSPEED = -b19200
+# el archivo avrdude.conf por defecto no incluye al atmega16m1
+antu_isp: AVRDUDE_CONF = -Cavrdude.conf
+antu_isp: isp
