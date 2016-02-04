@@ -20,35 +20,18 @@ atmega16m1: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.
 atmega16m1: $(PROGRAM)_atmega16m1.hex
 atmega16m1: $(PROGRAM)_atmega16m1.lst
 
-antu: TARGET = antu
-antu: CHIP = atmega16m1
-antu:
+mega16m1: TARGET = mega16m1
+mega16m1: CHIP = atmega16m1
+mega16m1:
 	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=D0
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
-antu_isp: antu
-antu_isp: TARGET = antu
-antu_isp: MCU_TARGET = atmega16m1
-#
-# http://eleccelerator.com/fusecalc/fusecalc.php?chip=atmega16m1&LOW=DE&HIGH=DE&EXTENDED=FF&LOCKBIT=3F
-# fuses originales
-# safemode: Fuses OK (E:FF, H:DF, L:62)
-# device signature: 0x1e9484
-antu_isp: HFUSE = DE
-# mal :(
-#antu_isp: LFUSE = F7
-# este era el correcto
-antu_isp: LFUSE = DE
-#antu_isp: EFUSE = FB
-antu_isp: EFUSE = FF
-# por defecto se usa un arduino programado con el sketch isp
-#antu_isp: ISPTOOL = stk500v1
-#antu_isp: ISPTOOL = usbasp
-antu_isp: ISPTOOL = pickit2
-#antu_isp: ISPPORT = COM1
-#antu_isp: ISPPORT = /dev/ttyUSB0
-#antu_isp: ISPSPEED = -b19200
-# el archivo avrdude.conf por defecto no incluye al atmega16m1
-antu_isp: AVRDUDE_CONF = -Cavrdude.conf
-antu_isp: isp
+mega16m1_isp: mega16m1
+mega16m1_isp: TARGET = mega16m1
+mega16m1_isp: MCU_TARGET = atmega16m1
+mega16m1_isp: HFUSE = DE
+mega16m1_isp: LFUSE = DE
+mega16m1_isp: EFUSE = FF
+mega16m1_isp: isp
+
