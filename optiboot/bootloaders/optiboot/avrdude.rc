@@ -4,7 +4,7 @@
 # Para que este archivo sea reconocido hay que:
 # - En Windows: copiar este archivo (avrdude.rc) al mismo 
 #               directorio del programa avrdude.exe
-# - En Windows: copiar este archivo con el nombre .avrduderc
+# - En Linux: copiar este archivo con el nombre .avrduderc
 #               en el directorio HOME
 #
 # http://www.nongnu.org/avrdude/user-manual/avrdude_10.html
