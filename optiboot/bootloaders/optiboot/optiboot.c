@@ -710,7 +710,7 @@ int main(void) {
 void putch(char ch) {
 #ifndef SOFT_UART
 #if defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
-  while (!(LINSIR & _BV(LTXOK)));
+  while ( LINSIR & _BV(LBUSY));
   LINDAT = ch;
 #else
   while (!(UART_SRA & _BV(UDRE0)));
