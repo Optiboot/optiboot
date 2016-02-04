@@ -515,10 +515,11 @@ int main(void) {
   UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
 #elif defined(__AVR_ATmega16M1__) || defined(__AVR_ATmega32M1__) || defined(__AVR_ATmega64M1__)
   // USART 8N1, enable RX and TX
-  LINCR = (0 << LCONF1) | (0 << LCONF0) | (1 << LENA) | (1 << LCMD2) | (1 << LCMD1) | (1 << LCMD0);
+  LINCR = (0 << LCONF1) | (0 << LCONF0) | (0 << LENA) | (1 << LCMD2) | (1 << LCMD1) | (1 << LCMD0);
   LINENIR = 0; // disable interrupts
-  LINBTR = (0 << LDISR) | 8; // 8 samples per bit
+  LINBTR = (1 << LDISR) | 8; // 8 samples per bit
   LINBRR = (uint16_t)( F_CPU/(8*BAUD_RATE)-1);
+  LINCR |= (1 << LENA);
 #else
   UART_SRA = _BV(U2X0); //Double speed mode USART0
   UART_SRB = _BV(RXEN0) | _BV(TXEN0);
