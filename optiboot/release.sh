@@ -1,5 +1,7 @@
 #%/bin/bash
-
+#
+# Use like: "sh release.sh <versionno>"
+#
 # Build a "release" .zip file for Optiboot bootloader
 # Run from the build directory
 
@@ -28,14 +30,14 @@ mkdir -p $TOP/libraries/
 # mkdir -p $TOP/system/
 
 #
-# Copy files from whereever into the release director 
+# Copy files from whereever into the release directory
 cp ../../boards-1.6.txt $TOP/boards.txt
 #cp -R ../../examples $TOP/libraries/
 #cp -R ../../variants $TOP/
 #cp -R ../../system $TOP/
 
 #
-# Create platform.tx, because it contains the "group" name for the boards menu
+# Create platform.txt, because it contains the "group" name for the boards menu
 echo name=Optiboot $1 > $TOP/platform.txt
 echo version=$1 >> $TOP/platform.txt
 
