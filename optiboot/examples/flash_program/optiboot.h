@@ -65,12 +65,23 @@
  *
  */
 
-// 'typedef' (in following line) and 'const' (few lines below) are a way to define external function at some arbitrary address
+/*
+ * This 'typedef' (in following line) and 'const' (few lines below) are a way to define external function at some arbitrary address
+ */
 typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
 
 /*
+ * Devices with 64KB of flash or more have larger bootloader area (1KB) (they are BIGBOOT targets),
+ * so entry address in these chips is different from smaller ones.
+ */
+#if FLASHEND > 65534
+  const do_spm_t do_spm = (do_spm_t)((FLASHEND-1023+2)>>1);
+#else
+  const do_spm_t do_spm = (do_spm_t)((FLASHEND-511+2)>>1);
+#endif
+
+/*
  * Devices with more than 64KB of flash:
- * - have larger bootloader area (1KB) (they are BIGBOOT targets)
  * - have RAMPZ register :-) 
  * - need larger variable to hold address (pgmspace.h uses uint32_t)
  * 
@@ -79,10 +90,8 @@ typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
  */
 #ifdef RAMPZ
   typedef uint32_t optiboot_addr_t;
-  const do_spm_t do_spm = (do_spm_t)((FLASHEND-1023+2)>>1);
 #else
   typedef uint16_t optiboot_addr_t;
-  const do_spm_t do_spm = (do_spm_t)((FLASHEND-511+2)>>1);
 #endif
 
 /*
