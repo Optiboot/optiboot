@@ -128,6 +128,11 @@
 /* UART number (0..n) for devices with more than          */
 /* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
+/* OSCCAL_EEPROM_ADDR                                     */
+/* On startup, load an oscillator calibration value from  */
+/* this address in EEPROM and write it to OSCCAL (unless  */
+/* it is 0xff).                                           */
+/*                                                        */
 /**********************************************************/
 
 /**********************************************************/
@@ -466,6 +471,13 @@ int main(void) {
   asm volatile ("clr __zero_reg__");
 #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   SP=RAMEND;  // This is done by hardware reset
+#endif
+
+#if defined(OSCCAL_EEPROM_ADDR)
+  // Load OSCCAL before app start, so the app does not have to
+  ch = eeprom_read_byte((uint8_t*)OSCCAL_EEPROM_ADDR);
+  if (ch != 0xff)
+    OSCCAL = ch;
 #endif
 
   /*
