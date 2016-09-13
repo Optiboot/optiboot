@@ -133,6 +133,13 @@
 /* this address in EEPROM and write it to OSCCAL (unless  */
 /* it is 0xff).                                           */
 /*                                                        */
+/* OSCCAL_PROGMEM                                         */
+/* On startup, load an oscillator calibration value from  */
+/* the top of the flash memory (unless it is 0xff, which  */
+/* is the default). This byte is put into its own .osccal */
+/* section, so its address should be set through the      */
+/* linker.                                                */
+/*                                                        */
 /**********************************************************/
 
 /**********************************************************/
@@ -243,6 +250,11 @@
 
 unsigned const int __attribute__((section(".version"))) 
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
+
+#if defined(OSCCAL_PROGMEM)
+unsigned const char __attribute__((section(".osccal")))
+optiboot_osccal = 0xff;
+#endif
 
 
 #include <inttypes.h>
@@ -480,6 +492,12 @@ int main(void) {
     OSCCAL = ch;
 #endif
 
+#if defined(OSCCAL_PROGMEM)
+  // Load OSCCAL before app start, so the app does not have to
+  ch = pgm_read_byte(&optiboot_osccal);
+  if (ch != 0xff)
+    OSCCAL = ch;
+#endif
   /*
    * modified Adaboot no-wait mod.
    * Pass the reset reason to app.  Also, it appears that an Uno poweron
