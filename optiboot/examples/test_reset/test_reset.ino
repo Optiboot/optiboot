@@ -23,6 +23,7 @@ uint8_t resetFlags __attribute__ ((section(".noinit")));
  * to the variable.  Again, avr-gcc provides special code sections for this.
  */
 void resetFlagsInit(void) __attribute__ ((naked))
+                          __attribute__ ((used))
                           __attribute__ ((section (".init0")));
 void resetFlagsInit(void)
 {
