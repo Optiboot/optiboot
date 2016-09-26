@@ -39,6 +39,7 @@
 /*   ATmega644P based devices (Sanguino)                  */
 /*   ATmega1284P based devices                            */
 /*   ATmega1280 based devices (Arduino Mega)              */
+/*   ATmega2560 based devices (Arduino Mega)              */
 /*                                                        */
 /* Alpha test                                             */
 /*   ATmega32                                             */
@@ -382,7 +383,7 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 // correct for a bug in avr-libc
 #undef SIGNATURE_2
 #define SIGNATURE_2 0x0A
-#elif defined(__AVR_ATmega1280__)
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #undef RAMSTART
 #define RAMSTART (0x200)
 #endif
@@ -559,17 +560,39 @@ int main(void) {
       newAddress = getch();
       newAddress = (newAddress & 0xff) | (getch() << 8);
 #ifdef RAMPZ
-      // Transfer top bit to RAMPZ
-      RAMPZ = (newAddress & 0x8000) ? 1 : 0;
+      // Transfer top bit to LSB in RAMPZ
+      if (newAddress & 0x8000) {
+        RAMPZ |= 0x01;
+      }
+      else {
+        RAMPZ &= 0xFE;
+      }
 #endif
       newAddress += newAddress; // Convert from word address to byte address
       address = newAddress;
       verifySpace();
     }
     else if(ch == STK_UNIVERSAL) {
+#ifdef RAMPZ
+      // LOAD_EXTENDED_ADDRESS is needed in STK_UNIVERSAL for addressing more than 128kB
+      if ( AVR_OP_LOAD_EXT_ADDR == getch() ) {
+        // get address
+        getch();  // get '0'
+        RAMPZ = (RAMPZ & 0x01) | ((getch() << 1) & 0xff);  // get address and put it in RAMPZ
+        getNch(1); // get last '0'
+        // response
+        putch(0x00);
+      }
+      else {
+        // everything else is ignored
+        getNch(3);
+        putch(0x00);
+      }
+#else
       // UNIVERSAL command is ignored
       getNch(4);
       putch(0x00);
+#endif
     }
     /* Write memory, length is big endian and is in bytes */
     else if(ch == STK_PROG_PAGE) {

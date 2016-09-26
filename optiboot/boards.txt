@@ -331,3 +331,21 @@ optibootxmini328p.bootloader.extended_fuses=0xFF
 optibootxmini328p.bootloader.file=optiboot/optiboot_xplained328p.hex
 
 optibootxmini328p.build.mcu=atmega328p
+
+#############################
+
+mega2560o.name=[Optiboot] Arduino Mega2560
+mega2560o.upload.protocol=arduino
+mega2560o.upload.maximum_size=261120
+mega2560o.upload.speed=115200
+mega2560o.bootloader.low_fuses=0xf7
+mega2560o.bootloader.high_fuses=0xde
+mega2560o.bootloader.extended_fuses=0xfd
+mega2560o.bootloader.path=optiboot
+mega2560o.bootloader.file=optiboot_atmega2560.hex
+mega2560o.bootloader.unlock_bits=0x3F
+mega2560o.bootloader.lock_bits=0x0F
+mega2560o.build.mcu=atmega2560
+mega2560o.build.f_cpu=16000000L
+mega2560o.build.core=arduino:arduino
+mega2560o.build.variant=arduino:mega
