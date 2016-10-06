@@ -301,6 +301,14 @@ atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.v
 atmega328: $(PROGRAM)_atmega328.hex
 atmega328: $(PROGRAM)_atmega328.lst
 
+atmega328pb: TARGET = atmega328pb
+atmega328pb: MCU_TARGET = atmega328pb
+atmega328pb: CFLAGS += $(COMMON_OPTIONS)
+atmega328pb: AVR_FREQ ?= 16000000L
+atmega328pb: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega328pb: $(PROGRAM)_atmega328pb.hex
+atmega328pb: $(PROGRAM)_atmega328pb.lst
+
 atmega328_isp: atmega328
 atmega328_isp: TARGET = atmega328
 atmega328_isp: MCU_TARGET = atmega328p
