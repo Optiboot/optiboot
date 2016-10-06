@@ -312,6 +312,25 @@ atmega328_isp: LFUSE ?= FF
 atmega328_isp: EFUSE ?= 05
 atmega328_isp: isp
 
+atmega328pb: TARGET = atmega328pb
+atmega328pb: MCU_TARGET = atmega328pb
+atmega328pb: CFLAGS += $(COMMON_OPTIONS)
+atmega328pb: AVR_FREQ ?= 16000000L
+atmega328pb: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega328pb: $(PROGRAM)_atmega328pb.hex
+atmega328pb: $(PROGRAM)_atmega328pb.lst
+
+atmega328pb_isp: atmega328pb
+atmega328pb_isp: TARGET = atmega328pb
+atmega328pb_isp: MCU_TARGET = atmega328pb
+# 512 byte boot, SPIEN
+atmega328pb_isp: HFUSE ?= DE
+# Low power xtal (16MHz) 16KCK/14CK+65ms
+atmega328pb_isp: LFUSE ?= FF
+# 2.7V brownout
+atmega328pb_isp: EFUSE ?= F5
+atmega328pb_isp: isp
+
 #Atmega1280
 atmega1280: MCU_TARGET = atmega1280
 atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
