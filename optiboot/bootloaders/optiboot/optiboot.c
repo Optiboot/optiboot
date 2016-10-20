@@ -39,6 +39,7 @@
 /*   ATmega644P based devices (Sanguino)                  */
 /*   ATmega1284P based devices                            */
 /*   ATmega1280 based devices (Arduino Mega)              */
+/*   ATmega2560 based devices (Arduino Mega)              */
 /*                                                        */
 /* Alpha test                                             */
 /*   ATmega32                                             */
@@ -382,7 +383,7 @@ void appStart(uint8_t rstFlags) __attribute__ ((naked));
 // correct for a bug in avr-libc
 #undef SIGNATURE_2
 #define SIGNATURE_2 0x0A
-#elif defined(__AVR_ATmega1280__)
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #undef RAMSTART
 #define RAMSTART (0x200)
 #endif
