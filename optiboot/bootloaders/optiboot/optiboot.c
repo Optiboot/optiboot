@@ -360,7 +360,9 @@ void __attribute__((noinline)) verifySpace();
 void __attribute__((noinline)) watchdogConfig(uint8_t x);
 
 static inline void getNch(uint8_t);
+#if LED_START_FLASHES > 0
 static inline void flash_led(uint8_t);
+#endif
 static inline void watchdogReset();
 static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 			       uint16_t address, pagelen_t len);
@@ -465,7 +467,7 @@ int main(void) {
   // If not, uncomment the following instructions:
   // cli();
   asm volatile ("clr __zero_reg__");
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
@@ -475,8 +477,13 @@ int main(void) {
    * can leave multiple reset flags set; we only want the bootloader to
    * run on an 'external reset only' status
    */
+#if !defined(__AVR_ATmega16__)
   ch = MCUSR;
   MCUSR = 0;
+#else
+  ch = MCUCSR;
+  MCUCSR = 0;
+#endif
   if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
       appStart(ch);
 
@@ -486,7 +493,7 @@ int main(void) {
 #endif
 
 #ifndef SOFT_UART
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   UCSRA = _BV(U2X); //Double speed mode USART
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
@@ -529,9 +536,9 @@ int main(void) {
        * Send optiboot version as "SW version"
        * Note that the references to memory are optimized away.
        */
-      if (which == 0x82) {
+      if (which == STK_SW_MINOR) {
 	  putch(optiboot_version & 0xFF);
-      } else if (which == 0x81) {
+      } else if (which == STK_SW_MAJOR) {
 	  putch(optiboot_version >> 8);
       } else {
 	/*
@@ -734,7 +741,7 @@ uint8_t getch(void) {
   uint8_t ch;
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -785,7 +792,7 @@ uint8_t getch(void) {
 #endif
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -834,7 +841,7 @@ void flash_led(uint8_t count) {
     TCNT1 = -(F_CPU/(1024*16));
     TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
-#if defined(__AVR_ATmega8__)  || defined (__AVR_ATmega32__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
     LED_PORT ^= _BV(LED);
 #else
     LED_PIN |= _BV(LED);

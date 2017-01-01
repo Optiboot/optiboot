@@ -286,6 +286,13 @@ atmega168_isp: LFUSE ?= F7
 atmega168_isp: EFUSE ?= 04
 atmega168_isp: isp
 
+atmega16: TARGET = atmega16
+atmega16: MCU_TARGET = atmega16
+atmega16: CFLAGS += $(COMMON_OPTIONS)
+atmega16: AVR_FREQ ?= 16000000L 
+atmega16: $(PROGRAM)_atmega16.hex
+atmega16: $(PROGRAM)_atmega16.lst
+
 atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += $(COMMON_OPTIONS)
