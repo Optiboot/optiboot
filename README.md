@@ -1,6 +1,6 @@
 ## Optiboot Bootloader for Arduino and Atmel AVR ##
 
-![http://optiboot.googlecode.com/files/optiboot.png](http://optiboot.googlecode.com/files/optiboot.png)
+![docs/optiboot.png](docs/optiboot.png)
 
 Optiboot is an easy to install upgrade to the Arduino bootloader within Arduino boards. It provides the following features:
 
