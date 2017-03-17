@@ -31,7 +31,7 @@
         <options />
         <configurations />
         <files />
-        <documentation help="" />
+        <documentation help="https://github.com/Optiboot/optiboot/wiki" />
         <offline-documentation help="" />
         <dependencies>
           <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.21.0" />
