@@ -1,0 +1,43 @@
+{
+  "packages": [
+    {
+      "name": "Optiboot-additional",
+      "maintainer": "Yugo Kajiwara",
+      "websiteURL": "https://github.com/musubi05/optiboot",
+      "email": "",
+      "help": {
+        "online": ""
+      },
+      "platforms": [
+        {
+          "name": "Additional chips with optiboot",
+          "architecture": "avr",
+          "version": "1.0.0",
+          "category": "Optiboot",
+          "help": {
+            "online": ""
+          },
+          "url": "https://github.com/musubi05/optiboot/archive/v7.0.zip",
+          "archiveFileName": "optiboot.zip",
+          "checksum": "SHA-256:a915655ace4a494b53d67be23de8b64e0e68bd3015a5fbfc077948663b8ae1a5",
+          "size": 263399,
+          "boards": [
+            {"name": "Arduino Pro Mini 4MHz"},
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
+        },
+      ]
+    }
+  ]
+}
