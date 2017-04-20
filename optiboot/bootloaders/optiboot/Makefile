@@ -17,6 +17,7 @@
 # etc...
 #
 # Edit History
+# 201704xx: Yugo K: Add atmega328_pro4 board.
 # 201406xx: WestfW: More Makefile restructuring.
 #                   Split off Makefile.1284, Makefile.extras, Makefile.custom
 #                   So that in theory, the main Makefile contains only the
@@ -499,6 +500,26 @@ atmega328_pro8_isp: LFUSE ?= FF
 # 2.7V brownout
 atmega328_pro8_isp: EFUSE ?= 05
 atmega328_pro8_isp: isp
+
+atmega328_pro4: TARGET = atmega328_pro_4MHz
+atmega328_pro4: CHIP = atmega328
+atmega328_pro4:
+	$(MAKE) $(CHIP) AVR_FREQ=4000000L LED_START_FLASHES=3
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+atmega328_pro4: BAUD_RATE = 9600
+
+atmega328_pro4_isp: atmega328_pro4
+atmega328_pro4_isp: TARGET = atmega328_pro_4MHz
+atmega328_pro4_isp: MCU_TARGET = atmega328p
+# 256 byte boot, SPIEN
+atmega328_pro4_isp: HFUSE ?= DE
+#  xtal (3<->8MHz) 14KCK/14CK+65ms
+atmega328_pro4_isp: LFUSE ?= FD
+# disable brownout
+atmega328_pro4_isp: EFUSE ?= 07
+atmega328_pro4_isp: BAUD_RATE = 9600
+atmega328_pro4_isp: isp
 
 #
 # Include additional platforms
