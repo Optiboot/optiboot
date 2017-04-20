@@ -334,8 +334,10 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 /*
  * We can never load flash with more than 1 page at a time, so we can save
  * some code space on parts with smaller pagesize by using a smaller int.
+ * We can use a single byte for page sizes up to 256, because a length of
+ * 256 will be truncated to 0, which will result in 256 byte transfers.
  */
-#if SPM_PAGESIZE > 255
+#if SPM_PAGESIZE > 256
 typedef uint16_t pagelen_t ;
 #define GETLENGTH(len) len = getch()<<8; len |= getch()
 #else
@@ -866,9 +868,9 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
     switch (memtype) {
     case 'E': // EEPROM
 #if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
-        while(len--) {
+        do {
 	    eeprom_write_byte((uint8_t *)(address++), *mybuff++);
-        }
+        } while (--len);
 #else
 	/*
 	 * On systems where EEPROM write is not supported, just busy-loop
