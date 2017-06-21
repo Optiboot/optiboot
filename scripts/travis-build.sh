@@ -2,7 +2,7 @@
 
 LOCAL_TOOLS_DIR=$HOME/avr-tools
 MAKE_PACKAGE=make_4.1-6_amd64.deb
-WGET_FLAGS="--retry-connrefused --tries=3 --timeout=60"
+WGET_FLAGS="--retry-connrefused --tries=3 --timeout=60 --continue"
 
 
 if [ -z "$TRAVIS_BUILD_DIR" ]; then
@@ -47,6 +47,7 @@ function download_and_unpack()
     wget $WGET_FLAGS "http://downloads.arduino.cc/arduino-$1-linux64.$arduExt"
     if [ $? -ne 0 ]; then
 	echo "ERROR: Can't download Arduino"
+	rm arduino-$1-linux64.$arduExt*
 	exit 1
     fi
     
@@ -56,16 +57,17 @@ function download_and_unpack()
 	cat arduino-$1.md5sum.txt|grep "linux64"|md5sum -c
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: md5sum for downloaded Arduino doesn't match"
+	    rm arduino-$1.md5sum.txt*
 	    exit 1
 	fi
-	rm arduino-$1.md5sum.txt
+	rm arduino-$1.md5sum.txt*
     fi
     
     # extract only avr-gcc
     tar xf arduino-$1-linux64.$arduExt --wildcards '*/hardware/tools/avr/'
 
     # clean up
-    rm arduino-$1-linux64.$arduExt    
+    rm arduino-$1-linux64.$arduExt*
 }
 
 function get_make4()
