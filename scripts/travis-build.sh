@@ -53,7 +53,7 @@ function download_and_unpack()
     # try to check md5sum, but Arduino provide only checksums for version 1.6 and greater
     wget $WGET_FLAGS https://downloads.arduino.cc/arduino-$1.md5sum.txt
     if [ $? -eq -0 ]; then
-	md5sum --ignore-missing -c arduino-$1.md5sum.txt
+	cat arduino-$1.md5sum.txt|grep "linux64"|md5sum -c
 	if [ $? -ne 0 ]; then
 	    echo "ERROR: md5sum for downloaded Arduino doesn't match"
 	    exit 1
