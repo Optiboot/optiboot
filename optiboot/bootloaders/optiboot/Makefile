@@ -17,6 +17,12 @@
 # etc...
 #
 # Edit History
+# 20170915: aweatherguy: Tweak to the baudcheck target to fix errors which
+#		         appear when building with Cygwin on Windows.
+#                        These errors are due to the avr-gcc pre-processor
+#                        output containing Windows line terminations (CR-LF).
+#                        The resulting shell script will not run.
+#                        Fix was to add a call to sed to remove the CR's
 # 201406xx: WestfW: More Makefile restructuring.
 #                   Split off Makefile.1284, Makefile.extras, Makefile.custom
 #                   So that in theory, the main Makefile contains only the
@@ -517,7 +523,9 @@ FORCE:
 
 baudcheck: FORCE
 	- @$(CC) --version
-	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
+	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp
+	- @sed 's/\r//' baudcheck.tmp >baudcheck.tmp.sh
+	- @rm baudcheck.tmp
 	- @$(SH) baudcheck.tmp.sh
 
 isp: $(TARGET)
