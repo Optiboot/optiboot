@@ -174,6 +174,10 @@
 /*    boot_page_fill_short() saves code space compared to the original	*/
 /*    method of extracting one byte at a time from mybuff and building	*/
 /*    int16_t arguments from them.					*/
+/*									*/
+/*    Updated some comments under the STK_PROG_PAGE case which were	*/
+/*    inaccurate (regarding EEPROM support).				*/
+/*									*/
 /*							  ***************/
 /* Aug 2014						  */
 /* 6.2 WestfW: make size of length variables dependent    */
