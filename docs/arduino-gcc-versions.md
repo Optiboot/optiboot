@@ -37,4 +37,5 @@ based on Linux versions.
 |1.8.0    |4.9.2    |same as 1.6.12, another patch for avrdude 6.3 | |
 |1.8.1    |4.9.2    |same as 1.8.0| |
 |1.8.2    |4.9.2    |recompiled, new toolchains, lot of changes| |
-|1.8.3    |4.9.2    |same as 1.8.2| yes |
+|1.8.3    |4.9.2    |same as 1.8.2| |
+|1.8.4    |4.9.2    |same as 1.8.2| yes |
