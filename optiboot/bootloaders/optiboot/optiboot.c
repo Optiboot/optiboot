@@ -960,18 +960,17 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 {
     uint8_t ch;
-
-    switch (memtype) {
-
+    do
+    {
 #if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
-    case 'E': // EEPROM
-	do {
+	if (memtype == 'E')
+	{
 	    putch(eeprom_read_byte((uint8_t *)(address++)));
-	} while (--length);
-	break;
+	}
+	else
+	{
 #endif
-    default:
-	do {
+
 #ifdef VIRTUAL_BOOT_PARTITION
         // Undo vector patch in bottom page so verify passes
 	    if (address == rstVect0) ch = rstVect0_sav;
@@ -992,7 +991,8 @@ static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 	    __asm__ ("lpm %0,Z+\n" : "=r" (ch), "=z" (address): "1" (address));
 #endif
 	    putch(ch);
-	} while (--length);
-	break;
-    } // switch
+#if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
+	}
+#endif
+    } while (--length);
 }

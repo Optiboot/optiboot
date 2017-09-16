@@ -393,7 +393,10 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
     7f32:	85 91       	lpm	r24, Z+
     7f34:	ef 01       	movw	r28, r30
     7f36:	14 d0       	rcall	.+40     	; 0x7f60 <putch>
-	} while (--length);
+#if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
+	}
+#endif
+    } while (--length);
     7f38:	01 50       	subi	r16, 0x01	; 1
     7f3a:	d1 f7       	brne	.-12     	; 0x7f30 <main+0x130>
     7f3c:	0e c0       	rjmp	.+28     	; 0x7f5a <main+0x15a>
