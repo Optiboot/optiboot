@@ -30,11 +30,11 @@ function download_and_unpack()
 
     # check if tools are already in place
     if [ -d arduino-$1/hardware/tools/avr ]; then
-	echo "Package $ver already downloaded and extracted, skipping"
+	echo "Arduino version $1 already downloaded and extracted, skipping"
 	return
     fi
 
-    echo "Downloading version $1"
+    echo "Downloading Arduino version $1"
     
     # default package extension
     local arduExt="tar.xz"
