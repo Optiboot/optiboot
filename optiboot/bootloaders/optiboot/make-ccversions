@@ -1,0 +1,34 @@
+#
+# Compile a couple of Optiboot variations using several different compilers
+#
+
+
+# A list of compilers that are available.
+#   This is, um, 4.3.3, 4.6.2, 4.8.1, 4.9.2, and 5.4.0
+#
+COMPS='
+/usr/local/CrossPack-AVR-20100115/bin/
+/usr/local/CrossPack-AVR-20121207/bin/
+/usr/local/CrossPack-AVR-48/bin/
+/usr/local/avr8-atmel-20160624/bin/
+/usr/local/avr8-Atmel-3.6.0.487/bin/
+'
+
+for c in $COMPS; do
+  #  Pretty print for readability
+  echo
+  echo
+  echo ===========================================================
+  echo Using compiler in $c
+  $c/avr-gcc --version | head -1
+  echo ===========================================================
+
+  echo ---------------  make GCCROOT=$c atmega328
+  make GCCROOT=$c atmega328
+  echo ---------------  make GCCROOT=$c atmega1284
+  make GCCROOT=$c atmega1284 
+  echo ---------------  make GCCROOT=$c luminet
+  make GCCROOT=$c luminet
+  echo ---------------  make GCCROOT=$c mega1280
+  make GCCROOT=$c mega1280
+done
