@@ -17,19 +17,19 @@ Optiboot is now installed by default on the Arduino Uno. It can be installed on 
 More detailed documentation is being added (slowly) to the [repository wiki](https://github.com/Optiboot/optiboot/wiki).
 
 ## Notes on IDE Version compatability
-Optiboot in "compatible", it a loose sense, will all versions of the Arduino IDE.  It was originally written at about the same time as v1.0, and has some "quirks" that date back to that timeframe.  Most significantly, install procedures and locations change between releases, and the ability to compile optiboot using only the tools installed with the IDE broke in the v1.5 timeframe.
+Optiboot is "compatible", in a loose sense, with all versions of the Arduino IDE.  It was originally written at about the same time as v1.0, and has some "quirks" that date back to that timeframe.  Most significantly, install procedures and locations change between releases, and the ability to compile Optiboot using only the tools installed with the IDE broke in the v1.5 timeframe.
 
 ## To install into the Arduino software ##
-You do NOT need to "install" Optiboot if you are trying to update an installed platform that already uses some form of Optiboot.  In that case, you should probably just find and replace the existing .hex files from the platform support directories.  Using the optiboot "install" procedure does not install any cores or variants, so it is only useful for cpus that are already supported by the standard Arduino core. (or, if all you want to do is install bootloaders.)
+You do NOT need to "install" Optiboot if you are trying to update an installed platform that already uses some form of Optiboot.  In that case, you should probably just find and replace the existing .hex files from the platform support directories.  Using the Optiboot "install" procedure does not install any cores or variants, so it is only useful for CPUs that are already supported by the standard Arduino core (or, if all you want to do is install bootloaders.)
 
 The following instructions are based on using the Arduino "Board Manager", present in IDE versions 1.6.5 and later.
 
-  1. Find the desired Optiboot release on the [Optiboot Rlease page] (https://github.com/Optiboot/optiboot/releases).
-  2. Use the "Copy Link" feature of your browswer copy the URL of the associated **.json** file.
-  3. Paste this url into the "Additional Boards Manager URLs" field in the Arduino IDE "Preferences" pane. (Separate it from other URLs that might be present with a comma.)
-  4. After closing the preferences pain, the **Tools/Boards/Boards Manager** menu should include an entry for that version of Optiboot.  Select that entry and click the **Install** button.
+  1. Find the desired Optiboot release on the [Optiboot Release page] (https://github.com/Optiboot/optiboot/releases).
+  2. Use the "Copy link address" feature of your browser to copy the URL of the associated **.json** file.
+  3. Paste this url into the "Additional Boards Manager URLs" field in the Arduino IDE "Preferences" pane. (Separate it from other URLs that might be present with a comma or click the icon to the right of the field to insert it on a new line.)
+  4. After closing the Preferences window, the **Tools/Boards/Boards Manager** menu should include an entry for that version of Optiboot.  Select that entry and click the **Install** button.
 
-For addition installation information, see the [Optiboot AddingOptibootChipsToIde Wiki page] (https://github.com/Optiboot/optiboot/wiki/AddingOptibootChipsToIde)
+For additional installation information, see the [Optiboot AddingOptibootChipsToIde Wiki page] (https://github.com/Optiboot/optiboot/wiki/AddingOptibootChipsToIde)
 
 
 <!---
