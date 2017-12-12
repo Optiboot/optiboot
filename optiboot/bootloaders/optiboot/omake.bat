@@ -14,7 +14,7 @@ REM Things are good; try to set the paths and run the compile
 
 REM --------------------------------------------------------
    call :findArduino
-   DEBUG Using make %*
+   %DEBUG% Using make %*
    make %*
    exit /b 0
 REM --------------------------------------------------------
@@ -132,8 +132,11 @@ REM setx will set a permanent path in the registry, but it won't take effect
 REM until the next invocation of cmd.exe
 REM setx PATH %bin%;%etc%
 REM
-%DEBUG% echoing  PATH %PATH%;%bin%;%etc%
-PATH %%PATH%%;%bin%;%etc%
+%DEBUG% adding arduin bin and etc to PATH %bin%;%etc%
+call :shorten "%bin%"
+PATH %PATH%;!shortout!
+call :shorten "%etc%"
+PATH %PATH%;!shortout!
 
 %DEBUG% Have utils = %utils%
 
@@ -143,7 +146,8 @@ IF %utils% NEQ "" (
    call :which make.exe
    if "%gotwhich%" EQU "" (
       echo Found Make at %utils%
-      PATH %%PATH%%;%bin%;%etc%;%utils%
+      call :shorten %utils%
+      PATH %PATH%;!shortout!
    )
 )
 call :clearerrors
@@ -204,5 +208,14 @@ REM ----------------------------------------------------------------------
 REM Clear the ERRORLEVEL to 0, if it happened to be set
 :clearerrors
    exit /b 0
+
+
+REM ----------------------------------------------------------------------
+
+REM Shorten a pathname to 8.3 format filenames.
+
+:shorten
+  set shortout=%~s1
+  exit /b 0
 
 :eof
