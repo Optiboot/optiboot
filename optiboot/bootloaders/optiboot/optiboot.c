@@ -1,5 +1,6 @@
 #define FUNC_READ 1
 #define FUNC_WRITE 1
+
 /**********************************************************/
 /* Optiboot bootloader for Arduino                        */
 /*                                                        */
@@ -152,7 +153,32 @@
 
 /**********************************************************/
 /* Edit History:					  */
-/*							  */
+/*							  ***************/
+/*    20170915 by aweatherguy. Code space reductions			*/
+/*    save 24 bytes on ATmega328P.					*/
+/*									*/
+/*    In main(), in the code for LOAD_ADDRESS, there was a temporary	*/
+/*    uint16_t named "newAddress". This seemed to serve no purpose	*/
+/*    and was later copied into "address". Removing "newAddress"	*/
+/*    and storing the command parameters directly into "address"	*/
+/*									*/
+/*    In main(), in the code for LOAD_ADDRESS, if RAMPZ is defined	*/
+/*    then it's MSB is tested to determine the value to be written	*/
+/*    to RAMPZ. Code space can be saved by first placing the address	*/
+/*    high byte in a local uint8_t and then later testing the MSB	*/
+/*    of the uint8_t (0x80) instead of the uint16_t (0x8000).		*/
+/*									*/
+/*    In write_buffer(), the command parameter data loaded into		*/
+/*    mybuff is in lil' endian order. So, mybuff can be interpreted 	*/
+/*    as int16_t[]. Doing this to extract values to be passed to	*/
+/*    boot_page_fill_short() saves code space compared to the original	*/
+/*    method of extracting one byte at a time from mybuff and building	*/
+/*    int16_t arguments from them.					*/
+/*									*/
+/*    Updated some comments under the STK_PROG_PAGE case which were	*/
+/*    inaccurate (regarding EEPROM support).				*/
+/*									*/
+/*							  ***************/
 /* Aug 2014						  */
 /* 6.2 WestfW: make size of length variables dependent    */
 /*              on the SPM_PAGESIZE.  This saves space    */
@@ -557,15 +583,18 @@ int main(void) {
     }
     else if(ch == STK_LOAD_ADDRESS) {
       // LOAD ADDRESS
-      uint16_t newAddress;
-      newAddress = getch();
-      newAddress = (newAddress & 0xff) | (getch() << 8);
+      // save high byte in uint8_t so that if RAMPZ is defined we can
+      // test the MSB on a uint8_t instead of having to look at the
+      // MSB on address (which is uint16_t).
+      uint8_t highAddress;
+      address = (uint16_t)getch();
+      highAddress = getch();
+      address |= (uint16_t)highAddress << 8;
 #ifdef RAMPZ
       // Transfer top bit to RAMPZ
-      RAMPZ = (newAddress & 0x8000) ? 1 : 0;
+      RAMPZ = (highAddress & 0x80) ? 1 : 0;
 #endif
-      newAddress += newAddress; // Convert from word address to byte address
-      address = newAddress;
+      address += address; // Convert from word address to byte address
       verifySpace();
     }
     else if(ch == STK_UNIVERSAL) {
@@ -575,7 +604,10 @@ int main(void) {
     }
     /* Write memory, length is big endian and is in bytes */
     else if(ch == STK_PROG_PAGE) {
-      // PROGRAM PAGE - we support flash programming only, not EEPROM
+      // PROGRAM PAGE
+      // FLASH memory programming is always supported.
+      // EEPROM programming is only supported if the
+      // SUPPORT_EEPROM macro is defined. See write_buffer().
       uint8_t desttype;
       uint8_t *bufPtr;
       pagelen_t savelength;
@@ -887,9 +919,13 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 	 */
 	{
 	    // Copy buffer into programming buffer
-	    uint8_t *bufPtr = mybuff;
+	    // mybuff contains data in lil' endian order (LSB first),
+	    // and Atmel MCUs store uint16_t's in memory in lil' endian order.
+	    // Therefore, we can interpret mybuff as an array of uint16_t
+	    // and this saves program space compared to extracting a single
+	    // byte at a time from mybuff and using them to build uint16_t's. 
+	    uint16_t *bufPtr = (uint16_t *)mybuff;
 	    uint16_t addrPtr = (uint16_t)(void*)address;
-
 	    /*
 	     * Start the page erase and wait for it to finish.  There
 	     * used to be code to do this while receiving the data over
@@ -903,10 +939,7 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 	     * Copy data from the buffer into the flash write buffer.
 	     */
 	    do {
-		uint16_t a;
-		a = *bufPtr++;
-		a |= (*bufPtr++) << 8;
-		__boot_page_fill_short((uint16_t)(void*)addrPtr,a);
+		__boot_page_fill_short((uint16_t)(void*)addrPtr,*bufPtr++);
 		addrPtr += 2;
 	    } while (len -= 2);
 
@@ -927,18 +960,17 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 {
     uint8_t ch;
-
-    switch (memtype) {
-
+    do
+    {
 #if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
-    case 'E': // EEPROM
-	do {
+	if (memtype == 'E')
+	{
 	    putch(eeprom_read_byte((uint8_t *)(address++)));
-	} while (--length);
-	break;
+	}
+	else
+	{
 #endif
-    default:
-	do {
+
 #ifdef VIRTUAL_BOOT_PARTITION
         // Undo vector patch in bottom page so verify passes
 	    if (address == rstVect0) ch = rstVect0_sav;
@@ -959,7 +991,8 @@ static inline void read_mem(uint8_t memtype, uint16_t address, pagelen_t length)
 	    __asm__ ("lpm %0,Z+\n" : "=r" (ch), "=z" (address): "1" (address));
 #endif
 	    putch(ch);
-	} while (--length);
-	break;
-    } // switch
+#if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
+	}
+#endif
+    } while (--length);
 }

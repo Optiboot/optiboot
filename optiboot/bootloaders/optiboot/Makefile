@@ -17,6 +17,12 @@
 # etc...
 #
 # Edit History
+# 20170915: aweatherguy: Tweak to the baudcheck target to fix errors which
+#		         appear when building with Cygwin on Windows.
+#                        These errors are due to the avr-gcc pre-processor
+#                        output containing Windows line terminations (CR-LF).
+#                        The resulting shell script will not run.
+#                        Fix was to add a call to sed to remove the CR's
 # 201406xx: WestfW: More Makefile restructuring.
 #                   Split off Makefile.1284, Makefile.extras, Makefile.custom
 #                   So that in theory, the main Makefile contains only the
@@ -190,19 +196,19 @@ ifdef SINGLESPEED
 SS_CMD = -DSINGLESPEED=1
 endif
 
+ifdef SUPPORT_EEPROM
+SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
+dummy = FORCE
+endif
+
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 ifdef UART
 UART_CMD = -DUART=$(UART)
 endif
-
-# Not supported yet
-# ifdef SUPPORT_EEPROM
-# SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
-# dummy = FORCE
-# endif
 
 # Not supported yet
 # ifdef TIMEOUT_MS
@@ -517,7 +523,9 @@ FORCE:
 
 baudcheck: FORCE
 	- @$(CC) --version
-	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp.sh
+	- @$(CC) $(CFLAGS) -E baudcheck.c -o baudcheck.tmp
+	- @sed 's/\r//' baudcheck.tmp >baudcheck.tmp.sh
+	- @rm baudcheck.tmp
 	- @$(SH) baudcheck.tmp.sh
 
 isp: $(TARGET)
