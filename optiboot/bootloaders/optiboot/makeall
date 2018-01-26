@@ -30,4 +30,5 @@ make xplained328pb
 make atmega8
 make atmega168
 make atmega328
-make atmega328pb
+make atmega328pb@16
+make atmega328pb@20

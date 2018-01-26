@@ -320,6 +320,16 @@ atmega328pb: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=
 atmega328pb: $(PROGRAM)_atmega328pb.hex
 atmega328pb: $(PROGRAM)_atmega328pb.lst
 
+atmega328pb@16: TARGET = atmega328pb_16MHz
+atmega328pb@16: AVR_FREQ = 16000000L
+atmega328pb@20: TARGET = atmega328pb_20MHz
+atmega328pb@20: AVR_FREQ = 20000000L
+atmega328pb@%: CHIP = atmega328pb
+atmega328pb@%:
+	$(MAKE) $(CHIP) AVR_FREQ=$(AVR_FREQ)
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
 atmega328pb_isp: atmega328pb
 atmega328pb_isp: TARGET = atmega328pb
 atmega328pb_isp: MCU_TARGET = atmega328pb
