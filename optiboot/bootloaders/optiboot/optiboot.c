@@ -128,6 +128,18 @@
 /* UART number (0..n) for devices with more than          */
 /* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
+/* OSCCAL_EEPROM_ADDR                                     */
+/* On startup, load an oscillator calibration value from  */
+/* this address in EEPROM and write it to OSCCAL (unless  */
+/* it is 0xff).                                           */
+/*                                                        */
+/* OSCCAL_PROGMEM                                         */
+/* On startup, load an oscillator calibration value from  */
+/* the top of the flash memory (unless it is 0xff, which  */
+/* is the default). This byte is put into its own .osccal */
+/* section, so its address should be set through the      */
+/* linker.                                                */
+/*                                                        */
 /**********************************************************/
 
 /**********************************************************/
@@ -238,6 +250,11 @@
 
 unsigned const int __attribute__((section(".version"))) 
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
+
+#if defined(OSCCAL_PROGMEM)
+unsigned const char __attribute__((section(".osccal")))
+optiboot_osccal = 0xff;
+#endif
 
 
 #include <inttypes.h>
@@ -470,6 +487,19 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
+#if defined(OSCCAL_EEPROM_ADDR)
+  // Load OSCCAL before app start, so the app does not have to
+  ch = eeprom_read_byte((uint8_t*)OSCCAL_EEPROM_ADDR);
+  if (ch != 0xff)
+    OSCCAL = ch;
+#endif
+
+#if defined(OSCCAL_PROGMEM)
+  // Load OSCCAL before app start, so the app does not have to
+  ch = pgm_read_byte(&optiboot_osccal);
+  if (ch != 0xff)
+    OSCCAL = ch;
+#endif
   /*
    * modified Adaboot no-wait mod.
    * Pass the reset reason to app.  Also, it appears that an Uno poweron
