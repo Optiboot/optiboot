@@ -567,11 +567,31 @@ int main(void) {
       newAddress += newAddress; // Convert from word address to byte address
       address = newAddress;
       verifySpace();
-    }
-    else if(ch == STK_UNIVERSAL) {
-      // UNIVERSAL command is ignored
-      getNch(4);
-      putch(0x00);
+
+    /* STK500 Universal Command */
+    } else if(ch == STK_UNIVERSAL) {
+      #if defined(BIGBOOT)           // real data
+      /* read fuse and lock bits; it takes additional 80 bytes */
+        uint8_t ucb1 = getch();      // universal command byte 1
+        uint8_t ucb2 = getch();      // universal command byte 2
+        getNch(2);                   // discard universal command byte 3-4
+        uint8_t ucr  = 0;            // response
+
+      /* mapping algorithm for function parameter, optimized to save a space:
+        ucb1(0x50), ucb2(0x00) -> GET_LOW_FUSE_BITS     (0x0000)
+        ucb1(0x58), ucb2(0x00) -> GET_LOCK_BITS         (0x0001)
+        ucb1(0x50), ucb2(0x08) -> GET_EXTENDED_FUSE_BITS(0x0002)
+        ucb1(0x58), ucb2(0x08) -> GET_HIGH_FUSE_BITS    (0x0003)
+       */
+        if((ucb1 & ~(0x08)) == 0x50 && (ucb2 & ~(0x08)) == 0x00) {
+          ucb1  = ((ucb1 & 0x08) ? 1 : 0) | (ucb2 >> 2);
+          ucr   = boot_lock_fuse_bits_get((uint16_t)ucb1);
+        }
+	putch(ucr);
+      #else                          // universal command is ignored
+        getNch(4);                   // 4 bytes of data/command
+	putch(0x00);                 // response
+      #endif
     }
     /* Write memory, length is big endian and is in bytes */
     else if(ch == STK_PROG_PAGE) {
