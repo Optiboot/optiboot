@@ -21,6 +21,9 @@ uint8_t resetFlags __attribute__ ((section(".noinit")));
 /*
  * Next, we need to put some code to save reset cause from the bootload (in r2)
  * to the variable.  Again, avr-gcc provides special code sections for this.
+ * If compiled with link time optimization (-flto), as done by the Arduno
+ * IDE version 1.6 and higher, we need the "used" attribute to prevent this
+ * from being omitted.
  */
 void resetFlagsInit(void) __attribute__ ((naked))
                           __attribute__ ((used))
