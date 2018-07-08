@@ -506,6 +506,7 @@ include Makefile.atmel
 include Makefile.extras
 include Makefile.1284
 include Makefile.custom
+include Makefile.2560
 
 
 #---------------------------------------------------------------------------
