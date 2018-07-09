@@ -15,6 +15,7 @@ atmega644p: LDSECTIONS  = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.
 atmega644p: CFLAGS += $(UART_CMD)
 atmega644p: $(PROGRAM)_atmega644p.hex
 atmega644p: $(PROGRAM)_atmega644p.lst
+atmega644p: LIBS=-latmega644
 
 atmega1284: TARGET = atmega1284p
 atmega1284: MCU_TARGET = atmega1284p
@@ -24,6 +25,7 @@ atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=
 atmega1284: CFLAGS += $(UART_CMD)
 atmega1284: $(PROGRAM)_atmega1284p.hex
 atmega1284: $(PROGRAM)_atmega1284p.lst
+atmega1284: LIBS=-latmega1284
 
 atmega1284p: atmega1284
 
@@ -137,3 +139,23 @@ wildfirev3_isp: LFUSE ?= F7
 # 2.7V brownout
 wildfirev3_isp: EFUSE ?= FD
 wildfirev3_isp: isp
+
+xplbee: TARGET = $@
+xplbee: CHIP = atmega1284p
+xplbee:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B7
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
+xplbee_isp: xplbee
+xplbee_isp: TARGET = xplbee
+xplbee_isp: MCU_TARGET = atmega1284p
+xplbee_isp: ISPTOOL ?= dragon_jtag
+xplbee_isp: ISPPORT ?= usb
+# 1024 byte boot, JTAG Enabled
+xplbee_isp: HFUSE ?= 9E
+# Full Swing xtal (16MHz) 16KCK/14CK+65ms
+xplbee_isp: LFUSE ?= F7
+# 2.7V brownout
+xplbee_isp: EFUSE ?= FD
+xplbee_isp: isp
