@@ -290,19 +290,29 @@ atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += $(COMMON_OPTIONS)
 atmega328: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT
 atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else
+# bigboot version is 1k long; starts earlier
+atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
 atmega328: $(PROGRAM)_atmega328.hex
 atmega328: $(PROGRAM)_atmega328.lst
 
 atmega328_isp: atmega328
 atmega328_isp: TARGET = atmega328
 atmega328_isp: MCU_TARGET = atmega328p
+ifndef BIGBOOT
 # 512 byte boot, SPIEN
 atmega328_isp: HFUSE ?= DE
+else
+# 1k byte boot, SPIEN
+atmega328_isp: HFUSE ?= DC
+endif
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_isp: LFUSE ?= FF
 # 2.7V brownout
-atmega328_isp: EFUSE ?= 05
+atmega328_isp: EFUSE ?= FD
 atmega328_isp: isp
 
 #Atmega1280
