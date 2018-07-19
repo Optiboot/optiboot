@@ -1,0 +1,60 @@
+language: bash
+dist: trusty
+sudo: false
+
+cache:
+  directories:
+    - $HOME/avr-tools    
+install: true
+
+env:
+  global:
+#    - ARDUINO_VERSION=1.0.6
+    - ARDUINO_VERSION=1.6.9
+#    - ARDUINO_VERSION=1.6.13
+#    - ARDUINO_VERSION=1.8.5
+  matrix:
+    - OPTIBOOT_TARGET=bobuino
+    - OPTIBOOT_TARGET=diecimila
+    - OPTIBOOT_TARGET=lilypad
+    - OPTIBOOT_TARGET=lilypad_resonator
+    - OPTIBOOT_TARGET=luminet
+    - OPTIBOOT_TARGET=mega1280
+    - OPTIBOOT_TARGET=mighty1284
+    - OPTIBOOT_TARGET=pro16
+    - OPTIBOOT_TARGET=pro20
+    - OPTIBOOT_TARGET=pro8
+    - OPTIBOOT_TARGET=sanguino
+    - OPTIBOOT_TARGET=virboot328
+    - OPTIBOOT_TARGET=virboot8
+    - OPTIBOOT_TARGET=wildfire
+    - OPTIBOOT_TARGET=wildfirev2
+    - OPTIBOOT_TARGET=wildfirev3
+    - OPTIBOOT_TARGET=xplained168pb
+    - OPTIBOOT_TARGET=xplained328p
+    - OPTIBOOT_TARGET=xplained328pb
+    - OPTIBOOT_TARGET=atmega1280
+    - OPTIBOOT_TARGET=atmega1284
+    - OPTIBOOT_TARGET=atmega1284p
+    - OPTIBOOT_TARGET=atmega16
+    - OPTIBOOT_TARGET=atmega168
+    - OPTIBOOT_TARGET=atmega168p
+    - OPTIBOOT_TARGET=atmega32
+    - OPTIBOOT_TARGET=atmega328
+    - OPTIBOOT_TARGET=atmega328_pro8
+    - OPTIBOOT_TARGET=atmega644p
+    - OPTIBOOT_TARGET=atmega8
+    - OPTIBOOT_TARGET=atmega88
+    - OPTIBOOT_TARGET=attiny84
+
+matrix:
+  allow_failures:
+    - env: OPTIBOOT_TARGET=attiny84
+
+script: scripts/travis-build.sh $ARDUINO_VERSION $OPTIBOOT_TARGET
+
+notifications:
+  email:
+    on_success: always
+    on_failure: always
+ 
