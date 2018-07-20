@@ -919,7 +919,7 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 	     * the serial link, but the performance improvement was slight,
 	     * and we needed the space back.
 	     */
-	    __boot_page_erase_short((uint16_t)(void*)address);
+	    optiboot_page_erase((uint16_t)(void*)address);
 	    boot_spm_busy_wait();
 
 	    /*
@@ -929,18 +929,18 @@ static inline void writebuffer(int8_t memtype, uint8_t *mybuff,
 		uint16_t a;
 		a = *bufPtr++;
 		a |= (*bufPtr++) << 8;
-		__boot_page_fill_short((uint16_t)(void*)addrPtr,a);
+		optiboot_page_fill((uint16_t)(void*)addrPtr,a);
 		addrPtr += 2;
 	    } while (len -= 2);
 
 	    /*
 	     * Actually Write the buffer to flash (and wait for it to finish.)
 	     */
-	    __boot_page_write_short((uint16_t)(void*)address);
+	    optiboot_page_write((uint16_t)(void*)address);
 	    boot_spm_busy_wait();
 #if defined(RWWSRE)
 	    // Reenable read access to flash
-	    boot_rww_enable();
+	    optiboot_rww_enable();
 #endif
 	} // default block
 	break;
