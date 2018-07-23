@@ -472,21 +472,49 @@ int main(void) {
 #endif
 
   /*
-   * modified Adaboot no-wait mod.
-   * Pass the reset reason to app.  Also, it appears that an Uno poweron
-   * can leave multiple reset flags set; we only want the bootloader to
-   * run on an 'external reset only' status
+   * Protect as much from MCUSR as possible for application
+   * and still skip bootloader if not necessary
+   * 
+   * Code by MarkG55
+   * see discusion in https://github.com/Optiboot/optiboot/issues/97
    */
 #if !defined(__AVR_ATmega16__)
   ch = MCUSR;
-  MCUSR = 0;
 #else
   ch = MCUCSR;
-  MCUCSR = 0;
 #endif
-  if (ch & (_BV(WDRF) | _BV(BORF) | _BV(PORF)))
+  // Skip all logic and run bootloader if MCUSR is cleared (application request)
+  if (ch != 0) {
+    /*
+     * To run the boot loader, External Reset Flag must be set.
+     * If not, we could make shortcut and jump directly to application code.
+     * Also WDRF set with EXTRF is a result of Optiboot timeout, so we
+     * shouldn't run bootloader in loop :-) That's why:
+     *  1. application is running if WDRF is cleared
+     *  2. we clear WDRF if it's set with EXTRF to avoid loops
+     * One problematic scenario: broken application code sets watchdog timer 
+     * without clearing MCUSR before and triggers it quickly. But it's
+     * recoverable by power-on with pushed reset button.
+     */
+    if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) { 
+      if (ch & _BV(EXTRF)) {
+        /*
+         * Clear WDRF because it was most probably set by wdr in bootloader.
+         * It's also needed to avoid loop by broken application which could
+         * prevent entering bootloader.
+         * '&' operation is skipped to spare few bytes as bits in MCUSR
+         * can only be cleared.
+         */
+#if !defined(__AVR_ATmega16__)
+        MCUSR = ~(_BV(WDRF));  
+#else
+        MCUCSR = ~(_BV(WDRF));  
+#endif
+      }
       appStart(ch);
-
+    }
+  }
+  
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
@@ -507,7 +535,7 @@ int main(void) {
 #endif
 
   // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
+  watchdogConfig(WATCHDOG_2S);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH)
   /* Set LED pin as output */
