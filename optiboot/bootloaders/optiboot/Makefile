@@ -185,6 +185,7 @@ endif
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 ifdef UART
@@ -192,10 +193,10 @@ UART_CMD = -DUART=$(UART)
 endif
 
 # Not supported yet
-# ifdef SUPPORT_EEPROM
-# SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
-# dummy = FORCE
-# endif
+ifdef SUPPORT_EEPROM
+SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
+dummy = FORCE
+endif
 
 # Not supported yet
 # ifdef TIMEOUT_MS
@@ -233,7 +234,8 @@ virboot8: TARGET = atmega8
 virboot8: MCU_TARGET = atmega8
 virboot8: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-Dsave_vect_num=EE_RDY_vect_num'
 virboot8: AVR_FREQ ?= 16000000L 
-virboot8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe
+# Start address of 1D80 allows for size up to 640 bytes, app up to 7552
+virboot8: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 virboot8: $(PROGRAM)_virboot8.hex
 virboot8: $(PROGRAM)_virboot8.lst
 
@@ -254,8 +256,20 @@ virboot328_isp: HFUSE ?= DF
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 virboot328_isp: LFUSE ?= FF
 # 2.7V brownout
-virboot328_isp: EFUSE ?= 05
+virboot328_isp: EFUSE ?= FD
 virboot328_isp: isp
+
+virboot8_isp: virboot8
+virboot8_isp: TARGET = virboot8
+virboot8_isp: MCU_TARGET = atmega8
+# SPIEN, CKOPT (for full swing xtal), boot section 1k
+#  Note that we need boot section to include our SPM instructions,
+#   even though we do not enable BOOTRST
+virboot8_isp: HFUSE ?= CB
+# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
+virboot8_isp: LFUSE ?= BF
+virboot8_isp: isp
+
 
 
 # Diecimila, Duemilanove with m168, and NG use identical bootloaders
