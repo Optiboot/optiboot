@@ -158,6 +158,11 @@ else
 LED_START_FLASHES_CMD = -DLED_START_FLASHES=3
 endif
 
+ifdef LED_START_ON
+LED_START_ON_CMD = -DLED_START_ON=1
+dummy = FORCE
+endif
+
 # BIG_BOOT: Include extra features, up to 1K.
 ifdef BIGBOOT
 BIGBOOT_CMD = -DBIGBOOT=1
@@ -185,7 +190,7 @@ endif
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
-COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 ifdef UART
@@ -279,7 +284,12 @@ virboot8_isp: isp
 atmega168: TARGET = atmega168
 atmega168: MCU_TARGET = atmega168
 atmega168: CFLAGS += $(COMMON_OPTIONS)
-atmega168: AVR_FREQ ?= 16000000L 
+atmega168: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT
+atmega168: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+else
+atmeg168: LDSECTIONS  = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+endif
 atmega168: $(PROGRAM)_atmega168.hex
 atmega168: $(PROGRAM)_atmega168.lst
 
@@ -289,8 +299,13 @@ atmega168_isp: TARGET = atmega168
 atmega168_isp: HFUSE ?= DD
 # Full swing (16MHz) 16KCK/14CK+65ms
 atmega168_isp: LFUSE ?= F7
+ifndef BIGBOOT
 # 512 byte boot
 atmega168_isp: EFUSE ?= 04
+else
+# 1024byte boot
+atmega168_isp: EFUSE ?= FA
+endif
 atmega168_isp: isp
 
 atmega16: TARGET = atmega16
@@ -344,15 +359,24 @@ atmega8: TARGET = atmega8
 atmega8: MCU_TARGET = atmega8
 atmega8: CFLAGS += $(COMMON_OPTIONS)
 atmega8: AVR_FREQ ?= 16000000L 
+ifndef BIGBOOT
 atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
+else
+atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
+endif
 atmega8: $(PROGRAM)_atmega8.hex
 atmega8: $(PROGRAM)_atmega8.lst
 
 atmega8_isp: atmega8
 atmega8_isp: TARGET = atmega8
 atmega8_isp: MCU_TARGET = atmega8
+ifndef BIGBOOT
 # SPIEN, CKOPT (for full swing xtal), Bootsize=512B
 atmega8_isp: HFUSE ?= CC
+else
+# SPIEN, CKOPT (for full swing xtal), Bootsize=1024B
+atmega8_isp: HFUSE ?= CA
+endif
 # 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
 atmega8_isp: LFUSE ?= BF
 atmega8_isp: isp
