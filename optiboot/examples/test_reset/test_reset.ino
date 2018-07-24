@@ -16,7 +16,7 @@
  * various initialization code.
  * avr-gcc provides for this via the ".noinit" section.
  */
-uint8_t resetFlags __attribute__ ((section(".noinit")));
+uint8_t resetFlag __attribute__ ((section(".noinit")));
 
 /*
  * Next, we need to put some code to save reset cause from the bootload (in r2)
@@ -35,15 +35,13 @@ void resetFlagsInit(void)
    * This is a "simple" matter of storing (STS) r2 in the special variable
    * that we have created.  We use assembler to access the right variable.
    */
-  __asm__ __volatile__ ("sts %0, r2\n" : "=m" (resetFlags) :);
+  __asm__ __volatile__ ("sts %0, r2\n" : "=m" (resetFlag) :);
 }
 
-void setup() {
-  Serial.begin(9600);  // Initialize serial port
+void printReset(const char *label, uint8_t resetFlags)
+{
   
-  Serial.println("Reset flag test");
-  
-  Serial.print("Have reset flag value 0x");
+  Serial.print(label);
   Serial.print(resetFlags, HEX);
   
   /*
@@ -78,6 +76,16 @@ void setup() {
   Serial.println("");
 }
 
+
+void setup() {
+  Serial.begin(9600);  // Initialize serial port
+  
+  Serial.println("Reset flag test");
+  printReset("Actual MCUSR content: 0x", MCUSR);
+  printReset("Passed in GPIOR0: 0x", GPIOR0);
+  printReset("Passed in R2: 0x", resetFlag);
+}
+  
 void loop() {
   Serial.println("Send something to reset through watchdog peripheral");
   while (Serial.read() < 0) ;
