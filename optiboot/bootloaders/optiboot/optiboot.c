@@ -273,11 +273,12 @@ typedef union {
 } addr16_t;
 
 /*
- * Note that we use our own version of "boot.h"
+ * Note that we use a replacement of "boot.h"
  * <avr/boot.h> uses sts instructions, but this version uses out instructions
- * This saves cycles and program memory.  Sorry for the name overlap.
+ * This saves cycles and program memory, if possible.
+ * boot_opt.h pulls in the standard boot.h for the odd target (?)
  */
-#include "boot.h"
+#include "boot_opt.h"
 
 
 // We don't use <avr/wdt.h> as those routines have interrupt overhead we don't need.
@@ -997,7 +998,7 @@ static inline void writebuffer(int8_t memtype, addr16_t mybuff,
 	    boot_spm_busy_wait();
 #if defined(RWWSRE)
 	    // Reenable read access to flash
-	    boot_rww_enable();
+	    __boot_rww_enable_short();
 #endif
 	} // default block
 	break;
