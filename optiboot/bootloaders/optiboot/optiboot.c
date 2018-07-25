@@ -909,6 +909,20 @@ void flash_led(uint8_t count) {
     LED_PIN |= _BV(LED);
 #endif
     watchdogReset();
+#ifndef SOFT_UART
+    /*
+     * While in theory, the STK500 initial commands would be buffered
+     *  by the UART hardware, avrdude sends several attempts in rather
+     *  quick succession, some of which will be lost and cause us to
+     *  get out of sync.  So if we see any data; stop blinking.
+     */
+    if (UART_SRA & _BV(RXC0))
+	break;
+#else
+// This doesn't seem to work?
+//    if ((UART_PIN & (1<<UART_RX_BIT)) == 0)
+//	break;  // detect start bit on soft uart too.
+#endif
   } while (--count);
 }
 #endif
