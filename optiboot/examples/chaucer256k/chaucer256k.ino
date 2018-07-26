@@ -3736,37 +3736,43 @@ const char knightsTale6[] PROGMEM= {
 void setup() {
   int i=0;
   uint8_t c;
-  Serial.begin(9600);
+  Serial.begin(115200);
   do {
-    c = pgm_read_byte(knightsTale+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
+  i = 0;
   do {
-    c = pgm_read_byte(knightsTale2+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale2)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
+  i = 0;
   do {
-    c = pgm_read_byte(knightsTale3+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale3)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
+  i = 0;
   do {
-    c = pgm_read_byte(knightsTale4+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale4)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
+  i = 0;
   do {
-    c = pgm_read_byte(knightsTale5+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale5)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
+  i = 0;
   do {
-    c = pgm_read_byte(knightsTale6+i);
+    c = pgm_read_byte_far(pgm_get_far_address(knightsTale6)+i);
     if (c) Serial.write(c);
     i++;
   } while (c);
 }
+
 void loop() {
 }

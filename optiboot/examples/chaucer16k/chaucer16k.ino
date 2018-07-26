@@ -2,7 +2,7 @@
 // Full text at http://www.gutenberg.org/dirs/etext00/cbtls12.txt
 #include <avr/pgmspace.h>
 
-prog_char knightsTale[] PROGMEM= {
+const char knightsTale[] PROGMEM= {
 "                     THE KNIGHT'S TALE <1>\n"
 "\n"
 "\n"
@@ -295,10 +295,10 @@ prog_char knightsTale[] PROGMEM= {
 void setup() {
   int i=0;
   uint8_t c;
-  Serial.begin(9600);
+  Serial.begin(115200);
   do {
     c = pgm_read_byte(knightsTale+i);
-    if (c) Serial.print(c,BYTE);
+    if (c) Serial.write(c);
     i++;
   } while (c);
 }
