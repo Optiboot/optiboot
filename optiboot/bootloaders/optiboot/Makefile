@@ -159,24 +159,32 @@ LED_START_FLASHES_CMD = -DLED_START_FLASHES=3
 endif
 
 ifdef LED_START_ON
+ifneq ($(LED_START_ON), 0)
 LED_START_ON_CMD = -DLED_START_ON=1
+endif
 dummy = FORCE
 endif
 
 # BIG_BOOT: Include extra features, up to 1K.
 ifdef BIGBOOT
+ifneq ($(BIGBOOT), 0)
 BIGBOOT_CMD = -DBIGBOOT=1
 dummy = FORCE
 endif
+endif
 
 ifdef SOFT_UART
+ifneq ($(SOFT_UART), 0)
 SOFT_UART_CMD = -DSOFT_UART=1
 dummy = FORCE
 endif
+endif
 
 ifdef LED_DATA_FLASH
+ifneq ($(LED_DATA_FLASH), 0)
 LED_DATA_FLASH_CMD = -DLED_DATA_FLASH=1
 dummy = FORCE
+endif
 endif
 
 ifdef LED
@@ -185,7 +193,9 @@ dummy = FORCE
 endif
 
 ifdef SINGLESPEED
+ifneq ($(SINGLESPEED), 0)
 SS_CMD = -DSINGLESPEED=1
+endif
 endif
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
@@ -197,10 +207,11 @@ ifdef UART
 UART_CMD = -DUART=$(UART)
 endif
 
-# Not supported yet
 ifdef SUPPORT_EEPROM
+ifneq ($(SUPPORT_EEPROM), 0)
 SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
 dummy = FORCE
+endif
 endif
 
 # Not supported yet
