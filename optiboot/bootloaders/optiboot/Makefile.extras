@@ -106,7 +106,7 @@ attiny84: $(PROGRAM)_attiny84.lst
 luminet: TARGET = $@
 luminet: CHIP = attiny84
 luminet:
-	$(MAKE) $(CHIP) AVR_FREQ=1000000L LED_START_FLASHES=0 BAUD_RATE=9600
+	"$(MAKE)" $(CHIP) AVR_FREQ=1000000L LED_START_FLASHES=0 BAUD_RATE=9600
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 

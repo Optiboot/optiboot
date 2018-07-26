@@ -47,7 +47,7 @@ atmega1284_isp: isp
 sanguino: TARGET = $@
 sanguino: CHIP = atmega644p
 sanguino:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B0
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B0
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -65,7 +65,7 @@ sanguino_isp: isp
 mighty1284: TARGET = $@
 mighty1284: CHIP = atmega1284p
 mighty1284:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B7
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -83,7 +83,7 @@ mighty1284_isp: isp
 bobuino: TARGET = $@
 bobuino: CHIP = atmega1284p
 bobuino:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B7
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -105,7 +105,7 @@ bobuino_isp: isp
 wildfirev2: TARGET = $@
 wildfirev2: CHIP = atmega1284p
 wildfirev2:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B7 BAUD_RATE=1000000
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7 BAUD_RATE=1000000
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -123,7 +123,7 @@ wildfirev2_isp: isp
 wildfirev3: TARGET = $@
 wildfirev3: CHIP = atmega1284p
 wildfirev3:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=B5
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B5
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 

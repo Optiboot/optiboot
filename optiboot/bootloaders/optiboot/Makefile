@@ -409,7 +409,7 @@ atmega8_isp: isp
 pro20: TARGET = pro_20mhz
 pro20: CHIP = atmega168
 pro20:
-	$(MAKE) atmega168 AVR_FREQ=20000000L LED_START_FLASHES=3
+	"$(MAKE)" atmega168 AVR_FREQ=20000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -431,7 +431,7 @@ pro20_isp: isp
 pro16: TARGET = pro_16MHz
 pro16: CHIP = atmega168
 pro16:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -448,7 +448,7 @@ pro16_isp: isp
 diecimila: TARGET = diecimila
 diecimila: CHIP = atmega168
 diecimila:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -490,7 +490,7 @@ mega1280_isp: isp
 lilypad: TARGET = $@
 lilypad: CHIP = atmega168
 lilypad:
-	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
+	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -520,7 +520,7 @@ lilypad_resonator_isp: isp
 pro8: TARGET = pro_8MHz
 pro8: CHIP = atmega168
 pro8:
-	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
+	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -537,7 +537,7 @@ pro8_isp: isp
 atmega328_pro8: TARGET = atmega328_pro_8MHz
 atmega328_pro8: CHIP = atmega328
 atmega328_pro8:
-	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
+	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
@@ -574,7 +574,7 @@ baudcheck: FORCE
 	- @$(SH) baudcheck.tmp.sh
 
 isp: $(TARGET)
-	$(MAKE) -f Makefile.isp isp TARGET=$(TARGET)
+	"$(MAKE)" -f Makefile.isp isp TARGET=$(TARGET)
 
 isp-stk500: $(PROGRAM)_$(TARGET).hex
 	$(STK500-1)

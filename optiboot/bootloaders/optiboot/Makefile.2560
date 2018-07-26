@@ -37,7 +37,7 @@ atmega2560_isp: isp
 mega2560: TARGET = $@
 mega2560: CHIP = atmega2560
 mega2560:
-	$(MAKE) $(CHIP) AVR_FREQ=16000000L
+	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
