@@ -12,7 +12,13 @@
  */
 
 /*------------------------------------------------------------------------ */
-#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__)
+#if    defined(__AVR_ATmega168__)	\
+    || defined(__AVR_ATmega168P__)	\
+    || defined(__AVR_ATmega328__)	\
+    || defined(__AVR_ATmega328P__)	\
+    || defined(__AVR_ATmega88)		\
+    || defined(__AVR_ATmega8__)		\
+    || defined(__AVR_ATmega88__)
 /*------------------------------------------------------------------------ */
 
 /* Onboard LED is connected to pin PB5 in Arduino NG, Diecimila, and Duemilanove
@@ -71,7 +77,9 @@
 # define UART_UDR UDR3
 #endif
 
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if    defined(__AVR_ATmega8__)		\
+    || defined (__AVR_ATmega32__)	\
+    || defined (__AVR_ATmega16__)
   //Name conversion R.Wiersma
   #define UCSR0A	UCSRA
   #define UDR0 		UDR
@@ -81,7 +89,9 @@
   #define TIFR1 	TIFR
   #define WDTCSR	WDTCR
 #endif
-#if defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+
+#if    defined (__AVR_ATmega32__)	\
+    || defined (__AVR_ATmega16__)
   #define WDCE		WDTOE
 #endif
 
@@ -106,7 +116,10 @@
 
 /*------------------------------------------------------------------------ */
 /* Sanguino support (and other 40pin DIP cpus) */
-#if defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if    defined(__AVR_ATmega644P__)	\
+    || defined(__AVR_ATmega1284P__)	\
+    || defined(__AVR_ATmega32__)	\
+    || defined (__AVR_ATmega16__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB0 on Sanguino */ 
 #if !defined(LED)
@@ -125,7 +138,8 @@
 
 /*------------------------------------------------------------------------ */
 /* Mega support */
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+#if    defined(__AVR_ATmega1280__)	\
+    || defined(__AVR_ATmega2560__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB7 on Arduino Mega */ 
 #if !defined(LED)
@@ -146,8 +160,13 @@
  * ------------------------------------------------------------------------
  * A bunch of macros to enable the LED to be specifed as "B5" for bit 5 
  * of port B, and similar.
+ * We define symbols for all the legal combination of port/bit on a chip,
+ * and do pre-processor tests to see if there's a match.  This ends up
+ * being very verbose, but it is pretty easy to generate semi-automatically.
+ * (We wouldn't need this if the preprocessor could do string compares.)
  */
 
+// Symbols for each PortA bit.
 #define A0 0x100
 #define A1 0x101
 #define A2 0x102
@@ -156,6 +175,14 @@
 #define A5 0x105
 #define A6 0x106
 #define A7 0x107
+// If there is no PORTA on this chip, don't allow these to be used
+//   (and indicate the error by redefining LED)
+#if !defined(PORTA)
+#if LED >= A0 && LED <= A7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define B0 0x200
 #define B1 0x201
@@ -165,6 +192,12 @@
 #define B5 0x205
 #define B6 0x206
 #define B7 0x207
+#if !defined(PORTB)
+#if LED >= B0 && LED <= B7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define C0 0x300
 #define C1 0x301
@@ -174,6 +207,12 @@
 #define C5 0x305
 #define C6 0x306
 #define C7 0x307
+#if !(defined(PORTC))
+#if LED >= C0 && LED <= C7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define D0 0x400
 #define D1 0x401
@@ -183,6 +222,12 @@
 #define D5 0x405
 #define D6 0x406
 #define D7 0x407
+#if !(defined(PORTD))
+#if LED >= D0 && LED <= D7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define E0 0x500
 #define E1 0x501
@@ -192,6 +237,12 @@
 #define E5 0x505
 #define E6 0x506
 #define E7 0x507
+#if !(defined(PORTE))
+#if LED >= E0 && LED <= E7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define F0 0x600
 #define F1 0x601
@@ -201,6 +252,12 @@
 #define F5 0x605
 #define F6 0x606
 #define F7 0x607
+#if !(defined(PORTF))
+#if LED >= F0 && LED <= F7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define G0 0x700
 #define G1 0x701
@@ -210,6 +267,12 @@
 #define G5 0x705
 #define G6 0x706
 #define G7 0x707
+#if !defined(PORTG)
+#if LED >= G0 && LED <= G7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define H0 0x800
 #define H1 0x801
@@ -219,6 +282,12 @@
 #define H5 0x805
 #define H6 0x806
 #define H7 0x807
+#if !(defined(PORTH))
+#if LED >= H0 && LED <= H7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define J0 0xA00
 #define J1 0xA01
@@ -228,6 +297,12 @@
 #define J5 0xA05
 #define J6 0xA06
 #define J7 0xA07
+#if !(defined(PORTJ))
+#if LED >= J0 && LED <= J7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define K0 0xB00
 #define K1 0xB01
@@ -237,6 +312,12 @@
 #define K5 0xB05
 #define K6 0xB06
 #define K7 0xB07
+#if !(defined(PORTK))
+#if LED >= K0 && LED <= K7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 #define L0 0xC00
 #define L1 0xC01
@@ -246,9 +327,18 @@
 #define L5 0xC05
 #define L6 0xC06
 #define L7 0xC07
+#if !(defined(PORTL))
+#if LED >= L0 && LED <= L7
+#undef LED
+#define LED -1
+#endif
+#endif
 
 
-
+/*
+ * A statement like "#if LED == B0" will evaluation (in the preprocessor)
+ * to #if C0 == B0, and then to #if 0x301 == 0x201
+ */
 #if LED == B0
 #undef LED
 #define LED_DDR     DDRB
@@ -789,7 +879,13 @@
 #define LED	    PINA7
 
 #else
-#error -------------------------------------------
+// Stop compilation right away, so we don't get more errors.
+#if LED == -1
 #error Unrecognized LED name.  Should be like "B5"
-#error -------------------------------------------
+// Stop compilation right away, so we don't get more errors.
+#pragma GCC diagnostic warning "-Wfatal-errors"
+#error Nonexistent LED PORT.  Check datasheet.
+#endif
+#pragma GCC diagnostic warning "-Wfatal-errors"
+#error Unrecognized LED name.  Should be like "B5"
 #endif
