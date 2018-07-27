@@ -9,8 +9,8 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.ActiveCfg = Debug|AVR
-		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.Build.0 = Debug|AVR
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.ActiveCfg = Release|AVR
+		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Debug|AVR.Build.0 = Release|AVR
 		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Release|AVR.ActiveCfg = Release|AVR
 		{02F0BC88-77BD-42CC-A94C-4CC452F0F909}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection

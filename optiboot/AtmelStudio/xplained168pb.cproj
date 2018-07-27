@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
@@ -49,7 +49,8 @@
       <ToolNumber>ATML2222050200008424</ToolNumber>
       <ToolName>mEDBG</ToolName>
     </com_atmel_avrdbg_tool_medbg>
-    <avrtoolinterface>ISP</avrtoolinterface>
+    <avrtoolinterface>
+    </avrtoolinterface>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -72,6 +73,13 @@
         <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
       </AvrGcc>
     </ToolchainSettings>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <BuildTarget>xplained168pb</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>..\bootloaders\optiboot\makefile</ExternalMakeFilePath>
+    <PostBuildEvent>copy optiboot_xplained168pb.* ..\..\AtmelStudio
+</PostBuildEvent>
+    <OutputDirectory>..\bootloaders\optiboot</OutputDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -102,10 +110,9 @@
     <ExternalMakeFilePath>..\bootloaders\optiboot\makefile</ExternalMakeFilePath>
     <OutputFileName>optiboot_xplained168pb</OutputFileName>
     <OutputFileExtension>.hex</OutputFileExtension>
-    <OutputDirectory>.</OutputDirectory>
-    <PostBuildEvent>cp ../bootloaders/optiboot/optiboot_xplained168pb.* .
-
+    <PostBuildEvent>copy optiboot_xplained168pb.* ..\..\AtmelStudio
 </PostBuildEvent>
+    <OutputDirectory>..\bootloaders\optiboot</OutputDirectory>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\bootloaders\optiboot\Makefile">
@@ -132,15 +139,17 @@
       <SubType>compile</SubType>
       <Link>Makefile.isp</Link>
     </None>
+    <None Include="optiboot_xplained168pb.hex">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="optiboot_xplained168pb.lst">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\bootloaders\optiboot\baudcheck.c">
       <SubType>compile</SubType>
       <Link>baudcheck.c</Link>
-    </Compile>
-    <Compile Include="..\bootloaders\optiboot\boot.h">
-      <SubType>compile</SubType>
-      <Link>boot.h</Link>
     </Compile>
     <Compile Include="..\bootloaders\optiboot\optiboot.c">
       <SubType>compile</SubType>

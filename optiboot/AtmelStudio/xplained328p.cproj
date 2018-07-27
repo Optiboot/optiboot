@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
@@ -78,6 +78,13 @@
         </avrgcc.linker.libraries.Libraries>
       </AvrGcc>
     </ToolchainSettings>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <OutputDirectory>..\bootloaders\optiboot</OutputDirectory>
+    <BuildTarget>xplained328p</BuildTarget>
+    <CleanTarget>clean</CleanTarget>
+    <ExternalMakeFilePath>..\bootloaders\optiboot\Makefile</ExternalMakeFilePath>
+    <PostBuildEvent>copy optiboot_xplained328p.*  ..\..\AtmelStudio
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -110,11 +117,11 @@
     <UsesExternalMakeFile>True</UsesExternalMakeFile>
     <BuildTarget>xplained328p</BuildTarget>
     <CleanTarget>clean</CleanTarget>
-    <ExternalMakeFilePath>..\bootloaders\optiboot\makefile</ExternalMakeFilePath>
+    <ExternalMakeFilePath>..\bootloaders\optiboot\Makefile</ExternalMakeFilePath>
     <OutputFileName>optiboot_xplained328p</OutputFileName>
     <OutputFileExtension>.hex</OutputFileExtension>
-    <OutputDirectory>.</OutputDirectory>
-    <PostBuildEvent>cp ../bootloaders/optiboot/optiboot_xplained328p.* .
+    <OutputDirectory>..\bootloaders\optiboot</OutputDirectory>
+    <PostBuildEvent>copy optiboot_xplained328p.*  ..\..\AtmelStudio
 
 </PostBuildEvent>
     <PreBuildEvent>
