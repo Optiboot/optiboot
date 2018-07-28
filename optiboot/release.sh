@@ -18,7 +18,7 @@ rm -Rf /tmp/optiboot-release
 # Note that the structure under "packages" (handed by boards manager)
 # is different than the structure under "sketchbook/hardware" would be.
 
-TOP=/tmp/optiboot-release/Optiboot/
+TOP=/tmp/optiboot-release/Optiboot$1/
 #
 # Bootloaders directory
 mkdir -p $TOP/bootloaders/optiboot
@@ -63,11 +63,11 @@ cp *.hex $TOP/bootloaders/optiboot
 #
 # zip everything up.
 pushd /tmp/optiboot-release
-zip -r Optiboot.zip Optiboot
-HASH=`openssl dgst -sha256 Optiboot.zip | sed -e 's/.* //'`
-SIZE=`stat -f %z Optiboot.zip`
+zip -r Optiboot$1.zip Optiboot$1
+HASH=`openssl dgst -sha256 Optiboot$1.zip | sed -e 's/.* //'`
+SIZE=`stat -f %z Optiboot$1.zip`
 popd
-sed -e "s/#.*//" -e "s/%HASH%/$HASH/" -e "s/%VERSION%/$1/" -e "s/%SIZE%/$SIZE/" ../../package_optiboot_optiboot-additional_index.json.TEMPLATE > /tmp/optiboot-release/package_optiboot_optiboot-additional_index.json
+sed -e "s/#.*//" -e "s/%HASH%/$HASH/g" -e "s/%VERSION%/$1/g" -e "s/%SIZE%/$SIZE/g" ../../package_optiboot_optiboot-additional_index.json.TEMPLATE > /tmp/optiboot-release/package_optiboot_optiboot-additional_index.json
 
 #
 # This leaves the .zip and the .json file in /tmp/optiboot-release

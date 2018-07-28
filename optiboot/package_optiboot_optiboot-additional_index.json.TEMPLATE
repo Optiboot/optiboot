@@ -30,8 +30,8 @@
           "help": {
 	    "online": "https://github.com/Optiboot/optiboot/wiki"
           },
-          "url": "https://github.com/Optiboot/optiboot/releases/download/v%VERSION%/optiboot.zip",
-          "archiveFileName": "optiboot.zip",
+          "url": "https://github.com/Optiboot/optiboot/releases/download/v%VERSION%/Optiboot%VERSION%.zip",
+          "archiveFileName": "optiboot%VERSION%.zip",
 #
 # Package file verification data
 #
