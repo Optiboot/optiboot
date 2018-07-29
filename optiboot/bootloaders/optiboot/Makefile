@@ -39,6 +39,7 @@
 # * This software is licensed under version 2 of the Gnu Public Licence.
 # * See optiboot.c for details.
 
+HELPTEXT = ""
 #----------------------------------------------------------------------
 #
 # program name should not be changed...
@@ -144,6 +145,7 @@ SIZE           = $(GCCROOT)avr-size
 # appropriate parameters ("-DLED_START_FLASHES=10") to gcc
 #
 
+HELPTEXT += "Option BAUD_RATE=nnnn        - set the bit rate for communications\n"
 ifdef BAUD_RATE
 BAUD_RATE_CMD = -DBAUD_RATE=$(BAUD_RATE)
 dummy = FORCE
@@ -151,6 +153,13 @@ else
 BAUD_RATE_CMD = -DBAUD_RATE=115200
 endif
 
+HELPTEXT += "Option LED=B3                - set LED pin to particular port/bit\n"
+ifdef LED
+LED_CMD = -DLED=$(LED)
+dummy = FORCE
+endif
+
+HELPTEXT += "Option LED_START_FLASHES=n   - set number of LED flashes when bootloader starts\n"
 ifdef LED_START_FLASHES
 LED_START_FLASHES_CMD = -DLED_START_FLASHES=$(LED_START_FLASHES)
 dummy = FORCE
@@ -158,28 +167,7 @@ else
 LED_START_FLASHES_CMD = -DLED_START_FLASHES=3
 endif
 
-ifdef LED_START_ON
-ifneq ($(LED_START_ON), 0)
-LED_START_ON_CMD = -DLED_START_ON=1
-endif
-dummy = FORCE
-endif
-
-# BIG_BOOT: Include extra features, up to 1K.
-ifdef BIGBOOT
-ifneq ($(BIGBOOT), 0)
-BIGBOOT_CMD = -DBIGBOOT=1
-dummy = FORCE
-endif
-endif
-
-ifdef SOFT_UART
-ifneq ($(SOFT_UART), 0)
-SOFT_UART_CMD = -DSOFT_UART=1
-dummy = FORCE
-endif
-endif
-
+HELPTEXT += "Option LED_DATA_FLASH=1      - flash the LED each time data is received.\n"
 ifdef LED_DATA_FLASH
 ifneq ($(LED_DATA_FLASH), 0)
 LED_DATA_FLASH_CMD = -DLED_DATA_FLASH=1
@@ -187,9 +175,38 @@ dummy = FORCE
 endif
 endif
 
-ifdef LED
-LED_CMD = -DLED=$(LED)
+HELPTEXT += "Option LED_START_ON=1        - Turn the LED on at bootload start\n"
+ifdef LED_START_ON
+ifneq ($(LED_START_ON), 0)
+LED_START_ON_CMD = -DLED_START_ON=1
+endif
 dummy = FORCE
+endif
+
+HELPTEXT += "Option BIGBOOT=1             - enable extra features up to 1kbytes\n"
+# BIGBOOT: Include extra features, up to 1K.
+ifdef BIGBOOT
+ifneq ($(BIGBOOT), 0)
+BIGBOOT_CMD = -DBIGBOOT=1
+dummy = FORCE
+endif
+endif
+
+HELPTEXT += "Option SUPPORT_EEPROM=1      - Include code to read/write EEPROM\n"
+ifdef SUPPORT_EEPROM
+ifneq ($(SUPPORT_EEPROM), 0)
+SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
+dummy = FORCE
+endif
+endif
+
+
+HELPTEXT += "Option SOFT_UART=1           - use a software (bit-banged) UART\n"
+ifdef SOFT_UART
+ifneq ($(SOFT_UART), 0)
+SOFT_UART_CMD = -DSOFT_UART=1
+dummy = FORCE
+endif
 endif
 
 ifdef SINGLESPEED
@@ -203,16 +220,11 @@ COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
+HELPTEXT += "Option UART=n                - use UARTn for communications\n"
 ifdef UART
 UART_CMD = -DUART=$(UART)
 endif
 
-ifdef SUPPORT_EEPROM
-ifneq ($(SUPPORT_EEPROM), 0)
-SUPPORT_EEPROM_CMD = -DSUPPORT_EEPROM
-dummy = FORCE
-endif
-endif
 
 # Not supported yet
 # ifdef TIMEOUT_MS
@@ -244,8 +256,11 @@ endif
 #---------------------------------------------------------------------------
 #
 
+HELPTEXT += "\n-------------\n\n"
+
 # Test platforms
 # Virtual boot block test
+HELPTEXT += "target virboot8      - ATmega8 with virtual boot partition\n"
 virboot8: TARGET = atmega8
 virboot8: MCU_TARGET = atmega8
 virboot8: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-Dsave_vect_num=EE_RDY_vect_num'
@@ -256,6 +271,7 @@ virboot8: $(PROGRAM)_virboot8.hex
 virboot8: $(PROGRAM)_virboot8.lst
 
 
+HELPTEXT += "target virboot328p   - ATmega328 with virtual boot partition\n"
 virboot328: TARGET = atmega328
 virboot328: MCU_TARGET = atmega328p
 virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION'
@@ -291,7 +307,37 @@ virboot8_isp: isp
 # Diecimila, Duemilanove with m168, and NG use identical bootloaders
 # Call it "atmega168" for generality and clarity, keep "diecimila" for
 # backward compatibility of makefile
+
+# ATmega8
 #
+HELPTEXT += "target atmega8       - ATmega8, ATmega8A, ATmega8L\n"
+atmega8: TARGET = atmega8
+atmega8: MCU_TARGET = atmega8
+atmega8: CFLAGS += $(COMMON_OPTIONS)
+atmega8: AVR_FREQ ?= 16000000L 
+ifndef BIGBOOT
+atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
+else
+atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
+endif
+atmega8: $(PROGRAM)_atmega8.hex
+atmega8: $(PROGRAM)_atmega8.lst
+
+atmega8_isp: atmega8
+atmega8_isp: TARGET = atmega8
+atmega8_isp: MCU_TARGET = atmega8
+ifndef BIGBOOT
+# SPIEN, CKOPT (for full swing xtal), Bootsize=512B
+atmega8_isp: HFUSE ?= CC
+else
+# SPIEN, CKOPT (for full swing xtal), Bootsize=1024B
+atmega8_isp: HFUSE ?= CA
+endif
+# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
+atmega8_isp: LFUSE ?= BF
+atmega8_isp: isp
+
+HELPTEXT += "target atmega168     - ATmega168, ATmega168A\n"
 atmega168: TARGET = atmega168
 atmega168: MCU_TARGET = atmega168
 atmega168: CFLAGS += $(COMMON_OPTIONS)
@@ -319,13 +365,7 @@ atmega168_isp: EFUSE ?= FA
 endif
 atmega168_isp: isp
 
-atmega16: TARGET = atmega16
-atmega16: MCU_TARGET = atmega16
-atmega16: CFLAGS += $(COMMON_OPTIONS)
-atmega16: AVR_FREQ ?= 16000000L 
-atmega16: $(PROGRAM)_atmega16.hex
-atmega16: $(PROGRAM)_atmega16.lst
-
+HELPTEXT += "target atmega328     - ATmega328p\n"
 atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += $(COMMON_OPTIONS)
@@ -356,6 +396,7 @@ atmega328_isp: EFUSE ?= FD
 atmega328_isp: isp
 
 #Atmega1280
+HELPTEXT += "target atmega1280    - ATmega1280 (100pin, 128k)\n"
 atmega1280: MCU_TARGET = atmega1280
 atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
 atmega1280: AVR_FREQ ?= 16000000L
@@ -363,34 +404,6 @@ atmega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start
 atmega1280: $(PROGRAM)_atmega1280.hex
 atmega1280: $(PROGRAM)_atmega1280.lst
 
-
-# ATmega8
-#
-atmega8: TARGET = atmega8
-atmega8: MCU_TARGET = atmega8
-atmega8: CFLAGS += $(COMMON_OPTIONS)
-atmega8: AVR_FREQ ?= 16000000L 
-ifndef BIGBOOT
-atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
-else
-atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
-endif
-atmega8: $(PROGRAM)_atmega8.hex
-atmega8: $(PROGRAM)_atmega8.lst
-
-atmega8_isp: atmega8
-atmega8_isp: TARGET = atmega8
-atmega8_isp: MCU_TARGET = atmega8
-ifndef BIGBOOT
-# SPIEN, CKOPT (for full swing xtal), Bootsize=512B
-atmega8_isp: HFUSE ?= CC
-else
-# SPIEN, CKOPT (for full swing xtal), Bootsize=1024B
-atmega8_isp: HFUSE ?= CA
-endif
-# 2.7V brownout, 16MHz Xtal, 16KCK/14CK+65ms
-atmega8_isp: LFUSE ?= BF
-atmega8_isp: isp
 
 
 #---------------------------------------------------------------------------
@@ -598,3 +611,6 @@ clean:
 
 %.bin: %.elf
 	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O binary $< $@
+
+help:
+	@echo $(HELPTEXT)

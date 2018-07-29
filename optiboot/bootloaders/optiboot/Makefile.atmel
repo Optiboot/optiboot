@@ -12,6 +12,7 @@
 #  
 # 
 #
+HELPTEXT += "target xplained168pb - Atmel Xplained Mini 168pb Eval board\n"
 xplained168pb: TARGET = $@
 xplained168pb: CHIP = atmega168
 xplained168pb:
@@ -19,6 +20,7 @@ xplained168pb:
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
+HELPTEXT += "target xplained328pb - Atmel Xplained Mini 328pb Eval board\n"
 xplained328pb: TARGET = $@
 xplained328pb: CHIP = atmega328
 xplained328pb:
@@ -26,6 +28,7 @@ xplained328pb:
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
+HELPTEXT += "target xplained328p  - Atmel Xplained Mini 328p Eval board\n"
 xplained328p: TARGET = $@
 xplained328p: CHIP = atmega328
 xplained328p:

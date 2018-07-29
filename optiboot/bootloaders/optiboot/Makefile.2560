@@ -7,6 +7,7 @@
 
 # Chip level targets
 #
+HELPTEXT += "target atmega2560    - ATmega2560p (100pin, 256k)\n"
 atmega2560: TARGET = atmega2560
 atmega2560: MCU_TARGET = atmega2560
 atmega2560: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT
@@ -34,6 +35,7 @@ atmega2560_isp: isp
 
 # Arduino/Geniuno MEGA 256 has a minimum boot size of 1024 bytes, so enable extra functions
 #
+HELPTEXT += "target mega2560      - Arduino MEGA2560 board, 2560ADK\n"
 mega2560: TARGET = $@
 mega2560: CHIP = atmega2560
 mega2560:

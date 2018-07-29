@@ -14,6 +14,7 @@
 #
 # ATmega88
 #
+HELPTEXT += "target atmega88      - ATmega88 or ATmega88p (28pin, 8k)\n"
 atmega88: TARGET = atmega88
 atmega88: MCU_TARGET = atmega88
 atmega88: CFLAGS += $(COMMON_OPTIONS)
@@ -47,6 +48,7 @@ atmega88p_isp: isp
 #
 # ATmega168p [QFN32]
 #
+HELPTEXT += "target atmega168p    - ATmega168p\n"
 atmega168p: TARGET = atmega168p
 atmega168p: MCU_TARGET = atmega168p
 atmega168p: CFLAGS += $(COMMON_OPTIONS)
@@ -64,9 +66,18 @@ atmega168p_isp: LFUSE ?= FF
 atmega168p_isp: EFUSE ?= 04
 atmega168p_isp: isp
 
+HELPTEXT += "target atmega16      - ATmega16 (40pin, 16k)\n"
+atmega16: TARGET = atmega16
+atmega16: MCU_TARGET = atmega16
+atmega16: CFLAGS += $(COMMON_OPTIONS)
+atmega16: AVR_FREQ ?= 16000000L 
+atmega16: $(PROGRAM)_atmega16.hex
+atmega16: $(PROGRAM)_atmega16.lst
+
 #
 # ATmega32
 #
+HELPTEXT += "target atmega32      - ATmega32 (40pin, 32k)\n"
 atmega32: TARGET = atmega32
 atmega32: MCU_TARGET = atmega32
 atmega32: CFLAGS += $(COMMON_OPTIONS)

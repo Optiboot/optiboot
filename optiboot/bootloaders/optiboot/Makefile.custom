@@ -6,6 +6,7 @@
 # * See optiboot.c for details.
 
 
+HELPTEXT += "target wildfire      - Wicked Devices Wildfire v1 board\n"
 wildfire: TARGET = $@
 wildfire: CHIP = atmega1284p
 wildfire:
