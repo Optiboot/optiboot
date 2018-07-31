@@ -613,4 +613,4 @@ clean:
 	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O binary $< $@
 
 help:
-	@echo $(HELPTEXT)
+	@echo -e $(HELPTEXT)
