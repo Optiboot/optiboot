@@ -156,6 +156,88 @@
 #endif
 #endif
 
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny1634__)
+/*------------------------------------------------------------------------ */
+/* LED is on C0 */
+#if !defined(LED)
+#define LED 	C0
+#endif
+#define TIFR1 TIFR
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 2
+#define UART_RX_BIT 3
+#endif
+#endif
+
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny841__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED 	B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 2
+#define UART_RX_BIT 3
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny167__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED 	A3
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny87__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED 	A3
+#endif
+#endif
+
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny828__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED 	B0
+#endif
+
+#define UDRE0 UDRE 
+#define FE0 FE 
+#define RXC0 RXC
+#define UCSZ00 UCSZ0
+#define UCSZ01 UCSZ1 
+#define TXEN0 TXEN
+#define RXEN0 RXEN
+#define U2X0 U2X
+
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 2
+#define UART_RX_BIT 3
+#endif
+#endif
+
 /*
  * ------------------------------------------------------------------------
  * A bunch of macros to enable the LED to be specifed as "B5" for bit 5 

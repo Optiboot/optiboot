@@ -945,8 +945,21 @@ void watchdogReset() {
 }
 
 void watchdogConfig(uint8_t x) {
+#ifdef WDCE //does it have a Watchdog Change Enable?
+ #ifdef WDTCSR
   WDTCSR = _BV(WDCE) | _BV(WDE);
+ #else
+  WDTCR= _BV(WDCE) | _BV(WDE);
+ #endif
+#else //then it must be one of those newfangled ones that use CCP
+  CCP=0xD8; //so write this magic number to CCP
+#endif 
+
+#ifdef WDTCSR
   WDTCSR = x;
+#else
+  WDTCR= x;
+#endif
 }
 
 void appStart(uint8_t rstFlags) {
