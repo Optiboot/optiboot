@@ -39,7 +39,7 @@
 # * This software is licensed under version 2 of the Gnu Public Licence.
 # * See optiboot.c for details.
 
-HELPTEXT = ""
+HELPTEXT = "\n"
 #----------------------------------------------------------------------
 #
 # program name should not be changed...
@@ -145,6 +145,20 @@ SIZE           = $(GCCROOT)avr-size
 # appropriate parameters ("-DLED_START_FLASHES=10") to gcc
 #
 
+ifdef PRODUCTION
+VERSION_CMD = -DPRODUCTION=1
+endif
+
+HELPTEXT += "Option CUSTOM_VERSION=nn     - set a customer version number\n"
+ifdef CUSTOM_VERSION
+ifneq ($(CUSTOM_VERSION), 0)
+VERSION_CMD = -DOPTIBOOT_CUSTOMVER=$(CUSTOM_VERSION)
+else
+VERSION_CMD = -DPRODUCTION=1
+endif
+dummy = FORCE
+endif
+
 HELPTEXT += "Option BAUD_RATE=nnnn        - set the bit rate for communications\n"
 ifdef BAUD_RATE
 BAUD_RATE_CMD = -DBAUD_RATE=$(BAUD_RATE)
@@ -218,6 +232,7 @@ endif
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD)
+COMMON_OPTIONS += $(VERSION_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
@@ -613,4 +628,4 @@ clean:
 	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O binary $< $@
 
 help:
-	@echo $(HELPTEXT)
+	@echo -e $(HELPTEXT)

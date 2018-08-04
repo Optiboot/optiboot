@@ -144,10 +144,20 @@
 /*  the optiboot source tree changes since v3.            */
 /* Version 5 was created at the time of the new Makefile  */
 /*  structure (Mar, 2013), even though no binaries changed*/
+/* Version 6 added EEPROM support, including causing an   */
+/*  error when trying to write eeprom with versions that  */
+/*  didn't have the code there. Makefiles were further    */
+/*  restructured.  Overlapping SPM/download removed.      */
+/* Version 7 straightened out the MCUSR and RESET         */
+/*  handling, did MORE Makefile mods.  EEPROM support now */
+/*  fits in 512 bytes, if you turn off LED Blinking.      */
+/*  Various bigboot and virboot targets were fixed.       */
+/*                                                        */
 /* It would be good if versions implemented outside the   */
 /*  official repository used an out-of-seqeunce version   */
 /*  number (like 104.6 if based on based on 4.5) to       */
-/*  prevent collisions.                                   */
+/*  prevent collisions.  The CUSTOM_VERSION=n option      */
+/*  adds n to the high version to facilitate this.        */
 /*                                                        */
 /**********************************************************/
 
@@ -386,7 +396,7 @@ uint8_t __attribute__((noinline)) getch(void);
 void __attribute__((noinline)) verifySpace();
 void __attribute__((noinline)) watchdogConfig(uint8_t x);
 
-static inline void getNch(uint8_t);
+static void getNch(uint8_t);
 #if LED_START_FLASHES > 0
 static inline void flash_led(uint8_t);
 #endif
@@ -1058,3 +1068,66 @@ static inline void read_mem(uint8_t memtype, addr16_t address, pagelen_t length)
 	break;
     } // switch
 }
+
+
+#ifdef BIGBOOT
+/*
+ * Optiboot is designed to fit in 512 bytes, with a minimum feature set.
+ * Some chips have a minimum bootloader size of 1024 bytes, and sometimes
+ * it is desirable to add extra features even though 512bytes is exceedded.
+ * In that case, the BIGBOOT can be used.
+ * Our extra features so far don't come close to filling 1k, so we can
+ * add extra "frivolous" data to the image.   In particular, we can add
+ * information about how Optiboot was built (which options were selected,
+ * what version, all in human-readable form (and extractable from the
+ * binary with avr-strings.)
+ * 
+ * This can always be removed or trimmed if more actual program space
+ * is needed in the future.  Currently the data occupies about 160 bytes,
+ */
+#define xstr(s) str(s)
+#define str(s) #s
+#define OPT2FLASH(o) char f##o[] = #o "=" xstr(o)
+
+
+#ifdef LED_START_FLASHES
+OPT2FLASH(LED_START_FLASHES);
+#endif
+#ifdef LED_DATA_FLASH
+OPT2FLASH(LED_DATA_FLASH);
+#endif
+#ifdef LED_START_ON
+OPT2FLASH(LED_START_ON);
+#endif
+#ifdef LED_NAME
+char f_LED[] = "LED=" LED_NAME;
+#endif
+
+#ifdef SUPPORT_EEPROM
+OPT2FLASH(SUPPORT_EEPROM);
+#endif
+#ifdef BAUD_RATE
+OPT2FLASH(BAUD_RATE);
+#endif
+#ifdef SOFT_UART
+OPT2FLASH(SOFT_UART);
+#endif
+#ifdef UART
+OPT2FLASH(UART);
+#endif
+
+char f_date[] = "Built:" __DATE__ ":" __TIME__;
+#ifdef BIGBOOT
+OPT2FLASH(BIGBOOT);
+#endif
+#ifdef VIRTUAL_BOOT_PARTITION
+char f_boot[] = "Virtual_Boot_Partition";
+#endif
+OPT2FLASH(F_CPU);
+char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
+#ifdef OPTIBOOT_CUSTOMVER
+OPT2FLASH(OPTIBOOT_CUSTOMVER);
+#endif
+char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
+
+#endif

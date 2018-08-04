@@ -340,48 +340,56 @@
  * to #if C0 == B0, and then to #if 0x301 == 0x201
  */
 #if LED == B0
+#define LED_NAME "B0"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB0
 #elif LED == B1
+#define LED_NAME "B1"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB1
 #elif LED == B2
+#define LED_NAME "B2"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB2
 #elif LED == B3
+#define LED_NAME "B3"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB3
 #elif LED == B4
+#define LED_NAME "B4"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB4
 #elif LED == B5
+#define LED_NAME "B5"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB5
 #elif LED == B6
+#define LED_NAME "B6"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
 #define LED_PIN     PINB
 #define LED	    PINB6
 #elif LED == B7
+#define LED_NAME "B7"
 #undef LED
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
@@ -389,48 +397,56 @@
 #define LED	    PINB7
 
 #elif LED == C0
+#define LED_NAME "C0"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC0
 #elif LED == C1
+#define LED_NAME "C1"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC1
 #elif LED == C2
+#define LED_NAME "C2"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC2
 #elif LED == C3
+#define LED_NAME "C3"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC3
 #elif LED == C4
+#define LED_NAME "C4"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC4
 #elif LED == C5
+#define LED_NAME "C5"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC5
 #elif LED == C6
+#define LED_NAME "C6"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
 #define LED_PIN     PINC
 #define LED	    PINC6
 #elif LED == C7
+#define LED_NAME "C7"
 #undef LED
 #define LED_DDR     DDRC
 #define LED_PORT    PORTC
@@ -438,48 +454,56 @@
 #define LED	    PINC7
 
 #elif LED == D0
+#define LED_NAME "D0"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND0
 #elif LED == D1
+#define LED_NAME "D1"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND1
 #elif LED == D2
+#define LED_NAME "D2"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND2
 #elif LED == D3
+#define LED_NAME "D3"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND3
 #elif LED == D4
+#define LED_NAME "D4"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND4
 #elif LED == D5
+#define LED_NAME "D5"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND5
 #elif LED == D6
+#define LED_NAME "D6"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 #define LED	    PIND6
 #elif LED == D7
+#define LED_NAME "D7"
 #undef LED
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
@@ -487,48 +511,56 @@
 #define LED	    PIND7
 
 #elif LED == E0
+#define LED_NAME "E0"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE0
 #elif LED == E1
+#define LED_NAME "E1"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE1
 #elif LED == E2
+#define LED_NAME "E2"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE2
 #elif LED == E3
+#define LED_NAME "E3"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE3
 #elif LED == E4
+#define LED_NAME "E4"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE4
 #elif LED == E5
+#define LED_NAME "E5"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE5
 #elif LED == E6
+#define LED_NAME "E6"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
 #define LED_PIN     PINE
 #define LED	    PINE6
 #elif LED == E7
+#define LED_NAME "E7"
 #undef LED
 #define LED_DDR     DDRE
 #define LED_PORT    PORTE
@@ -536,48 +568,56 @@
 #define LED	    PINE7
 
 #elif LED == F0
+#define LED_NAME "F0"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF0
 #elif LED == F1
+#define LED_NAME "F1"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF1
 #elif LED == F2
+#define LED_NAME "F2"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF2
 #elif LED == F3
+#define LED_NAME "F3"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF3
 #elif LED == F4
+#define LED_NAME "F4"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF4
 #elif LED == F5
+#define LED_NAME "F5"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF5
 #elif LED == F6
+#define LED_NAME "F6"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
 #define LED_PIN     PINF
 #define LED	    PINF6
 #elif LED == F7
+#define LED_NAME "F7"
 #undef LED
 #define LED_DDR     DDRF
 #define LED_PORT    PORTF
@@ -585,48 +625,56 @@
 #define LED	    PINF7
 
 #elif LED == G0
+#define LED_NAME "G0"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING0
 #elif LED == G1
+#define LED_NAME "G1"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING1
 #elif LED == G2
+#define LED_NAME "G2"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING2
 #elif LED == G3
+#define LED_NAME "G3"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING3
 #elif LED == G4
+#define LED_NAME "G4"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING4
 #elif LED == G5
+#define LED_NAME "G5"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING5
 #elif LED == G6
+#define LED_NAME "G6"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
 #define LED_PIN     PING
 #define LED	    PING6
 #elif LED == G7
+#define LED_NAME "G7"
 #undef LED
 #define LED_DDR     DDRG
 #define LED_PORT    PORTG
@@ -634,48 +682,56 @@
 #define LED	    PING7
 
 #elif LED == H0
+#define LED_NAME "H0"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH0
 #elif LED == H1
+#define LED_NAME "H1"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH1
 #elif LED == H2
+#define LED_NAME "H2"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH2
 #elif LED == H3
+#define LED_NAME "H3"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH3
 #elif LED == H4
+#define LED_NAME "H4"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH4
 #elif LED == H5
+#define LED_NAME "H5"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH5
 #elif LED == H6
+#define LED_NAME "H6"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
 #define LED_PIN     PINH
 #define LED	    PINH6
 #elif LED == H7
+#define LED_NAME "H7"
 #undef LED
 #define LED_DDR     DDRH
 #define LED_PORT    PORTH
@@ -683,48 +739,56 @@
 #define LED	    PINH7
 
 #elif LED == J0
+#define LED_NAME "J0"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ0
 #elif LED == J1
+#define LED_NAME "J1"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ1
 #elif LED == J2
+#define LED_NAME "J2"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ2
 #elif LED == J3
+#define LED_NAME "J3"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ3
 #elif LED == J4
+#define LED_NAME "J4"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ4
 #elif LED == J5
+#define LED_NAME "J5"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ5
 #elif LED == J6
+#define LED_NAME "J6"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
 #define LED_PIN     PINJ
 #define LED	    PINJ6
 #elif LED == J7
+#define LED_NAME "J7"
 #undef LED
 #define LED_DDR     DDRJ
 #define LED_PORT    PORTJ
@@ -732,48 +796,56 @@
 #define LED	    PINJ7
 
 #elif LED == K0
+#define LED_NAME "K0"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK0
 #elif LED == K1
+#define LED_NAME "K1"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK1
 #elif LED == K2
+#define LED_NAME "K2"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK2
 #elif LED == K3
+#define LED_NAME "K3"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK3
 #elif LED == K4
+#define LED_NAME "K4"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK4
 #elif LED == K5
+#define LED_NAME "K5"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK5
 #elif LED == K6
+#define LED_NAME "K6"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
 #define LED_PIN     PINK
 #define LED	    PINK6
 #elif LED == K7
+#define LED_NAME "K7"
 #undef LED
 #define LED_DDR     DDRK
 #define LED_PORT    PORTK
@@ -781,48 +853,56 @@
 #define LED	    PINK7
 
 #elif LED == L0
+#define LED_NAME "L0"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL0
 #elif LED == L1
+#define LED_NAME "L1"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL1
 #elif LED == L2
+#define LED_NAME "L2"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL2
 #elif LED == L3
+#define LED_NAME "L3"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL3
 #elif LED == L4
+#define LED_NAME "L4"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL4
 #elif LED == L5
+#define LED_NAME "L5"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL5
 #elif LED == L6
+#define LED_NAME "L6"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
 #define LED_PIN     PINL
 #define LED	    PINL6
 #elif LED == L7
+#define LED_NAME "L7"
 #undef LED
 #define LED_DDR     DDRL
 #define LED_PORT    PORTL
@@ -830,48 +910,56 @@
 #define LED	    PINL7
 
 #elif LED == A0
+#define LED_NAME "A0"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA0
 #elif LED == A1
+#define LED_NAME "A1"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA1
 #elif LED == A2
+#define LED_NAME "A2"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA2
 #elif LED == A3
+#define LED_NAME "A3"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA3
 #elif LED == A4
+#define LED_NAME "A4"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA4
 #elif LED == A5
+#define LED_NAME "A5"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA5
 #elif LED == A6
+#define LED_NAME "A6"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
 #define LED_PIN     PINA
 #define LED	    PINA6
 #elif LED == A7
+#define LED_NAME "A7"
 #undef LED
 #define LED_DDR     DDRA
 #define LED_PORT    PORTA
