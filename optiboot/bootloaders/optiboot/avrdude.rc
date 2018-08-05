@@ -1,0 +1,30 @@
+# 
+# Archivo para agregar soporte del atmega16m1 al avrdude
+#
+# Para que este archivo sea reconocido hay que:
+# - En Windows: copiar este archivo (avrdude.rc) al mismo 
+#               directorio del programa avrdude.exe
+# - En Linux: copiar este archivo con el nombre .avrduderc
+#               en el directorio HOME
+#
+# http://www.nongnu.org/avrdude/user-manual/avrdude_10.html
+
+#------------------------------------------------------------
+# ATmega16m1
+#------------------------------------------------------------
+
+part parent "m328"
+    id              = "m16m1";
+    desc            = "ATmega16M1";
+    # stk500_devcode	= 0x;
+    # avr910_devcode	= 0x;
+    signature       = 0x1e 0x94 0x84;
+    bs2             = 0xe2;
+
+    memory "efuse"
+        read            = "0 1 0 1 0 0 0 0 0 0 0 0 1 0 0 0",
+                          "x x x x x x x x o o o o o o o o";
+        write           = "1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 0",
+                          "x x x x x x x x x x i i i i i i";
+    ;
+;

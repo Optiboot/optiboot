@@ -14,3 +14,25 @@ wildfire:
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
+atmega16m1: MCU_TARGET = atmega16m1
+atmega16m1: CFLAGS += $(COMMON_OPTIONS)
+atmega16m1: AVR_FREQ = 16000000L
+atmega16m1: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffc
+atmega16m1: $(PROGRAM)_atmega16m1.hex
+atmega16m1: $(PROGRAM)_atmega16m1.lst
+
+mega16m1: TARGET = mega16m1
+mega16m1: CHIP = atmega16m1
+mega16m1:
+	$(MAKE) $(CHIP) AVR_FREQ=16000000L LED=D0
+	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+
+mega16m1_isp: mega16m1
+mega16m1_isp: TARGET = mega16m1
+mega16m1_isp: MCU_TARGET = atmega16m1
+mega16m1_isp: HFUSE = DE
+mega16m1_isp: LFUSE = DE
+mega16m1_isp: EFUSE = FF
+mega16m1_isp: isp
+
