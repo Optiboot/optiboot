@@ -1017,8 +1017,14 @@ static inline void writebuffer(int8_t memtype, addr16_t mybuff,
 	     * the serial link, but the performance improvement was slight,
 	     * and we needed the space back.
 	     */
+#ifdef FOURPAGEERASE
+	    if ((address.bytes[0] & ((SPM_PAGESIZE<<2)-1))==0) {
+#endif
 	    __boot_page_erase_short(address.word);
 	    boot_spm_busy_wait();
+#ifdef FOURPAGEERASE
+	    }
+#endif
 
 	    /*
 	     * Copy data from the buffer into the flash write buffer.
