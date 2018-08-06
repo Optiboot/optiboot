@@ -131,6 +131,9 @@ CC         = $(GCCROOT)avr-gcc
 
 # Override is only needed by avr-lib build system.
 
+HELPTEXT += "Option AVR_FREQ=<n>          - Clock rate of AVR CPU\n"
+
+
 override CFLAGS        = -g -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) -DF_CPU=$(AVR_FREQ) $(DEFS)
 override LDFLAGS       = $(LDSECTIONS) -Wl,--relax -nostartfiles
 
@@ -223,6 +226,7 @@ dummy = FORCE
 endif
 endif
 
+HELPTEXT += "Option SINGLESPEED=1         - do not use U2X mode on UART\n"
 ifdef SINGLESPEED
 ifneq ($(SINGLESPEED), 0)
 SS_CMD = -DSINGLESPEED=1
