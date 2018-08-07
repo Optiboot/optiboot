@@ -16,15 +16,15 @@
  */
 
 asm(".macro __wr_spmcsr p, v \n\t"
-    ".if \\p > 0x37	\n\t"
+    ".if \\p > 0x57	\n\t"
     "sts \\p, \\v	\n\t"
     ".else		\n\t"
-    "out \\p, \\v	\n\t"
+    "out \\p-0x20, \\v	\n\t"
     ".endif		\n\t"
     ".endm		\n");
 
 
-#if defined(SPMCSR) || defined(SPMCR)
+#if defined(__SPM_REG)
 
 #define __boot_page_fill_short(address, data)    \
 (__extension__({                                 \
@@ -35,7 +35,7 @@ asm(".macro __wr_spmcsr p, v \n\t"
         "spm\n\t"                                \
         "clr  r1\n\t"                            \
         :                                        \
-        : "i" (_SFR_IO_ADDR(__SPM_REG)),         \
+        : "i" (_SFR_MEM_ADDR(__SPM_REG)),         \
           "r" ((uint8_t)__BOOT_PAGE_FILL),       \
           "z" ((uint16_t)address),               \
           "r" ((uint16_t)data)                   \
@@ -50,7 +50,7 @@ asm(".macro __wr_spmcsr p, v \n\t"
         "__wr_spmcsr %0, %1\n\t"                 \
         "spm\n\t"                                \
         :                                        \
-        : "i" (_SFR_IO_ADDR(__SPM_REG)),         \
+        : "i" (_SFR_MEM_ADDR(__SPM_REG)),         \
           "r" ((uint8_t)__BOOT_PAGE_ERASE),      \
           "z" ((uint16_t)address)                \
     );                                           \
@@ -63,7 +63,7 @@ asm(".macro __wr_spmcsr p, v \n\t"
         "__wr_spmcsr %0, %1\n\t"                 \
         "spm\n\t"                                \
         :                                        \
-        : "i" (_SFR_IO_ADDR(__SPM_REG)),         \
+        : "i" (_SFR_MEM_ADDR(__SPM_REG)),         \
           "r" ((uint8_t)__BOOT_PAGE_WRITE),      \
           "z" ((uint16_t)address)                \
     );                                           \
@@ -76,18 +76,20 @@ asm(".macro __wr_spmcsr p, v \n\t"
         "__wr_spmcsr %0, %1\n\t"                 \
         "spm\n\t"                                \
         :                                        \
-        : "i" (_SFR_IO_ADDR(__SPM_REG)),         \
+        : "i" (_SFR_MEM_ADDR(__SPM_REG)),         \
           "r" ((uint8_t)__BOOT_RWW_ENABLE)       \
     );                                           \
 }))
 
-#else
+#endif // __SPM_REG
+
+#ifndef __boot_page_erase_short
 
 /*
- * if SPMCSR or SPMCR isn't defined, it means we have some sort of
- * new-fangled chip that post-dates the version of boot.h that we
- * know about.  In this case, it's possible that the standard boot.h
- * still has workable functions, so we'll alias those.
+ * if __SPM_REG didn't get defined by now, but we didn't exit it means
+ * we have some sort of new-fangled chip that post-dates the version
+ * of boot.h that we know about.  In this case, it's possible that the
+ * standard boot.h still has workable functions, so we'll alias those.
  */
 
 #define __boot_page_fill_short(address, data) boot_page_fill(address, data)
