@@ -339,14 +339,14 @@ typedef union {
   #define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
   #if BAUD_ERROR >= 5
     #error BAUD_RATE off by greater than -5%
-  #elif BAUD_ERROR >= 2
+  #elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
     #warning BAUD_RATE off by greater than -2%
   #endif
 #else
   #define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
   #if BAUD_ERROR >= 5
     #error BAUD_RATE off by greater than 5%
-  #elif BAUD_ERROR >= 2
+  #elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
     #warning BAUD_RATE off by greater than 2%
   #endif
 #endif
@@ -511,7 +511,11 @@ int main(void) {
   // If not, uncomment the following instructions:
   // cli();
   asm volatile ("clr __zero_reg__");
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+
+#if defined(__AVR_ATmega8__) || defined(__AVR_ATmega8515__) ||		\
+    defined(__AVR_ATmega8535__) || defined (__AVR_ATmega16__) || 	\
+    defined (__AVR_ATmega32__) || defined (__AVR_ATmega64__)  ||	\
+    defined (__AVR_ATmega128__) || defined (__AVR_ATmega162__)
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
@@ -522,10 +526,12 @@ int main(void) {
    * Code by MarkG55
    * see discusion in https://github.com/Optiboot/optiboot/issues/97
    */
-#if !defined(__AVR_ATmega16__)
-  ch = MCUSR;
-#else
+#if defined(__AVR_ATmega8515__) || defined(__AVR_ATmega8535__) ||	\
+    defined(__AVR_ATmega16__)   || defined(__AVR_ATmega162__) ||	\
+    defined (__AVR_ATmega128__)
   ch = MCUCSR;
+#else
+  ch = MCUSR;
 #endif
   // Skip all logic and run bootloader if MCUSR is cleared (application request)
   if (ch != 0) {
@@ -549,10 +555,13 @@ int main(void) {
 	       * '&' operation is skipped to spare few bytes as bits in MCUSR
 	       * can only be cleared.
 	       */
-#if !defined(__AVR_ATmega16__)
-	      MCUSR = ~(_BV(WDRF));  
+#if defined(__AVR_ATmega8515__) || defined(__AVR_ATmega8535__) ||	\
+    defined(__AVR_ATmega16__)   || defined(__AVR_ATmega162__) ||	\
+    defined(__AVR_ATmega128__)
+               // Fix missing definitions in avr-libc
+	      MCUCSR = ~(_BV(WDRF));
 #else
-	      MCUCSR = ~(_BV(WDRF));  
+	      MCUSR = ~(_BV(WDRF));
 #endif
 	  }
 	  appStart(ch);
@@ -565,7 +574,9 @@ int main(void) {
 #endif
 
 #ifndef SOFT_UART
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega8515__) ||		\
+    defined (__AVR_ATmega8535__) || defined (__AVR_ATmega16__) ||	\
+    defined (__AVR_ATmega32__)
 #ifndef SINGLESPEED
   UCSRA = _BV(U2X); //Double speed mode USART
 #endif
@@ -700,6 +711,9 @@ int main(void) {
  * AVR with 4-byte ISR Vectors and "jmp"
  * WARNING: this works only up to 128KB flash!
  */
+#if FLASHEND > (128*1024)
+#error "Can't use VIRTUAL_BOOT_PARTITION with more than 128k of Flash"
+#endif
       if (address.word == 0) {
 	// This is the reset vector page. We need to live-patch the
 	// code so the bootloader runs first.
@@ -824,7 +838,10 @@ uint8_t getch(void) {
   uint8_t ch;
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
+    defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
+    defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
+    defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -875,7 +892,10 @@ uint8_t getch(void) {
 #endif
 
 #ifdef LED_DATA_FLASH
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
+    defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
+    defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
+    defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
   LED_PORT ^= _BV(LED);
 #else
   LED_PIN |= _BV(LED);
@@ -924,7 +944,10 @@ void flash_led(uint8_t count) {
     TCNT1 = -(F_CPU/(1024*16));
     TIFR1 = _BV(TOV1);
     while(!(TIFR1 & _BV(TOV1)));
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega32__) || defined (__AVR_ATmega16__)
+#if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
+    defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
+    defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
+    defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
     LED_PORT ^= _BV(LED);
 #else
     LED_PIN |= _BV(LED);

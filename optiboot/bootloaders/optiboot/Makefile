@@ -149,7 +149,10 @@ SIZE           = $(GCCROOT)avr-size
 #
 
 ifdef PRODUCTION
+ifneq ($(PRODUCTION),0)
 VERSION_CMD = -DPRODUCTION=1
+endif
+dummy = FORCE
 endif
 
 HELPTEXT += "Option CUSTOM_VERSION=nn     - set a customer version number\n"
@@ -592,7 +595,13 @@ include Makefile.1284
 include Makefile.custom
 include Makefile.2560
 include Makefile.tiny
+include Makefile.MCUdude
 
+ifndef PRODUCTION
+BAUDCHECK= baudcheck
+else
+BAUDCHECK=
+endif
 
 #---------------------------------------------------------------------------
 #
@@ -613,12 +622,15 @@ isp-stk500: $(PROGRAM)_$(TARGET).hex
 	$(STK500-1)
 	$(STK500-2)
 
-%.elf: $(OBJ) baudcheck $(dummy)
+%.elf: $(OBJ) $(BAUDCHECK) $(dummy)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS)
 	$(SIZE) $@
 
 clean:
 	rm -rf *.o *.elf *.lst *.map *.sym *.lss *.eep *.srec *.bin *.hex *.tmp.sh
+
+clean_asm:
+	rm -rf *.lst
 
 %.lst: %.elf
 	$(OBJDUMP) -h -S $< > $@

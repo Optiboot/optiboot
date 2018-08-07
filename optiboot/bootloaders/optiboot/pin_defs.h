@@ -116,14 +116,66 @@
 
 /*------------------------------------------------------------------------ */
 /* Sanguino support (and other 40pin DIP cpus) */
-#if    defined(__AVR_ATmega644P__)	\
-    || defined(__AVR_ATmega1284P__)	\
-    || defined(__AVR_ATmega32__)	\
-    || defined (__AVR_ATmega16__)
 /*------------------------------------------------------------------------ */
-/* Onboard LED is connected to pin PB0 on Sanguino */ 
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega8515__) || defined(__AVR_ATmega162__) 
+/*------------------------------------------------------------------------ */
 #if !defined(LED)
 #define LED         B0
+#endif
+
+/* Fix register names */
+#if defined(__AVR_ATmega8515__)
+#define UCSR0A  UCSRA
+#define UDR0    UDR
+#define UDRE0   UDRE
+#define RXC0    RXC
+#define FE0     FE
+#endif
+#define TIFR1   TIFR
+#define WDTCSR  WDTCR
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+#if    defined(__AVR_ATmega8535__)		\
+    || defined(__AVR_ATmega16__)		\
+    || defined(__AVR_ATmega32__)		\
+    || defined(__AVR_ATmega164A__)		\
+    || defined(__AVR_ATmega164P__)		\
+    || defined(__AVR_ATmega324A__)		\
+    || defined(__AVR_ATmega324P__)		\
+    || defined(__AVR_ATmega324PA__)		\
+    || defined(__AVR_ATmega644__)		\
+    || defined(__AVR_ATmega644P__)		\
+    || defined(__AVR_ATmega1284__)		\
+    || defined(__AVR_ATmega1284P__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B0
+#endif
+
+#if     defined(__AVR_ATmega8535__)	\
+    ||  defined(__AVR_ATmega16__)	\
+    ||  defined(__AVR_ATmega32__)
+/* Fix register names */
+#define UCSR0A  UCSRA
+#define UDR0    UDR
+#define UDRE0   UDRE
+#define RXC0    RXC
+#define FE0     FE
+#define TIFR1   TIFR
+#define WDTCSR  WDTCR
+#endif
+#if defined(__AVR_ATmega16__) || defined(__AVR_ATmega32__)
+#define WDCE        WDTOE
 #endif
 
 /* Ports for soft UART */
@@ -136,15 +188,284 @@
 #endif
 #endif
 
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega324PB__)
+/*------------------------------------------------------------------------ */
+
+#if !defined(LED)
+#define LED         B0
+#endif
+
+/* Fix missing register names */
+#define MPCM0   MPCM
+#define U2X0    U2X
+#define UPE0    UPE
+#define DOR0    DOR
+#define FE0     FE
+#define UDRE0   UDRE
+#define TXC0    TXC
+#define RXC0    RXC
+
+#define TXB80   TXB8
+#define RXB80   RXB8
+#define UCSZ02  UCSZ2
+#define TXEN0   TXEN
+#define RXEN0   RXEN
+#define UDRIE0  UDRIE
+#define TXCIE0  TXCIE
+#define RXCIE0  RXCIE
+
+#define UCPOL0  UCPOL
+#define UCSZ00  UCSZ0
+#define UCSZ01  UCSZ1
+#define USBS0   USBS
+#define UPM00   UPM0
+#define UPM01   UPM1
+#define UMSEL00 UMSEL0
+#define UMSEL01 UMSEL1
+
+#define MPCM1   MPCM
+#define U2X1    U2X
+#define UPE1    UPE
+#define DOR1    DOR
+#define FE1     FE
+#define UDRE1   UDRE
+#define TXC1    TXC
+#define RXC1    RXC
+
+#define TXB81   TXB8
+#define RXB81   RXB8
+#define UCSZ12  UCSZ2
+#define TXEN1   TXEN
+#define RXEN1   RXEN
+#define UDRIE1  UDRIE
+#define TXCIE1  TXCIE
+#define RXCIE1  RXCIE
+
+#define UCPOL1  UCPOL
+#define UCSZ10  UCSZ0
+#define UCSZ11  UCSZ1
+#define USBS1   USBS
+#define UPM10   UPM0
+#define UPM11   UPM1
+#define UMSEL10 UMSEL0
+#define UMSEL11 UMSEL1
+
+#define MPCM2   MPCM
+#define U2X2    U2X
+#define UPE2    UPE
+#define DOR2    DOR
+#define FE2     FE
+#define UDRE2   UDRE
+#define TXC2    TXC
+#define RXC2    RXC
+
+#define TXB82   TXB8
+#define RXB82   RXB8
+#define UCSZ22  UCSZ2
+#define TXEN2   TXEN
+#define RXEN2   RXEN
+#define UDRIE2  UDRIE
+#define TXCIE2  TXCIE
+#define RXCIE2  RXCIE
+
+#define UCPOL2  UCPOL
+#define UCSZ20  UCSZ0
+#define UCSZ21  UCSZ1
+#define USBS2   USBS
+#define UPM20   UPM0
+#define UPM21   UPM1
+#define UMSEL20 UMSEL0
+#define UMSEL21 UMSEL1
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+#define TIFR1 TIFR
+#define WDTCSR WDTCR
+//#define MCUSR MCUCSR
+//#define SPMCR SPMCSR
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
 /*------------------------------------------------------------------------ */
 /* Mega support */
-#if    defined(__AVR_ATmega1280__)	\
+#if    defined(__AVR_ATmega640__)	\
+    || defined(__AVR_ATmega1280__)	\
     || defined(__AVR_ATmega2560__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB7 on Arduino Mega */ 
 #if !defined(LED)
 #define LED         B7
 #endif
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega169__) 
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Fix register names */
+#define UCSR0A UCSRA
+#define UCSR0B UCSRB
+#define UCSR0C UCSRC
+#define UBRR0L UBRRL
+#define UDR0 UDR
+#define UDRE0 UDRE
+#define RXC0 RXC
+#define FE0 FE
+#define WDTCSR WDTCR
+#define U2X0 U2X
+#define RXEN0 RXEN
+#define TXEN0 TXEN
+#define UCSZ00 UCSZ0
+#define UCSZ01 UCSZ1
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega169P__) || defined(__AVR_ATmega329__) || defined(__AVR_ATmega329P__) \
+|| defined(__AVR_ATmega3290__) || defined(__AVR_ATmega3290P__) || defined(__AVR_ATmega649__) \
+|| defined(__AVR_ATmega649P__) || defined(__AVR_ATmega6490__) || defined(__AVR_ATmega6490P__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Fix register names */
+#define WDTCSR WDTCR
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega169__) 
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Fix register names */
+#define UCSR0A UCSRA
+#define UCSR0B UCSRB
+#define UCSR0C UCSRC
+#define UBRR0L UBRRL
+#define UDR0 UDR
+#define UDRE0 UDRE
+#define RXC0 RXC
+#define FE0 FE
+#define WDTCSR WDTCR
+#define U2X0 U2X
+#define RXEN0 RXEN
+#define TXEN0 TXEN
+#define UCSZ00 UCSZ0
+#define UCSZ01 UCSZ1
+
+/* Ports for soft UART */
+#ifdef SOFT_UART
+#define UART_PORT   PORTE
+#define UART_PIN    PINE
+#define UART_DDR    DDRE
+#define UART_TX_BIT 1
+#define UART_RX_BIT 0
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega169P__) || defined(__AVR_ATmega329__) || defined(__AVR_ATmega329P__) \
+|| defined(__AVR_ATmega3290__) || defined(__AVR_ATmega3290P__) || defined(__AVR_ATmega649__) \
+|| defined(__AVR_ATmega649P__) || defined(__AVR_ATmega6490__) || defined(__AVR_ATmega6490P__)
+/*------------------------------------------------------------------------ */
+#if !defined(LED)
+#define LED         B5
+#endif
+
+/* Fix register names */
+#define WDTCSR WDTCR
 
 /* Ports for soft UART */
 #ifdef SOFT_UART
