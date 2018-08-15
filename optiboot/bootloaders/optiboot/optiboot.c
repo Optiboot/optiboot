@@ -396,10 +396,10 @@ typedef uint8_t pagelen_t;
  * supress some compile-time options we want.)
  */
 
-int main(void) __attribute__ ((OS_main)) __attribute__ ((section (".init9")));
+int main(void) __attribute__ ((OS_main)) __attribute__ ((section (".init9"))) __attribute__((used));
 
-void __attribute__((noinline)) putch(char);
-uint8_t __attribute__((noinline)) getch(void);
+void __attribute__((noinline)) __attribute__((leaf)) putch(char);
+uint8_t __attribute__((noinline)) __attribute__((leaf)) getch(void) ;
 void __attribute__((noinline)) verifySpace();
 void __attribute__((noinline)) watchdogConfig(uint8_t x);
 
@@ -574,24 +574,34 @@ int main(void) {
 #endif
 
 #ifndef SOFT_UART
-#if defined(__AVR_ATmega8__) || defined (__AVR_ATmega8515__) ||		\
-    defined (__AVR_ATmega8535__) || defined (__AVR_ATmega16__) ||	\
-    defined (__AVR_ATmega32__)
-#ifndef SINGLESPEED
+  #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega8515__) ||	\
+      defined (__AVR_ATmega8535__) || defined (__AVR_ATmega16__) ||	\
+      defined (__AVR_ATmega32__)
+  #ifndef SINGLESPEED
   UCSRA = _BV(U2X); //Double speed mode USART
-#endif
+  #endif //singlespeed
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
   UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
-#else
-#ifndef SINGLESPEED
+  #else // mega8/etc
+    #ifdef LIN_UART
+  //DDRB|=3;
+  LINCR = (1 << LSWRES); 
+  //LINBRRL = (((F_CPU * 10L / 32L / BAUD_RATE) + 5L) / 10L) - 1; 
+  LINBRRL=(uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+  LINBTR = (1 << LDISR) | (8 << LBT0); 
+  LINCR = _BV(LENA) | _BV(LCMD2) | _BV(LCMD1) | _BV(LCMD0); 
+  LINDAT=0;
+    #else
+      #ifndef SINGLESPEED
   UART_SRA = _BV(U2X0); //Double speed mode USART0
-#endif
+      #endif
   UART_SRB = _BV(RXEN0) | _BV(TXEN0);
   UART_SRC = _BV(UCSZ00) | _BV(UCSZ01);
   UART_SRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
-#endif
-#endif
+    #endif // LIN_UART
+  #endif // mega8/etc
+#endif // soft_uart
 
   // Set up watchdog to trigger after 1s
   watchdogConfig(WATCHDOG_1S);
@@ -806,8 +816,14 @@ int main(void) {
 
 void putch(char ch) {
 #ifndef SOFT_UART
-  while (!(UART_SRA & _BV(UDRE0)));
+  #ifndef LIN_UART
+    while (!(UART_SRA & _BV(UDRE0))) {  /* Spin */ }
+  #else
+    while (!(LINSIR & _BV(LTXOK)))   {  /* Spin */ }
+  #endif
+
   UART_UDR = ch;
+
 #else
   __asm__ __volatile__ (
     "   com %[ch]\n" // ones complement, carry set
@@ -874,9 +890,13 @@ uint8_t getch(void) {
       "r25"
 );
 #else
-  while(!(UART_SRA & _BV(RXC0)))
-    ;
+#ifndef LIN_UART
+  while(!(UART_SRA & _BV(RXC0)))  {  /* Spin */ }
   if (!(UART_SRA & _BV(FE0))) {
+#else
+  while(!(LINSIR & _BV(LRXOK)))  {  /* Spin */ }
+  if (!(LINSIR & _BV(LFERR))) {
+#endif
       /*
        * A Framing Error indicates (probably) that something is talking
        * to us at the wrong bit rate.  Assume that this is because it
@@ -960,7 +980,11 @@ void flash_led(uint8_t count) {
      *  quick succession, some of which will be lost and cause us to
      *  get out of sync.  So if we see any data; stop blinking.
      */
+#ifndef LIN_UART
     if (UART_SRA & _BV(RXC0))
+#else
+    if (LINSIR & _BV(LRXOK))
+#endif
 	break;
 #else
 // This doesn't seem to work?
