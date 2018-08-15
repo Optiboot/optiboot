@@ -279,6 +279,7 @@ attiny828at8_5v:
 # ATtiny167, ATtiny87 - has LIN UART
 #--------------------
 
+HELPTEXT += "target attiny167, attiny87\n"
 
 attiny167: TARGET = attiny167
 attiny167: MCU_TARGET = attiny167
