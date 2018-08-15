@@ -276,7 +276,7 @@ attiny828at8_5v:
 
 
 #-------------------
-# ATtiny167 - has LIN UART
+# ATtiny167, ATtiny87 - has LIN UART
 #--------------------
 
 
@@ -287,3 +287,12 @@ attiny167: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-DBAUD_RATE=5
 attiny167: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 attiny167: $(PROGRAM)_attiny167.hex
 attiny167: $(PROGRAM)_attiny167.lst
+
+
+attiny87: TARGET = attiny87
+attiny87: MCU_TARGET = attiny87
+attiny87: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-DBAUD_RATE=57600'
+attiny87: AVR_FREQ ?= 8000000L
+attiny87: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
+attiny87: $(PROGRAM)_attiny87.hex
+attiny87: $(PROGRAM)_attiny87.lst
