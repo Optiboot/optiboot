@@ -416,7 +416,6 @@ static inline void read_mem(uint8_t memtype,
 #ifdef SOFT_UART
 void uartDelay() __attribute__ ((naked));
 #endif
-void appStart(uint8_t rstFlags) __attribute__ ((naked));
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
@@ -564,7 +563,35 @@ int main(void) {
 	      MCUSR = ~(_BV(WDRF));
 #endif
 	  }
-	  appStart(ch);
+	  /* 
+	   * save the reset flags in the designated register
+	   * This can be saved in a main program by putting code in .init0 (which
+	   * executes before normal c init code) to save R2 to a global variable.
+	   */
+	  __asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
+
+	  // switch off watchdog
+	  watchdogConfig(WATCHDOG_OFF);
+	  // Note that appstart_vec is defined so that this works with either
+	  // real or virtual boot partitions.
+	   __asm__ __volatile__ (
+	    // Jump to 'save' or RST vector
+#ifdef VIRTUAL_BOOT_PARTITION
+	    // full code version for virtual boot partition
+	    "ldi r30,%[rstvec]\n"
+	    "clr r31\n"
+	    "ijmp\n"::[rstvec] "M"(appstart_vec)
+#else
+#ifdef RAMPZ
+	    // use absolute jump for devices with lot of flash
+	    "jmp 0\n"::
+#else
+	    // use rjmp to go around end of flash to address 0
+	    // it uses fact that optiboot_version constant is 2 bytes before end of flash
+	    "rjmp optiboot_version+2\n"
+#endif //RAMPZ
+#endif //VIRTUAL_BOOT_PARTITION
+	  );
       }
   }
 
@@ -1020,22 +1047,6 @@ void watchdogConfig(uint8_t x) {
 #endif
 }
 
-void appStart(uint8_t rstFlags) {
-  // save the reset flags in the designated register
-  //  This can be saved in a main program by putting code in .init0 (which
-  //  executes before normal c init code) to save R2 to a global variable.
-  __asm__ __volatile__ ("mov r2, %0\n" :: "r" (rstFlags));
-
-  watchdogConfig(WATCHDOG_OFF);
-  // Note that appstart_vec is defined so that this works with either
-  // real or virtual boot partitions.
-  __asm__ __volatile__ (
-    // Jump to 'save' or RST vector
-    "ldi r30,%[rstvec]\n"
-    "clr r31\n"
-    "ijmp\n"::[rstvec] "M"(appstart_vec)
-  );
-}
 
 /*
  * void writebuffer(memtype, buffer, address, length)
