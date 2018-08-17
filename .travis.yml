@@ -7,12 +7,17 @@ cache:
     - $HOME/avr-tools    
 install: true
 
+stages:
+  - check sizes
+  - test
+
 env:
   global:
-#    - ARDUINO_VERSION=1.0.6
-    - ARDUINO_VERSION=1.6.9
-#    - ARDUINO_VERSION=1.6.13
-#    - ARDUINO_VERSION=1.8.5
+#    - TOOLS_VERSION=1.0.6
+#    - TOOLS_VERSION=1.6.9
+#    - TOOLS_VERSION=1.6.13
+#    - TOOLS_VERSION=1.8.5
+    - TOOLS_VERSION=microchip    
   matrix:
     - OPTIBOOT_TARGET=bobuino
     - OPTIBOOT_TARGET=diecimila
@@ -41,17 +46,66 @@ env:
     - OPTIBOOT_TARGET=atmega168p
     - OPTIBOOT_TARGET=atmega32
     - OPTIBOOT_TARGET=atmega328
+    - OPTIBOOT_TARGET="atmega328 LED_START_FLASHES=0"
+    - OPTIBOOT_TARGET="atmega328 LED_START_FLASHES=0 SUPPORT_EEPROM=1"
+    - OPTIBOOT_TARGET="atmega328 LED_START_FLASHES=0 LED_START_ON=1 SUPPORT_EEPROM=1"
+    - OPTIBOOT_TARGET="atmega328 SOFT_UART=1"
+    - OPTIBOOT_TARGET="atmega328 BIGBOOT=1"
     - OPTIBOOT_TARGET=atmega328_pro8
     - OPTIBOOT_TARGET=atmega644p
     - OPTIBOOT_TARGET=atmega8
     - OPTIBOOT_TARGET=atmega88
     - OPTIBOOT_TARGET=attiny84
+    - OPTIBOOT_TARGET=attiny1634
+    - OPTIBOOT_TARGET=attiny841
+    - OPTIBOOT_TARGET=attiny828
+    - OPTIBOOT_TARGET=atmega2560
+    - OPTIBOOT_TARGET=mega2560
+    - OPTIBOOT_TARGET="atmega64"
+    - OPTIBOOT_TARGET="atmega88p LED=B5"
+    - OPTIBOOT_TARGET="atmega88pb LED=B5"
+    - OPTIBOOT_TARGET=atmega128
+    - OPTIBOOT_TARGET=atmega162
+    - OPTIBOOT_TARGET=atmega164a
+    - OPTIBOOT_TARGET=atmega164p
+    - OPTIBOOT_TARGET="atmega168pb LED=B5"
+    - OPTIBOOT_TARGET=atmega169
+    - OPTIBOOT_TARGET=atmega169p
+    - OPTIBOOT_TARGET=atmega324a
+    - OPTIBOOT_TARGET=atmega324p
+    - OPTIBOOT_TARGET=atmega324pa
+    - OPTIBOOT_TARGET=atmega324pb
+    - OPTIBOOT_TARGET="atmega328pb LED=B5"
+    - OPTIBOOT_TARGET=atmega329
+    - OPTIBOOT_TARGET=atmega329p
+    - OPTIBOOT_TARGET=atmega640
+    - OPTIBOOT_TARGET=atmega644p
+    - OPTIBOOT_TARGET=atmega649
+    - OPTIBOOT_TARGET=atmega649p
+    - OPTIBOOT_TARGET=atmega1281
+    - OPTIBOOT_TARGET=atmega2561
+    - OPTIBOOT_TARGET=atmega3290
+    - OPTIBOOT_TARGET=atmega3290p
+    - OPTIBOOT_TARGET=atmega6490
+    - OPTIBOOT_TARGET=atmega6490p
+    - OPTIBOOT_TARGET=atmega8515
+    - OPTIBOOT_TARGET=atmega8535
+    - OPTIBOOT_TARGET=attiny167
+    - OPTIBOOT_TARGET=attiny87
 
 matrix:
   allow_failures:
-    - env: OPTIBOOT_TARGET=attiny84
+    - env: OPTIBOOT_TARGET=attiny828
+    - env: OPTIBOOT_TARGET=atmega324pb
+    - env: OPTIBOOT_TARGET="atmega328pb LED=B5"
 
-script: scripts/travis-build.sh $ARDUINO_VERSION $OPTIBOOT_TARGET
+script: scripts/travis-build.sh $TOOLS_VERSION $OPTIBOOT_TARGET
+
+jobs:
+  include:
+    - stage: check sizes
+      script: scripts/travis-check-sizes.sh
+      env: OPTIBOOT_TARGET=none
 
 notifications:
   email:
