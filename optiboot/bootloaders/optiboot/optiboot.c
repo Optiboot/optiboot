@@ -609,13 +609,13 @@ int main(void) {
   #endif //singlespeed
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
   UCSRC = _BV(URSEL) | _BV(UCSZ1) | _BV(UCSZ0);  // config USART; 8N1
-  UBRRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+  UBRRL = (uint8_t)BAUD_SETTING;
   #else // mega8/etc
     #ifdef LIN_UART
   //DDRB|=3;
   LINCR = (1 << LSWRES); 
   //LINBRRL = (((F_CPU * 10L / 32L / BAUD_RATE) + 5L) / 10L) - 1; 
-  LINBRRL=(uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+  LINBRRL=(uint8_t)BAUD_SETTING;
   LINBTR = (1 << LDISR) | (8 << LBT0); 
   LINCR = _BV(LENA) | _BV(LCMD2) | _BV(LCMD1) | _BV(LCMD0); 
   LINDAT=0;
@@ -625,7 +625,7 @@ int main(void) {
       #endif
   UART_SRB = _BV(RXEN0) | _BV(TXEN0);
   UART_SRC = _BV(UCSZ00) | _BV(UCSZ01);
-  UART_SRL = (uint8_t)( (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 );
+  UART_SRL = (uint8_t)BAUD_SETTING;
     #endif // LIN_UART
   #endif // mega8/etc
 #endif // soft_uart
