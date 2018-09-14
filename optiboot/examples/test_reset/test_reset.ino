@@ -78,6 +78,16 @@ void printReset(const char *label, uint8_t resetFlags)
 }
 
 void setup() {
+#if 1
+  /*
+   * if we're going to allow the bootloader to be called as a service ('j" command),
+   * then we need to disable the WDT when the sketch starts.  Essentially, there is no
+   * way to tell a watchdog that occurs during the sketch from the watchdog that will
+   * re-start the sketch when the bootloader is called from the application.
+   */
+  MCUSR = ~(1 << WDRF); // allow us to disable WD
+  wdt_disable();
+#endif
   Serial.begin(9600);  // Initialize serial port
 
   Serial.println(F("Reset flag test\n"));
@@ -98,7 +108,7 @@ void loop() {
     printReset("\nNew MCUSR content: 0x", MCUSR);
   } else
     switch (ch & ~('a' - 'A')) {
-      
+
       case 'W':
         wdt_enable(WDTO_15MS);
         while (1); // To prevent the loop to start again before WDT resets the board
@@ -115,7 +125,7 @@ void loop() {
         Serial.print(F("\nPower down not supported on this CPU\n"));
 #endif
         break;
-        
+
       case 'J':
         /* Figure out where the bootloader starts. */
 #if FLASHEND > 140000
