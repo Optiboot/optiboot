@@ -193,7 +193,7 @@ do
      # Print out current build info
      echo -e " ${mcu_and_params[$i]} AVR_FREQ=${clock_and_baud[$j]} BAUD_RATE=${clock_and_baud[$j+1]} ${mcu_and_params[$i+1]} \x1B[0m"
      # Build
-     make ${mcu_and_params[$i]} AVR_FREQ=${clock_and_baud[$j]} BAUD_RATE=${clock_and_baud[$j+1]} ${mcu_and_params[$i+1]}
+     make ${mcu_and_params[$i]} AVR_FREQ=${clock_and_baud[$j]} BAUD_RATE=${clock_and_baud[$j+1]} ${mcu_and_params[$i+1]} $*
   done
 done
 

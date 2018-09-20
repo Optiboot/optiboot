@@ -152,6 +152,7 @@
 /*  handling, did MORE Makefile mods.  EEPROM support now */
 /*  fits in 512 bytes, if you turn off LED Blinking.      */
 /*  Various bigboot and virboot targets were fixed.       */
+/* Version 8.0 adds the do_spm code callable from Apps.   */
 /*                                                        */
 /* It would be good if versions implemented outside the   */
 /*  official repository used an out-of-seqeunce version   */
@@ -164,6 +165,10 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Sep 2018						  */
+/* 8.0  WestfW (and MCUDude)				  */
+/*      Include do_spm routine callable from the app      */
+/*      at BOOTSTART+2, controllable with compile option  */
 /* July 2018						  */
 /* 7.0	WestfW (with much input from Others)		  */
 /*	Fix MCUSR treatement as per much discussion,	  */
@@ -246,7 +251,7 @@
 /* 4.1 WestfW: put version number in binary.		  */
 /**********************************************************/
 
-#define OPTIBOOT_MAJVER 7
+#define OPTIBOOT_MAJVER 8
 #define OPTIBOOT_MINVER 0
 
 /*
@@ -396,6 +401,7 @@ typedef uint8_t pagelen_t;
  * supress some compile-time options we want.)
  */
 
+void pre_main(void) __attribute__ ((naked)) __attribute__ ((section (".init8")));
 int main(void) __attribute__ ((OS_main)) __attribute__ ((section (".init9"))) __attribute__((used));
 
 void __attribute__((noinline)) __attribute__((leaf)) putch(char);
@@ -485,6 +491,23 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #else
 #define appstart_vec (0)
 #endif // VIRTUAL_BOOT_PARTITION
+
+
+/* everything that needs to run VERY early */
+void pre_main(void) {
+  // Allow convenient way of calling do_spm function - jump table,
+  //   so entry to this function will always be here, indepedent of compilation,
+  //   features etc
+  asm volatile (
+    "	rjmp	1f\n"
+#ifndef APP_NOSPM
+    "	rjmp	do_spm\n"
+#else
+    "   ret\n"   // if do_spm isn't include, return without doing anything
+#endif
+    "1:\n"
+  );
+}
 
 
 /* main program starts here */
@@ -1156,6 +1179,59 @@ static inline void read_mem(uint8_t memtype, addr16_t address, pagelen_t length)
 	break;
     } // switch
 }
+
+
+#ifndef APP_NOSPM
+
+/*
+ * Separate function for doing spm stuff
+ * It's needed for application to do SPM, as SPM instruction works only
+ * from bootloader.
+ *
+ * How it works:
+ * - do SPM
+ * - wait for SPM to complete
+ * - if chip have RWW/NRWW sections it does additionaly:
+ *   - if command is WRITE or ERASE, AND data=0 then reenable RWW section
+ *
+ * In short:
+ * If you play erase-fill-write, just set data to 0 in ERASE and WRITE
+ * If you are brave, you have your code just below bootloader in NRWW section
+ *   you could do fill-erase-write sequence with data!=0 in ERASE and
+ *   data=0 in WRITE
+ */
+static void do_spm(uint16_t address, uint8_t command, uint16_t data)  __attribute__ ((used));
+static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
+    // Do spm stuff
+    asm volatile (
+	"    movw  r0, %3\n"
+    "    __wr_spmcsr %0, %1\n"
+    "    spm\n"
+    "    clr  r1\n"
+    :
+    : "i" (_SFR_MEM_ADDR(__SPM_REG)),
+        "r" ((uint8_t)command),
+        "z" ((uint16_t)address),
+        "r" ((uint16_t)data)
+    : "r0"
+    );
+
+    // wait for spm to complete
+    //   it doesn't have much sense for __BOOT_PAGE_FILL,
+    //   but it doesn't hurt and saves some bytes on 'if'
+    boot_spm_busy_wait();
+#if defined(RWWSRE)
+    // this 'if' condition should be: (command == __BOOT_PAGE_WRITE || command == __BOOT_PAGE_ERASE)...
+    // but it's tweaked a little assuming that in every command we are interested in here, there
+    // must be also SELFPRGEN set. If we skip checking this bit, we save here 4B
+    if ((command & (_BV(PGWRT)|_BV(PGERS))) && (data == 0) ) {
+      // Reenable read access to flash
+      __boot_rww_enable_short();
+    }
+#endif
+}
+#endif
+
 
 
 #ifdef BIGBOOT

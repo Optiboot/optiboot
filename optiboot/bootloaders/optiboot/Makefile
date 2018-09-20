@@ -236,9 +236,17 @@ SS_CMD = -DSINGLESPEED=1
 endif
 endif
 
+HELPTEXT += "Option NO_APP_SPM=1          - disallow application call of do_spm\n"
+ifdef NO_APP_SPM
+ifneq ($(NO_APP_SPM),0)
+APPSPM_CMD = -DAPP_NOSPM=1
+endif
+endif
+
+
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
-COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
 COMMON_OPTIONS += $(VERSION_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
@@ -380,7 +388,7 @@ atmega168_isp: HFUSE ?= DD
 atmega168_isp: LFUSE ?= F7
 ifndef BIGBOOT
 # 512 byte boot
-atmega168_isp: EFUSE ?= 04
+atmega168_isp: EFUSE ?= FC
 else
 # 1024byte boot
 atmega168_isp: EFUSE ?= FA
