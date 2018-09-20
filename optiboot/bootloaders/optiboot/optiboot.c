@@ -166,7 +166,7 @@
 /* Edit History:					  */
 /*							  */
 /* Sep 2018						  */
-/* 8.0  WestfW (and MCUDude)				  */
+/* 8.0  WestfW (and Majekw and MCUDude)			  */
 /*      Include do_spm routine callable from the app      */
 /*      at BOOTSTART+2, controllable with compile option  */
 /* July 2018						  */
