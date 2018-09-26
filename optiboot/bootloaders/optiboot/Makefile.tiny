@@ -2,7 +2,7 @@
 # ATtiny 1634, Base instructions
 #-------------------------------
 
-HELPTEXT += "target attiny1634    - atttiny1634at<freq>  attiny1634at<freq>ser1\n"
+HELPTEXT += "\n target attiny1634    - atttiny1634at<freq>  attiny1634at<freq>ser1\n"
 HELPTEXT += "                     - atttiny1634at8_5v  attiny1634at8_5vser1\n"
 
 attiny1634:	TARGET = attiny1634
@@ -12,7 +12,9 @@ attiny1634: CFLAGS += $(COMMON_OPTIONS) -DVIRTUAL_BOOT_PARTITION -DFOURPAGEERASE
 attiny1634: AVR_FREQ ?= 8000000L
 attiny1634: LDSECTIONS  = -Wl,--section-start=.text=0x3d80 -Wl,--section-start=.version=0x3ffe
 attiny1634: $(PROGRAM)_attiny1634.hex
+ifndef PRODUCTION
 attiny1634: $(PROGRAM)_attiny1634.lst
+endif
 
 
 #-----------------------
@@ -21,42 +23,58 @@ attiny1634: $(PROGRAM)_attiny1634.lst
 attiny1634at12:
 	"$(MAKE)" attiny1634	AVR_FREQ=12000000L
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at16:
 	"$(MAKE)" attiny1634	AVR_FREQ=16000000L
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at8:
 	"$(MAKE)" attiny1634	AVR_FREQ=8000000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at8_5v:
 	"$(MAKE)" attiny1634	AVR_FREQ=8200000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at737:
 	"$(MAKE)" attiny1634	AVR_FREQ=7372800L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at921:
 	"$(MAKE)" attiny1634	AVR_FREQ=9216000L  BAUD_RATE=57600
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at110:
 	"$(MAKE)" attiny1634	AVR_FREQ=11059200L
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at147:
 	"$(MAKE)" attiny1634	AVR_FREQ=14745600L
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 
 
@@ -67,42 +85,58 @@ attiny1634at147:
 attiny1634at12ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=12000000L UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at16ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=16000000L UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at8ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=8000000L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at8_5vser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=8200000L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at737ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=7372800L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at921ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=9216000L  BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at110ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=11059200L UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 attiny1634at147ser1:
 	"$(MAKE)" attiny1634	AVR_FREQ=14745600L UART=1
 	mv $(PROGRAM)_attiny1634.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny1634.lst $(PROGRAM)_$@.lst
+endif
 
 
 
@@ -120,7 +154,9 @@ attiny841: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-DFOURPAGEERA
 attiny841: AVR_FREQ ?= 8000000L
 attiny841: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 attiny841: $(PROGRAM)_attiny841.hex
+ifndef PRODUCTION
 attiny841: $(PROGRAM)_attiny841.lst
+endif
 
 #-----------------------
 # ATtiny 841, UART 0 
@@ -128,52 +164,72 @@ attiny841: $(PROGRAM)_attiny841.lst
 attiny841at184:
 	$(MAKE) attiny841	 AVR_FREQ=18432000L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at147:
 	$(MAKE) attiny841	 AVR_FREQ=14745600L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at110:
 	$(MAKE) attiny841	 AVR_FREQ=11059200L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at921:
 	$(MAKE) attiny841	 AVR_FREQ=9216000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at737:
 	$(MAKE) attiny841	 AVR_FREQ=7372800L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at20:
 	$(MAKE) attiny841	 AVR_FREQ=20000000L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at16:
 	$(MAKE) attiny841	 AVR_FREQ=16000000L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at12:
 	$(MAKE) attiny841	 AVR_FREQ=12000000L
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at8:
 	$(MAKE) attiny841	 AVR_FREQ=8000000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at8_5v:
 	$(MAKE) attiny841	 AVR_FREQ=8200000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 
 
@@ -183,47 +239,65 @@ attiny841at8_5v:
 attiny841at184ser1:
 	$(MAKE) attiny841	 AVR_FREQ=18432000L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at147ser1:
 	$(MAKE) attiny841	 AVR_FREQ=14745600L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at110ser1:
 	$(MAKE) attiny841	 AVR_FREQ=11059200L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at921ser1:
 	$(MAKE) attiny841	 AVR_FREQ=9216000L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at737ser1:
 	$(MAKE) attiny841	 AVR_FREQ=7372800L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at20ser1:
 	$(MAKE) attiny841	 AVR_FREQ=20000000L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at16ser1:
 	$(MAKE) attiny841	 AVR_FREQ=16000000L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at12ser1:
 	$(MAKE) attiny841	 AVR_FREQ=12000000L UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at8ser1:
 	$(MAKE) attiny841	 AVR_FREQ=8000000L BAUD_RATE=57600 UART=1
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 #-----------------------
 # ATtiny 841, UART 0, no LED
@@ -234,17 +308,23 @@ attiny841at8ser1:
 attiny841at20noLED:
 	$(MAKE) attiny841	 AVR_FREQ=20000000L LED_START_FLASHES=0
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at16noLED:
 	$(MAKE) attiny841	 AVR_FREQ=16000000L LED_START_FLASHES=0
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 attiny841at8noLED:
 	$(MAKE) attiny841	 AVR_FREQ=8000000L  BAUD_RATE=57600 LED_START_FLASHES=0
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_$@.lst
+endif
 
 
 #-------------------
@@ -260,18 +340,24 @@ attiny828: CFLAGS += $(COMMON_OPTIONS) '-DBAUD_RATE=57600'
 attiny828: AVR_FREQ ?= 8000000L
 attiny828: LDSECTIONS  = -Wl,--section-start=.text=0x1E00 -Wl,--section-start=.version=0x1ffe
 attiny828: $(PROGRAM)_attiny828.hex
+ifndef PRODUCTION
 attiny828: $(PROGRAM)_attiny828.lst
+endif
 
 
 attiny828at8: 
 	$(MAKE) attiny828at8 AVR_FREQ=8000000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny828.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny828.lst $(PROGRAM)_$@.lst
+endif
 
 attiny828at8_5v: 
 	$(MAKE) attiny828at8 AVR_FREQ=8200000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny828.hex $(PROGRAM)_$@.hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_attiny828.lst $(PROGRAM)_$@.lst
+endif
 
 
 
@@ -287,7 +373,9 @@ attiny167: AVR_FREQ ?= 8000000L
 attiny167: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-DBAUD_RATE=57600'
 attiny167: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 attiny167: $(PROGRAM)_attiny167.hex
+ifndef PRODUCTION
 attiny167: $(PROGRAM)_attiny167.lst
+endif
 
 
 attiny87: TARGET = attiny87
@@ -296,4 +384,6 @@ attiny87: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-DBAUD_RATE=57
 attiny87: AVR_FREQ ?= 8000000L
 attiny87: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 attiny87: $(PROGRAM)_attiny87.hex
+ifndef PRODUCTION
 attiny87: $(PROGRAM)_attiny87.lst
+endif

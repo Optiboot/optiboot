@@ -15,7 +15,9 @@ atmega644p: AVR_FREQ ?= 16000000L
 atmega644p: LDSECTIONS  = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
 atmega644p: CFLAGS += $(UART_CMD)
 atmega644p: $(PROGRAM)_atmega644p.hex
+ifndef PRODUCTION
 atmega644p: $(PROGRAM)_atmega644p.lst
+endif
 
 HELPTEXT += "target atmega1284    - ATmega1284p (40 pin, 128k)\n"
 atmega1284: TARGET = atmega1284p
@@ -25,7 +27,9 @@ atmega1284: AVR_FREQ ?= 16000000L
 atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
 atmega1284: CFLAGS += $(UART_CMD)
 atmega1284: $(PROGRAM)_atmega1284p.hex
+ifndef PRODUCTION
 atmega1284: $(PROGRAM)_atmega1284p.lst
+endif
 
 atmega1284p: atmega1284
 
@@ -52,7 +56,9 @@ sanguino: CHIP = atmega644p
 sanguino:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B0
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 sanguino_isp: sanguino
 sanguino_isp: TARGET = sanguino
@@ -71,7 +77,9 @@ mighty1284: CHIP = atmega1284p
 mighty1284:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 mighty1284_isp: mighty1284
 mighty1284_isp: TARGET = mighty1284
@@ -90,7 +98,9 @@ bobuino: CHIP = atmega1284p
 bobuino:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 bobuino_isp: bobuino
 bobuino_isp: TARGET = bobuino
@@ -113,7 +123,9 @@ wildfirev2: CHIP = atmega1284p
 wildfirev2:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B7 BAUD_RATE=1000000
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 wildfirev2_isp: wildfirev2
 wildfirev2_isp: TARGET = wildfirev2
@@ -132,7 +144,9 @@ wildfirev3: CHIP = atmega1284p
 wildfirev3:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED=B5
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 wildfirev3_isp: wildfirev3
 wildfirev3_isp: TARGET = wildfirev3

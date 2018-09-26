@@ -298,7 +298,9 @@ virboot8: AVR_FREQ ?= 16000000L
 # Start address of 1D80 allows for size up to 640 bytes, app up to 7552
 virboot8: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 virboot8: $(PROGRAM)_virboot8.hex
+ifndef PRODUCTION
 virboot8: $(PROGRAM)_virboot8.lst
+endif
 
 
 HELPTEXT += "target virboot328p   - ATmega328 with virtual boot partition\n"
@@ -308,7 +310,9 @@ virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION'
 virboot328: AVR_FREQ ?= 16000000L
 virboot328: LDSECTIONS  = -Wl,--section-start=.text=0x7d80 -Wl,--section-start=.version=0x7ffe
 virboot328: $(PROGRAM)_virboot328.hex
+ifndef PRODUCTION
 virboot328: $(PROGRAM)_virboot328.lst
+endif
 
 virboot328_isp: virboot328
 virboot328_isp: TARGET = virboot328
@@ -351,7 +355,9 @@ else
 atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
 endif
 atmega8: $(PROGRAM)_atmega8.hex
+ifndef PRODUCTION
 atmega8: $(PROGRAM)_atmega8.lst
+endif
 
 atmega8_isp: atmega8
 atmega8_isp: TARGET = atmega8
@@ -367,7 +373,7 @@ endif
 atmega8_isp: LFUSE ?= BF
 atmega8_isp: isp
 
-HELPTEXT += "target atmega168     - ATmega168, ATmega168A\n"
+HELPTEXT += "target atmega168*    - ATmega168/A, ATmega168P, ATMEGA1268PB\n"
 atmega168: TARGET = atmega168
 atmega168: MCU_TARGET = atmega168
 atmega168: CFLAGS += $(COMMON_OPTIONS)
@@ -378,7 +384,9 @@ else
 atmeg168: LDSECTIONS  = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
 endif
 atmega168: $(PROGRAM)_atmega168.hex
+ifndef PRODUCTION
 atmega168: $(PROGRAM)_atmega168.lst
+endif
 
 atmega168_isp: atmega168
 atmega168_isp: TARGET = atmega168
@@ -395,7 +403,7 @@ atmega168_isp: EFUSE ?= FA
 endif
 atmega168_isp: isp
 
-HELPTEXT += "target atmega328     - ATmega328p\n"
+HELPTEXT += "target atmega328*    - ATmega328, ATmega328p, ATmega328pb\n"
 atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += $(COMMON_OPTIONS)
@@ -407,7 +415,9 @@ else
 atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
 endif
 atmega328: $(PROGRAM)_atmega328.hex
+ifndef PRODUCTION
 atmega328: $(PROGRAM)_atmega328.lst
+endif
 
 atmega328_isp: atmega328
 atmega328_isp: TARGET = atmega328
@@ -432,7 +442,9 @@ atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
 atmega1280: AVR_FREQ ?= 16000000L
 atmega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
 atmega1280: $(PROGRAM)_atmega1280.hex
+ifndef PRODUCTION
 atmega1280: $(PROGRAM)_atmega1280.lst
+endif
 
 
 
@@ -454,7 +466,9 @@ pro20: CHIP = atmega168
 pro20:
 	"$(MAKE)" atmega168 AVR_FREQ=20000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 pro20_isp: pro20
 pro20_isp: TARGET = pro_20mhz
@@ -463,7 +477,7 @@ pro20_isp: HFUSE ?= DC
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
 pro20_isp: LFUSE ?= F7
 # 512 byte boot
-pro20_isp: EFUSE ?= 04
+pro20_isp: EFUSE ?= FC
 pro20_isp: isp
 
 # 16MHz clocked platforms
@@ -476,7 +490,9 @@ pro16: CHIP = atmega168
 pro16:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 pro16_isp: pro16
 pro16_isp: TARGET = pro_16MHz
@@ -485,7 +501,7 @@ pro16_isp: HFUSE ?= DD
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
 pro16_isp: LFUSE ?= F7
 # 512 byte boot
-pro16_isp: EFUSE ?= 04
+pro16_isp: EFUSE ?= FC
 pro16_isp: isp
 
 diecimila: TARGET = diecimila
@@ -493,7 +509,9 @@ diecimila: CHIP = atmega168
 diecimila:
 	"$(MAKE)" $(CHIP) AVR_FREQ=16000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 diecimila_isp: diecimila
 diecimila_isp: TARGET = diecimila
@@ -502,7 +520,7 @@ diecimila_isp: HFUSE ?= DD
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 diecimila_isp: LFUSE ?= F7
 # 512 byte boot
-diecimila_isp: EFUSE ?= 04
+diecimila_isp: EFUSE ?= FC
 diecimila_isp: isp
 
 # MEGA1280 Board (this is different from the atmega1280 chip platform)
@@ -535,7 +553,9 @@ lilypad: CHIP = atmega168
 lilypad:
 	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 lilypad_isp: lilypad
 lilypad_isp: TARGET = lilypad
@@ -544,7 +564,7 @@ lilypad_isp: HFUSE ?= DD
 # Internal 8MHz osc (8MHz) Slow rising power
 lilypad_isp: LFUSE ?= E2
 # 512 byte boot
-lilypad_isp: EFUSE ?= 04
+lilypad_isp: EFUSE ?= FC
 lilypad_isp: isp
 
 # lilypad_resonator is the same as a 8MHz lilypad, except for fuses.
@@ -557,7 +577,7 @@ lilypad_resonator_isp: HFUSE ?= DD
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
 lilypad_resonator_isp: LFUSE ?= C6
 # 512 byte boot
-lilypad_resonator_isp: EFUSE ?= 04
+lilypad_resonator_isp: EFUSE ?= FC
 lilypad_resonator_isp: isp
 
 pro8: TARGET = pro_8MHz
@@ -565,7 +585,9 @@ pro8: CHIP = atmega168
 pro8:
 	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 pro8_isp: pro8
 pro8_isp: TARGET = pro_8MHz
@@ -574,7 +596,7 @@ pro8_isp: HFUSE ?= DD
 # Full swing xtal (20MHz) 258CK/14CK+4.1ms
 pro8_isp: LFUSE ?= C6
 # 512 byte boot
-pro8_isp: EFUSE ?= 04
+pro8_isp: EFUSE ?= FC
 pro8_isp: isp
 
 atmega328_pro8: TARGET = atmega328_pro_8MHz
@@ -582,7 +604,9 @@ atmega328_pro8: CHIP = atmega328
 atmega328_pro8:
 	"$(MAKE)" $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
 	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+endif
 
 atmega328_pro8_isp: atmega328_pro8
 atmega328_pro8_isp: TARGET = atmega328_pro_8MHz
@@ -592,7 +616,7 @@ atmega328_pro8_isp: HFUSE ?= DE
 # Low power xtal (16MHz) 16KCK/14CK+65ms
 atmega328_pro8_isp: LFUSE ?= FF
 # 2.7V brownout
-atmega328_pro8_isp: EFUSE ?= 05
+atmega328_pro8_isp: EFUSE ?= FD
 atmega328_pro8_isp: isp
 
 #
@@ -634,7 +658,11 @@ isp-stk500: $(PROGRAM)_$(TARGET).hex
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS)
 	$(SIZE) $@
 
+#windows "rm" is dumb and objects to wildcards that don't exist
 clean:
+	@touch  __temp_.o __temp_.elf __temp_.lst __temp_.map
+	@touch  __temp_.sym __temp_.lss __temp_.eep __temp_.srec
+	@touch __temp_.bin __temp_.hex __temp_.tmp.sh
 	rm -rf *.o *.elf *.lst *.map *.sym *.lss *.eep *.srec *.bin *.hex *.tmp.sh
 
 clean_asm:
