@@ -27,20 +27,19 @@ make <platform>  <options>
 ~~~~
 Where <platform> is one of the named chips or boards implemented as normal targets in the makefile (ie "atmega328".) (the order may be reversed.) The implemented <options> include:
 
-  * AVR_FREQ=nnnnnn  --  Use CPU frequency as specified (default: target dependent, but usually 16000000L)
-  * BAUD_RATE=nnnnn  --  Use an alternate bitrate (default: usually 115200)
-  *
-  * LED=\<portpin\>  --  Like "LED=B5" or "LED=L5"; which LED to flash.
-  * LED\_START\_FLASHES=n  -- number of flashes to emit when the bootloader executes (default 3)  Setting this to 0 omits the LED-flashing code and saves some space.
-  * LED\_START\_ON  -- Turn on the LED when the bootloader starts.  A smaller alternative to LED_START_FLASHES.
-  * LED\_DATA\_FLASH  -- flash the LED in the data receive function as well as at bootloader startup.
-  *
-  * SOFT_UART=1  --  use a bit-banged Software Uart.  Required for chips without a HW UART.
-  * SINGLESPEED=1  -- Operate the UART in single-speed mode.
-  * UART=n  -- user UARTn instead of UART0.
-  *
-  * BIGBOOT=1 -- include extra features that cause the bootloader to grow to between 512 and 1024 bytes.
-  * SUPPORT_EEPROM=1 -- try to include EEPROM read/write support, without other BIGBOOT features.
+  * **AVR\_FREQ=nnnnnn**  --  Use CPU frequency as specified (default: target dependent, but usually 16000000L)
+
+  * **BAUD\_RATE=nnnnn**  --  Use an alternate bitrate (default: usually 115200)<br>
+  * **SINGLESPEED=1**  -- Operate the UART in single-speed mode.
+  * **UART=n**  -- user UARTn instead of UART0.
+  * **SOFT_UART=1**  --  use a bit-banged Software Uart.  Required for chips without a HW UART.
+  * **LED=\<portpin\>**  --  Like "LED=B5" or "LED=L5" - which LED to flash.
+  * **LED\_START\_FLASHES=n**  -- number of flashes to emit when the bootloader executes (default 3)  Setting this to 0 omits the LED-flashing code and saves some space.
+  * **LED\_START\_ON**  -- Turn on the LED when the bootloader starts.  A smaller alternative to LED\_START\_FLASHES.
+  * **LED\_DATA\_FLASH=1 ** -- flash the LED in the data receive function as well as at bootloader startup.
+  * **BIGBOOT=1** -- include extra features that cause the bootloader to grow to between 512 and 1024 bytes.
+  * **SUPPORT\_EEPROM=1** -- try to include EEPROM read/write support, without other BIGBOOT features.
+  * **NO\_APP\_SPM=1** -- Omit the code tat allows applications to have Optiboot execute an SPM instruction (for writing to flash.)
 
 For example:
 
