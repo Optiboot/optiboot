@@ -1,0 +1,29 @@
+Explanations for possibly mysterious lables used on Optiboot github "issues."
+
+Component-Docs  - requires a fix in the documentation only
+Component-Makefiles - requires a change to the makefiles only
+Component-Scripts - changes to the scripts only
+Discussion - an "issue" that has significant "discussion" involved; may not be an actual bug.
+Duplicate
+help wanted - "official maintainers" don't have the parts or the interest.  A request for someone in the community to provide a patch/pull request/etc.
+Invalid - the bug is reported in error, or determined not to exist.
+Maintainability - affects the ease of maintenance of the program.
+Not-our-issue - the actual problem is determined to lie outside of optiboot itself.
+OpSys-Linux
+OpSys-OSX
+OpSys-Windows
+Partly Done - come code has been added/merged, but there is more to do.
+Priority-Critical
+Priority-High
+Priority-Low
+Priority-Medium
+Question - more of a
+Regression - something that used to work correctly has broken
+Superseded - was a bug at one time, but is no longer present because of other changes.
+Type-Defect
+Type-Enhancement
+Type-newChip - request for a new chip; usually involves Makefile and pin_defs.h, but not actual program logic.
+Type-Other
+Type-Patch
+wontfix - describes a real problem that can't be fixed, or won't be fixed because we think it is outside the scope of Optiboot.
+

@@ -54,7 +54,7 @@ optiboot28.menu.cpu.atmega328p.upload.maximum_size=32256
 optiboot28.menu.cpu.atmega328p.upload.maximum_data_size=2048
 
 optiboot28.menu.cpu.atmega328p.bootloader.high_fuses=0xDE
-optiboot28.menu.cpu.atmega328p.bootloader.extended_fuses=0x05
+optiboot28.menu.cpu.atmega328p.bootloader.extended_fuses=0xFD
 optiboot28.menu.cpu.atmega328p.bootloader.file=optiboot/optiboot_atmega328.hex
 
 optiboot28.menu.cpu.atmega328p.build.mcu=atmega328p
@@ -66,7 +66,7 @@ optiboot28.menu.cpu.atmega328.upload.maximum_size=32256
 optiboot28.menu.cpu.atmega328.upload.maximum_data_size=2048
 
 optiboot28.menu.cpu.atmega328.bootloader.high_fuses=0xDE
-optiboot28.menu.cpu.atmega328.bootloader.extended_fuses=0x05
+optiboot28.menu.cpu.atmega328.bootloader.extended_fuses=0xFD
 optiboot28.menu.cpu.atmega328.bootloader.file=optiboot/optiboot_atmega328.hex
 # lie!  Arduino wise, these are compatible
 optiboot28.menu.cpu.atmega328.build.mcu=atmega328p
@@ -171,7 +171,7 @@ optiboot32.menu.cpu.atmega328p.upload.maximum_size=32256
 optiboot32.menu.cpu.atmega328p.upload.maximum_data_size=2048
 
 optiboot32.menu.cpu.atmega328p.bootloader.high_fuses=0xDE
-optiboot32.menu.cpu.atmega328p.bootloader.extended_fuses=0x05
+optiboot32.menu.cpu.atmega328p.bootloader.extended_fuses=0xFD
 optiboot32.menu.cpu.atmega328p.bootloader.file=optiboot/optiboot_atmega328.hex
 
 optiboot32.menu.cpu.atmega328p.build.mcu=atmega328p
@@ -183,7 +183,7 @@ optiboot32.menu.cpu.atmega328.upload.maximum_size=32256
 optiboot32.menu.cpu.atmega328.upload.maximum_data_size=2048
 
 optiboot32.menu.cpu.atmega328.bootloader.high_fuses=0xDE
-optiboot32.menu.cpu.atmega328.bootloader.extended_fuses=0x05
+optiboot32.menu.cpu.atmega328.bootloader.extended_fuses=0xFD
 optiboot32.menu.cpu.atmega328.bootloader.file=optiboot/optiboot_atmega328.hex
 # lie!  Arduino wise, these are compatible
 optiboot32.menu.cpu.atmega328.build.mcu=atmega328p
@@ -241,7 +241,7 @@ optiboot1280.upload.maximum_data_size=8192
 
 optiboot1280.bootloader.low_fuses=0xFF
 optiboot1280.bootloader.high_fuses=0xDE
-optiboot1280.bootloader.extended_fuses=0x05
+optiboot1280.bootloader.extended_fuses=0xFD
 optiboot1280.bootloader.file=optiboot/optiboot_atmega1280.hex
 
 optiboot1280.build.mcu=atmega1280
@@ -271,7 +271,7 @@ optiboot1284.upload.maximum_data_size=16384
 # Select full swing crystal oscillator (F7 rather than FF)
 optiboot1284.bootloader.low_fuses=0xF7
 optiboot1284.bootloader.high_fuses=0xDE
-optiboot1284.bootloader.extended_fuses=0x05
+optiboot1284.bootloader.extended_fuses=0xFD
 optiboot1284.bootloader.file=optiboot/optiboot_atmega1284p.hex
 
 optiboot1284.build.mcu=atmega1284p

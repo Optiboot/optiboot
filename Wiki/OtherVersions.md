@@ -1,0 +1,3 @@
+A number of people have modified some version of Optiboot to support additional features or communications channels, where I have decided for one reason or another NOT to merge those changes back into the main Optiboot source.  Nevertheless, they're worth referencing here...
+
+<http://sowerbutts.com/optiboot-w5100/> Boot over TCP using Wiznet W5100 chip.  As small as 1K.
