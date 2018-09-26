@@ -2,7 +2,7 @@
 
 There are two aspects to "installing optiboot."  The first problem, which is discussed here, involves getting the optiboot firmware into chips, whether the chips have an older version of a bootloader, or are completely blank.
 
-The second problem is configuring the Arduino IDE to support the optiboot-loaded chips.  This is easy if you're loading up ATmega328x chips, since any 328 chip with optiboot is essentially an Arduino Uno, and you can use the existing Uno configuration.  It is more difficult (and not yet documented) if you're adding a new chip, or putting optiboot on a chip that normally uses a different bootloader.  This is (will be) described at [[AddingOptibootChipsToIde]].
+The second problem is configuring the Arduino IDE to support the optiboot-loaded chips.  This is easy if you're loading up ATmega328x chips, since any 328 chip with optiboot is essentially an Arduino Uno, and you can use the existing Uno configuration.  It is more difficult (and not yet documented) if you're adding a new chip, or putting optiboot on a chip that normally uses a different bootloader.  This is (will be) described at [AddingOptibootChipsToIde](https://github.com/Optiboot/optiboot/blob/master/Wiki/AddingOptibootChipsToIde.md).
 
 Much information about burning optiboot into ATmega chips for use in Arduino can be found in the Arduino forums, especially in [this thread](http://arduino.cc/forum/index.php/topic,64105.0.html)
 
