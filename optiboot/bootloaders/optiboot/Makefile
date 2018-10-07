@@ -629,10 +629,11 @@ include Makefile.2560
 include Makefile.tiny
 include Makefile.MCUdude
 
-ifndef PRODUCTION
-BAUDCHECK= baudcheck
-else
 BAUDCHECK=
+ifndef PRODUCTION
+ifndef SOFT_UART
+BAUDCHECK= baudcheck
+endif
 endif
 
 #---------------------------------------------------------------------------

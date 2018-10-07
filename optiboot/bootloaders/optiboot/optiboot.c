@@ -331,6 +331,7 @@ typedef union {
 #define UART 0
 #endif
 
+#ifndef SOFT_UART
 #ifdef SINGLESPEED
 /* Single speed option */
 #define BAUD_SETTING (( (F_CPU + BAUD_RATE * 8L) / ((BAUD_RATE * 16L))) - 1 )
@@ -364,6 +365,7 @@ typedef union {
 #error Unachievable baud rate (too fast) BAUD_RATE 
 #endif
 #endif // baud rate fast check
+#endif // SOFT_UART
 
 /* Watchdog settings */
 #define WATCHDOG_OFF    (0)
@@ -982,6 +984,13 @@ uint8_t getch(void) {
 #if UART_B_VALUE > 255
 #error Baud rate too slow for soft UART
 #endif
+#if UART_B_VALUE < 6
+// (this value is a "guess" at when loop/call overhead might become too
+//  significant for the soft uart to work.  It tests OK with the popular
+//  "ATtinycore" chips that need SOFT_UART, at the usual clock/baud combos.)
+#error Baud rate too high for soft UART
+#endif
+
 
 void uartDelay() {
   __asm__ __volatile__ (
