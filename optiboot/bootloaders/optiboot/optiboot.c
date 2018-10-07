@@ -463,6 +463,10 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #define save_vect_num (SPM_RDY_vect_num)
 #elif defined (SPM_READY_vect_num)
 #define save_vect_num (SPM_READY_vect_num)
+#elif defined (EE_RDY_vect_num)
+#define save_vect_num (EE_RDY_vect_num)
+#elif defined (EE_READY_vect_num)
+#define save_vect_num (EE_READY_vect_num)
 #elif defined (WDT_vect_num)
 #define save_vect_num (WDT_vect_num)
 #else
@@ -808,24 +812,44 @@ int main(void) {
 	// Save jmp targets (for "Verify")
 	rstVect0_sav = buff.bptr[rstVect0];
 	rstVect1_sav = buff.bptr[rstVect1];
-	saveVect0_sav = buff.bptr[saveVect0];
-	saveVect1_sav = buff.bptr[saveVect1];
-
+	addr16_t vect;
+	vect.word = ((uint16_t)main);
+    buff.bptr[0] = vect.bytes[0]; // rjmp to start of bootloader
+	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
+#if (save_vect_num > SPM_PAGESIZE/2)
+} else if (address.word == SPM_PAGESIZE) { //allow for vectors 8~15
 	// Instruction is a relative jump (rjmp), so recalculate.
 	// an RJMP instruction is 0b1100xxxx xxxxxxxx, so we should be able to
 	// do math on the offsets without masking it off first.
 	addr16_t vect;
 	vect.bytes[0] = rstVect0_sav;
 	vect.bytes[1] = rstVect1_sav;
+	saveVect0_sav = buff.bptr[saveVect0-SPM_PAGESIZE];
+	saveVect1_sav = buff.bptr[saveVect1-SPM_PAGESIZE];
 	vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
         // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0] = vect.bytes[0];
-        buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
-        // Add rjump to bootloader at RESET vector
+        buff.bptr[saveVect0-SPM_PAGESIZE] = vect.bytes[0];
+        buff.bptr[saveVect1-SPM_PAGESIZE] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+      }
+		
+#else
+
+		saveVect0_sav = buff.bptr[saveVect0];
+		saveVect1_sav = buff.bptr[saveVect1];
+		vect.bytes[0] = rstVect0_sav;
+		vect.bytes[1] = rstVect1_sav;
+		vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
+        // Move RESET jmp target to 'save' vector
+    	buff.bptr[saveVect0] = vect.bytes[0];
+    	buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+    	// Add rjump to bootloader at RESET vector
         vect.word = ((uint16_t)main); // (main) is always <= 0x0FFF; no masking needed.
         buff.bptr[0] = vect.bytes[0]; // rjmp 0x1c00 instruction
-	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
       }
+
+#endif
+
+
 #endif // FLASHEND
 #endif // VBP
 
