@@ -42,3 +42,5 @@ make attiny841at8ser1 $*
 make attiny841at20noLED $*
 make attiny841at16noLED $*
 make attiny841at8noLED $*
+
+make attiny828at8 $*

@@ -43,19 +43,27 @@
  * differently.
  */
 #if UART == 0
- #if defined(LINDAT)
-#define LIN_UART 1
-#define UART_SRA UCSRA
-#define UART_SRB UCSRB
-#define UART_SRC UCSRC
-#define UART_SRL UBRRL
-#define UART_UDR LINDAT
- #else
+#if defined(UDR0)
 # define UART_SRA UCSR0A
 # define UART_SRB UCSR0B
 # define UART_SRC UCSR0C
 # define UART_SRL UBRR0L
 # define UART_UDR UDR0
+#elif defined(UDR)
+# define UART_SRA UCSRA
+# define UART_SRB UCSRB
+# define UART_SRC UCSRC
+# define UART_SRL UBRRL
+# define UART_UDR UDR
+#elif defined(LINDAT)
+# define LIN_UART 1
+# define UART_SRA UCSRA
+# define UART_SRB UCSRB
+# define UART_SRC UCSRC
+# define UART_SRL UBRRL
+# define UART_UDR LINDAT
+#else
+# error UART == 0, but no UART0 on device
 #endif
 #elif UART == 1
 #if !defined(UDR1)
