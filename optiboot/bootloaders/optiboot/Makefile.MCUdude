@@ -115,15 +115,15 @@ endif
 atmega164pa: atmega164p
 
 #ATmega168/A
-atmega168: TARGET = atmega168
-atmega168: MCU_TARGET = atmega168
-atmega168: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega168: AVR_FREQ ?= 16000000L 
-atmega168: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
-atmega168: $(PROGRAM)_atmega168_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
-ifndef PRODUCTION
-atmega168: $(PROGRAM)_atmega168_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
-endif
+#atmega168: TARGET = atmega168
+#atmega168: MCU_TARGET = atmega168
+#atmega168: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+#atmega168: AVR_FREQ ?= 16000000L 
+#atmega168: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+#atmega168: $(PROGRAM)_atmega168_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
+#ifndef PRODUCTION
+#atmega168: $(PROGRAM)_atmega168_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
+#endif
 atmega168a: atmega168
 
 #ATmega168P/PA

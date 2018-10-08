@@ -381,7 +381,7 @@ atmega168: AVR_FREQ ?= 16000000L
 ifndef BIGBOOT
 atmega168: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
 else
-atmeg168: LDSECTIONS  = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+atmega168: LDSECTIONS  = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
 endif
 atmega168: $(PROGRAM)_atmega168.hex
 ifndef PRODUCTION
