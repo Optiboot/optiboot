@@ -46,7 +46,7 @@ else
 fi
 
 # start json
-echo "{\"slug\":\"$REPO\",\"branch\":\"$BRANCH\",\"commit\":\"$TRAVIS_COMMIT\",\"emoji\":\"false\",\"builds\":[" >"$OUTPUT_JSON"
+echo "{\"slug\":\"$REPO\",\"branch\":\"$BRANCH\",\"commit\":\"$TRAVIS_COMMIT\",\"emoji\":\"true\",\"builds\":[" >"$OUTPUT_JSON"
 
 # build everything
 cat $TRAVIS_BUILD_DIR/.travis.yml|grep "    - OPTIBOOT_TARGET="|cut -f 2- -d '=' \

@@ -40,3 +40,5 @@ based on Linux versions.
 |1.8.3    |4.9.2    |same as 1.8.2| |
 |1.8.4    |4.9.2    |same as 1.8.2| |
 |1.8.5    |4.9.2    |same as 1.8.2| yes |
+|1.8.6    |5.4.0    |new toolchains, added ATmega328PB and ATmega324PB among others| |
+|1.8.7    |5.4.0    |same as 1.8.6| yes |
