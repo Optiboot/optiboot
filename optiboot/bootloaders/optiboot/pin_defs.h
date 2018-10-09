@@ -42,6 +42,7 @@
  * Note that mega8/m32 still needs special handling, because ubrr is handled
  * differently.
  */
+#ifndef SOFT_UART
 #if UART == 0
 #if defined(UDR0)
 # define UART_SRA UCSR0A
@@ -92,6 +93,7 @@
 # define UART_SRC UCSR3C
 # define UART_SRL UBRR3L
 # define UART_UDR UDR3
+#endif
 #endif
 
 #if    defined(__AVR_ATmega8__)		\
