@@ -94,7 +94,7 @@
 # define UART_SRL UBRR3L
 # define UART_UDR UDR3
 #endif
-#endif
+#endif //end #ifndef SOFT_UART
 
 #if    defined(__AVR_ATmega8__)		\
     || defined (__AVR_ATmega32__)	\
@@ -114,24 +114,6 @@
   #define WDCE		WDTOE
 #endif
 
-/* Luminet support */
-/*------------------------------------------------------------------------ */
-#if defined(__AVR_ATtiny84__)
-/*------------------------------------------------------------------------ */
-/* Red LED is connected to pin PA4 */ 
-#if !defined(LED)
-#define LED         A4
-#endif
-
-/* Ports for soft UART - left port only for now. TX/RX on PA2/PA3 */
-#ifdef SOFT_UART
-#define UART_PORT   PORTA
-#define UART_PIN    PINA
-#define UART_DDR    DDRA
-#define UART_TX_BIT 2
-#define UART_RX_BIT 3
-#endif
-#endif
 
 /*------------------------------------------------------------------------ */
 /* Sanguino support (and other 40pin DIP cpus) */
@@ -529,6 +511,158 @@
 #define UART_DDR    DDRA
 #define UART_TX_BIT 2
 #define UART_RX_BIT 3
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny441__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 2
+#define UART_RX_BIT 3
+#endif
+#endif
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny84__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 1
+#define UART_RX_BIT 2
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny44__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 1
+#define UART_RX_BIT 2
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny85__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTB
+#define UART_PIN    PINB
+#define UART_DDR    DDRB
+#define UART_TX_BIT 0
+#define UART_RX_BIT 1
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny45__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B2
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTB
+#define UART_PIN    PINB
+#define UART_DDR    DDRB
+#define UART_TX_BIT 0
+#define UART_RX_BIT 1
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny861__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B3
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 6
+#define UART_RX_BIT 7
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny461__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B3
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTA
+#define UART_PIN    PINA
+#define UART_DDR    DDRA
+#define UART_TX_BIT 6
+#define UART_RX_BIT 7
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny88__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B5
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 6
+#define UART_RX_BIT 7
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATtiny48__)
+/*------------------------------------------------------------------------ */
+/* LED is on B2 */
+#if !defined(LED)
+#define LED   B5
+#endif
+
+#ifdef SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 6
+#define UART_RX_BIT 7
 #endif
 #endif
 

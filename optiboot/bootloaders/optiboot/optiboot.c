@@ -463,6 +463,10 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #define save_vect_num (SPM_RDY_vect_num)
 #elif defined (SPM_READY_vect_num)
 #define save_vect_num (SPM_READY_vect_num)
+#elif defined (EE_RDY_vect_num)
+#define save_vect_num (EE_RDY_vect_num)
+#elif defined (EE_READY_vect_num)
+#define save_vect_num (EE_READY_vect_num)
 #elif defined (WDT_vect_num)
 #define save_vect_num (WDT_vect_num)
 #else
@@ -470,9 +474,7 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #endif
 #endif //save_vect_num
 // check if it's on the same page (code assumes that)
-#if (SPM_PAGESIZE <= save_vect_num)
-#error Save vector not in the same page as reset!
-#endif
+
 #if FLASHEND > 8192
 // AVRs with more than 8k of flash have 4-byte vectors, and use jmp.
 //  We save only 16 bits of address, so devices with more than 128KB
@@ -484,6 +486,7 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #define appstart_vec (save_vect_num*2)
 #else
 // AVRs with up to 8k of flash have 2-byte vectors, and use rjmp.
+
 #define rstVect0 0
 #define rstVect1 1
 #define saveVect0 (save_vect_num*2)
@@ -622,8 +625,17 @@ int main(void) {
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter
+#if defined(__AVR_ATtiny261__)||defined(__AVR_ATtiny461__)||defined(__AVR_ATtiny861__)
+  TCCR1B = 0x0E; //div 8196 - we could divide by less since it's a 10-bit counter, but why? 
+#elif defined(__AVR_ATtiny25__)||defined(__AVR_ATtiny45__)||defined(__AVR_ATtiny85__)
+  TCCR1 = 0x0E; //div 8196 - it's an 8-bit timer. 
+#elif defined(__AVR_ATtiny43__)
+  #error "LED flash for Tiny43 not yet supported"
+#else
   TCCR1B = _BV(CS12) | _BV(CS10); // div 1024
 #endif
+#endif
+
 
 #ifndef SOFT_UART
   #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega8515__) ||	\
@@ -783,18 +795,30 @@ int main(void) {
 	// Save jmp targets (for "Verify")
 	rstVect0_sav = buff.bptr[rstVect0];
 	rstVect1_sav = buff.bptr[rstVect1];
-	saveVect0_sav = buff.bptr[saveVect0];
-	saveVect1_sav = buff.bptr[saveVect1];
 
-        // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0] = rstVect0_sav;
-        buff.bptr[saveVect1] = rstVect1_sav;
 
         // Add jump to bootloader at RESET vector
         // WARNING: this works as long as 'main' is in first section
         buff.bptr[rstVect0] = ((uint16_t)main) & 0xFF;
         buff.bptr[rstVect1] = ((uint16_t)main) >> 8;
-      }
+#if (save_vect_num>SPM_PAGESIZE/4)
+	} else if (address.word == (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))) { //allow for any vector
+		saveVect0_sav = buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))];
+		saveVect1_sav = buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))];
+
+        // Move RESET jmp target to 'save' vector
+        buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))] = rstVect0_sav;
+        buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))] = rstVect1_sav;
+    }
+#else 
+        saveVect0_sav = buff.bptr[saveVect0];
+		saveVect1_sav = buff.bptr[saveVect1];
+
+        // Move RESET jmp target to 'save' vector
+        buff.bptr[saveVect0] = rstVect0_sav;
+        buff.bptr[saveVect1] = rstVect1_sav;
+	}
+#endif
 
 #else
 /*
@@ -808,24 +832,44 @@ int main(void) {
 	// Save jmp targets (for "Verify")
 	rstVect0_sav = buff.bptr[rstVect0];
 	rstVect1_sav = buff.bptr[rstVect1];
-	saveVect0_sav = buff.bptr[saveVect0];
-	saveVect1_sav = buff.bptr[saveVect1];
-
+	addr16_t vect;
+	vect.word = ((uint16_t)main);
+    buff.bptr[0] = vect.bytes[0]; // rjmp to start of bootloader
+	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
+#if (save_vect_num > SPM_PAGESIZE/2)
+} else if (address.word == (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))) { //allow for any vector
 	// Instruction is a relative jump (rjmp), so recalculate.
 	// an RJMP instruction is 0b1100xxxx xxxxxxxx, so we should be able to
 	// do math on the offsets without masking it off first.
 	addr16_t vect;
 	vect.bytes[0] = rstVect0_sav;
 	vect.bytes[1] = rstVect1_sav;
+	saveVect0_sav = buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))];
+	saveVect1_sav = buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))];
 	vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
         // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0] = vect.bytes[0];
-        buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
-        // Add rjump to bootloader at RESET vector
+        buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))] = vect.bytes[0];
+        buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+      }
+		
+#else
+
+		saveVect0_sav = buff.bptr[saveVect0];
+		saveVect1_sav = buff.bptr[saveVect1];
+		vect.bytes[0] = rstVect0_sav;
+		vect.bytes[1] = rstVect1_sav;
+		vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
+        // Move RESET jmp target to 'save' vector
+    	buff.bptr[saveVect0] = vect.bytes[0];
+    	buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+    	// Add rjump to bootloader at RESET vector
         vect.word = ((uint16_t)main); // (main) is always <= 0x0FFF; no masking needed.
         buff.bptr[0] = vect.bytes[0]; // rjmp 0x1c00 instruction
-	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
       }
+
+#endif
+
+
 #endif // FLASHEND
 #endif // VBP
 
@@ -984,6 +1028,7 @@ uint8_t getch(void) {
 #if UART_B_VALUE > 255
 #error Baud rate too slow for soft UART
 #endif
+
 #if UART_B_VALUE < 6
 // (this value is a "guess" at when loop/call overhead might become too
 //  significant for the soft uart to work.  It tests OK with the popular
@@ -1020,9 +1065,18 @@ void verifySpace() {
 #if LED_START_FLASHES > 0
 void flash_led(uint8_t count) {
   do {
-    TCNT1 = -(F_CPU/(1024*16));
-    TIFR1 = _BV(TOV1);
-    while(!(TIFR1 & _BV(TOV1)));
+  	#if defined(__AVR_ATtiny261__)||defined(__AVR_ATtiny461__)||defined(__AVR_ATtiny861__) || defined(__AVR_ATtiny25__)||defined(__AVR_ATtiny45__)||defined(__AVR_ATtiny85__)
+  		TCNT1 = -(F_CPU/(8196*16));
+    	TIFR = _BV(TOV1);
+    	while(!(TIFR & _BV(TOV1)));
+	#elif defined(__AVR_ATtiny43__)
+  		#error "LED flash for Tiny43 not yet supported"
+	#else
+  		TCNT1 = -(F_CPU/(1024*16));
+    	TIFR1 = _BV(TOV1);
+    	while(!(TIFR1 & _BV(TOV1)));
+	#endif
+    
 #if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
     defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
     defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
