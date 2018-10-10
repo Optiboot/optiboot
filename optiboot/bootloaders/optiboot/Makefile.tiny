@@ -346,14 +346,14 @@ endif
 
 
 attiny828at8: 
-	$(MAKE) attiny828at8 AVR_FREQ=8000000L BAUD_RATE=57600
+	$(MAKE) attiny828 AVR_FREQ=8000000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny828.hex $(PROGRAM)_$@.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny828.lst $(PROGRAM)_$@.lst
 endif
 
 attiny828at8_5v: 
-	$(MAKE) attiny828at8 AVR_FREQ=8200000L BAUD_RATE=57600
+	$(MAKE) attiny828 AVR_FREQ=8200000L BAUD_RATE=57600
 	mv $(PROGRAM)_attiny828.hex $(PROGRAM)_$@.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny828.lst $(PROGRAM)_$@.lst
