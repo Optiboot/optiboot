@@ -243,11 +243,18 @@ APPSPM_CMD = -DAPP_NOSPM=1
 endif
 endif
 
+HELPTEXT += "Option TIMEOUT_MS=1000       - application start after 1|2|4|8 sec\n""
+ifdef TIMEOUT_MS
+TIMEOUT_MS_CMD = -DTIMEOUT_MS=$(TIMEOUT_MS)
+dummy = FORCE
+endif
+
+
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
-COMMON_OPTIONS += $(VERSION_CMD)
+COMMON_OPTIONS += $(VERSION_CMD) $(TIMEOUT_MS_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
@@ -255,13 +262,6 @@ ifdef UART
 UART_CMD = -DUART=$(UART)
 endif
 
-
-# Not supported yet
-# ifdef TIMEOUT_MS
-# TIMEOUT_MS_CMD = -DTIMEOUT_MS=$(TIMEOUT_MS)
-# dummy = FORCE
-# endif
-#
 
 #.PRECIOUS: %.elf
 

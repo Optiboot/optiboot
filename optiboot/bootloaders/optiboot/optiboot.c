@@ -382,6 +382,29 @@ typedef union {
 #define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 #endif
 
+#ifndef TIMEOUT_MS
+#define TIMEOUT_MS 1000
+#endif
+
+#if TIMEOUT_MS == 125
+#define WATCHDOG_TIMEOUT WATCHDOG_125MS
+#elif TIMEOUT_MS == 250
+#define WATCHDOG_TIMEOUT WATCHDOG_250MS
+#elif TIMEOUT_MS == 500
+#define WATCHDOG_TIMEOUT WATCHDOG_500MS
+#elif TIMEOUT_MS == 1000
+#define WATCHDOG_TIMEOUT WATCHDOG_1S
+#elif TIMEOUT_MS == 2000
+#define WATCHDOG_TIMEOUT WATCHDOG_2S
+#elif TIMEOUT_MS == 2000
+#define WATCHDOG_TIMEOUT WATCHDOG_2S
+#elif TIMEOUT_MS == 4000
+#define WATCHDOG_TIMEOUT WATCHDOG_4S
+#elif TIMEOUT_MS == 8000
+#define WATCHDOG_TIMEOUT WATCHDOG_8S
+#else
+#error Invalid definition for timeout, must be 1|2|4|8 seconds
+#endif
 
 /*
  * We can never load flash with more than 1 page at a time, so we can save
@@ -667,8 +690,8 @@ int main(void) {
   #endif // mega8/etc
 #endif // soft_uart
 
-  // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
+  // Set up watchdog to trigger after 1s, or configured value
+  watchdogConfig(WATCHDOG_TIMEOUT);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
   /* Set LED pin as output */
