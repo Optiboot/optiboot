@@ -1314,7 +1314,8 @@ static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
  */
 #define xstr(s) str(s)
 #define str(s) #s
-#define OPT2FLASH(o) char f##o[] = #o "=" xstr(o)
+#define OPTFLASHSECT __attribute__((section(".fini8")))
+#define OPT2FLASH(o) OPTFLASHSECT const char f##o[] = #o "=" xstr(o)
 
 
 #ifdef LED_START_FLASHES
@@ -1327,7 +1328,7 @@ OPT2FLASH(LED_DATA_FLASH);
 OPT2FLASH(LED_START_ON);
 #endif
 #ifdef LED_NAME
-char f_LED[] = "LED=" LED_NAME;
+OPTFLASHSECT const char f_LED[] = "LED=" LED_NAME;
 #endif
 
 #ifdef SUPPORT_EEPROM
@@ -1343,18 +1344,18 @@ OPT2FLASH(SOFT_UART);
 OPT2FLASH(UART);
 #endif
 
-char f_date[] = "Built:" __DATE__ ":" __TIME__;
+OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
 #ifdef BIGBOOT
 OPT2FLASH(BIGBOOT);
 #endif
 #ifdef VIRTUAL_BOOT_PARTITION
-char f_boot[] = "Virtual_Boot_Partition";
+OPTFLASHSECT const char f_boot[] = "Virtual_Boot_Partition";
 #endif
 OPT2FLASH(F_CPU);
-char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
+OPTFLASHSECT const char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
 #ifdef OPTIBOOT_CUSTOMVER
 OPT2FLASH(OPTIBOOT_CUSTOMVER);
 #endif
-char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
+OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
 
 #endif
