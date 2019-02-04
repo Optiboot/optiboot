@@ -165,6 +165,9 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Jan 2019                                               */
+/* 8.1  gmattinson: Create do_spm_copy at BOOTSTART+4 to  */
+/*      make self-updating code easier                    */
 /* Sep 2018						  */
 /* 8.0  WestfW (and Majekw and MCUDude)			  */
 /*      Include do_spm routine callable from the app      */
@@ -252,7 +255,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 8
-#define OPTIBOOT_MINVER 0
+#define OPTIBOOT_MINVER 1
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -509,6 +512,11 @@ void pre_main(void) {
     "	rjmp	do_spm\n"
 #else
     "   ret\n"   // if do_spm isn't include, return without doing anything
+#endif
+#ifdef BIGBOOT
+    "	rjmp	do_spm_copy\n"
+#else
+    "   ret\n"   // if do_spm_copy isn't included, return without doing anything
 #endif
     "1:\n"
   );
@@ -1357,5 +1365,21 @@ OPTFLASHSECT const char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
 OPT2FLASH(OPTIBOOT_CUSTOMVER);
 #endif
 OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
+
+void do_spm_copy(uint16_t dst, uint16_t src, uint8_t numPages, void(*retFunc)(void))  __attribute__((used));
+void do_spm_copy(uint16_t dst, uint16_t src, uint8_t numPages, void(*retFunc)(void)) {
+    uint8_t i, j;
+
+    if (numPages == 0) return;
+
+    for (i = 0; i < numPages; i++) {
+        do_spm(dst + i * SPM_PAGESIZE, __BOOT_PAGE_ERASE, 0);
+        for (j = 0; j < SPM_PAGESIZE; j += 2) {
+            do_spm(dst + i * SPM_PAGESIZE + j, __BOOT_PAGE_FILL, pgm_read_word(src + i * SPM_PAGESIZE + j));
+        }
+        do_spm(dst + i * SPM_PAGESIZE, __BOOT_PAGE_WRITE, 0);
+    }
+    retFunc();
+}
 
 #endif
