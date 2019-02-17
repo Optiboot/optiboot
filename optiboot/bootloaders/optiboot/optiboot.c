@@ -129,6 +129,10 @@
 /* UART number (0..n) for devices with more than          */
 /* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
+/* COPY_FLASH_PAGES:                                      */
+/* Adds function to copy flash pages. The functiom is     */
+/* intended to be called by the application.              */
+/*                                                        */
 /**********************************************************/
 
 /**********************************************************/
@@ -506,9 +510,15 @@ void pre_main(void) {
   asm volatile (
     "	rjmp	1f\n"
 #ifndef APP_NOSPM
-    "	rjmp	do_spm\n"
+    "	rjmp    do_spm\n"
 #else
     "   ret\n"   // if do_spm isn't include, return without doing anything
+#undef COPY_FLASH_PAGES_FNC
+#endif
+#ifdef COPY_FLASH_PAGES_FNC
+    "   rjmp    copy_flash_pages\n"
+#else
+    "   ret\n"   // if COPY_FLASH_PAGES_FNC isn't include, return without doing anything
 #endif
     "1:\n"
   );
@@ -1297,7 +1307,55 @@ static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
 
 
 
-#ifdef BIGBOOT
+#ifdef COPY_FLASH_PAGES_FNC
+/*
+ * Helper function do_spm_rampz wraps do_spm to handle RAMPZ
+ * for copy_flash_pages function. It is inlined by the compiler.
+ * 
+ * On devices with more than 64kB flash, 16 bit address is not enough,
+ * so there is also RAMPZ used in that case.
+ */
+void do_spm_rampz(uint32_t address, uint8_t command, uint16_t data) {
+  #ifdef RAMPZ
+    RAMPZ = (address >> 16) & 0xff;  // address bits 23-16 goes to RAMPZ
+    do_spm((address & 0xffff), command, data); // do_spm accepts only lower 16 bits of address
+  #else
+    do_spm(address, command, data);  // 16 bit address - no problems to pass directly
+  #endif
+}
+
+/*
+ * Function copy_flash_pages uses do_spm() function to copy flash pages.
+ * It is intended to be called by the application over the 'vector table' in pre_main().
+ * It uses 32bit addresses for use on devices with more then 64 kB flash memory.
+ * The destination and source address must be page aligned.
+ * Additionally parameter reset_mcu activates an (almost) immediate watchdog reset of the MCU after pages are copied.
+ *
+ * It was created to copy a new version of the aplication stored in the upper half of the flash memory 
+ * to the beginnig of the flash and then reset the MCU to run the new version. 
+ * It is used by ArduinoOTA libray in InternalStorageAVR over utility/optiboot.h.
+ */
+void copy_flash_pages(uint32_t dest_page_addr, uint32_t src_page_addr, uint16_t page_count, uint8_t reset_mcu) {
+  int i, j;
+  for (i = 0; i < page_count; i++) { // do standard spm steps for every page
+    do_spm_rampz(dest_page_addr, __BOOT_PAGE_ERASE, 0); // erase page
+    for (j = 0; j < SPM_PAGESIZE; j += 2) { // fill the bytes for the page
+#ifdef RAMPZ // only devices with RAMPZ have pgm_read_word_far()
+      do_spm_rampz(dest_page_addr + j, __BOOT_PAGE_FILL, pgm_read_word_far(src_page_addr + j));
+#else
+      do_spm(dest_page_addr + j, __BOOT_PAGE_FILL, pgm_read_word(src_page_addr + j));
+#endif
+    }
+    do_spm_rampz(dest_page_addr, __BOOT_PAGE_WRITE, 0); // write the page
+    dest_page_addr += SPM_PAGESIZE;
+    src_page_addr += SPM_PAGESIZE;
+  }
+  if (reset_mcu) {
+    watchdogConfig(WATCHDOG_16MS); // for a reset of the MCU
+    while (1); // to prevent return to application in the 15MS to reset
+  }
+}
+#elif defined(BIGBOOT)
 /*
  * Optiboot is designed to fit in 512 bytes, with a minimum feature set.
  * Some chips have a minimum bootloader size of 1024 bytes, and sometimes

@@ -2,6 +2,7 @@
  |                  																												|
  | June 2015 by Marek Wodzinski, https://github.com/majekw                  |
  | Modified June 2016 by MCUdude, https://github.com/MCUdude                |
+ | Modified Dec 2018 by Juraj Andrassy, https://github.com/jandrassy        |
  | Released to public domain                                                |
  |                                                                          |
  | This header file gives possibility to use SPM instruction                |
@@ -19,7 +20,6 @@
  | For some hardcore users, you could use 'do_spm' as raw entry to          |
  | bootloader spm function.                                                 |
  |-------------------------------------------------------------------------*/
-
 
 #ifndef _OPTIBOOT_H_
 #define _OPTIBOOT_H_  1
@@ -39,14 +39,15 @@
  *
  */
 
-// 'typedef' (in following line) and 'const' (few lines below) are a way to define external function at some arbitrary address
-typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
+  // 'typedef' (in following line) and 'const' (few lines below) are a way to define external function at some arbitrary address
+  typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
+  typedef void (*copy_flash_pages_t)(uint32_t dest, uint32_t src, uint16_t page_count, uint8_t reset);
 
 
 /*
  * Devices with more than 64KB of flash:
  * - have larger bootloader area (1KB) (they are BIGBOOT targets)
- * - have RAMPZ register :-) 
+ * - have RAMPZ register :-)
  * - need larger variable to hold address (pgmspace.h uses uint32_t)
  */
 #ifdef RAMPZ
@@ -55,11 +56,12 @@ typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
   typedef uint16_t optiboot_addr_t;
 #endif
 
-#if FLASHEND > 65534
-  const do_spm_t do_spm = (do_spm_t)((FLASHEND-1023+2)>>1);
-#else
-  const do_spm_t do_spm = (do_spm_t)((FLASHEND-511+2)>>1);
-#endif
+  #if FLASHEND > 65534
+    const do_spm_t do_spm = (do_spm_t)((FLASHEND-1023+2)>>1);
+    const copy_flash_pages_t copy_flash_pages = (copy_flash_pages_t)((FLASHEND-1023+4)>>1);
+  #else
+    const do_spm_t do_spm = (do_spm_t)((FLASHEND-511+2)>>1);
+  #endif
 
 
 /*
@@ -68,21 +70,55 @@ typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
  * 
  * On devices with more than 64kB flash, 16 bit address is not enough,
  * so there is also RAMPZ used in that case.
+ * 
+ * On devices with more than 128kB flash, 16 bit word address is not enough
+ * for a function call above 0x20000, so there is also EIND used in that case.
  */
 void do_spm_cli(optiboot_addr_t address, uint8_t command, uint16_t data) {
   uint8_t sreg_save;
 
   sreg_save = SREG;  // save old SREG value
   asm volatile("cli");  // disable interrupts
-  #ifdef RAMPZ
-    RAMPZ = (address >> 16) & 0xff;  // address bits 23-16 goes to RAMPZ
-    do_spm((address & 0xffff), command, data); // do_spm accepts only lower 16 bits of address
-  #else
-    do_spm(address, command, data);  // 16 bit address - no problems to pass directly
-  #endif
+#ifdef RAMPZ
+  RAMPZ = (address >> 16) & 0xff;  // address bits 23-16 goes to RAMPZ
+#ifdef EIND
+  uint8_t eind = EIND;
+  EIND = FLASHEND / 0x20000;
+#endif
+  do_spm((address & 0xffff), command, data); // do_spm accepts only lower 16 bits of address
+#ifdef EIND
+  EIND = eind;
+#endif
+#else
+  do_spm(address, command, data); // 16 bit address - no problems to pass directly
+#endif
   SREG = sreg_save; // restore last interrupts state
 }
 
+/*
+ * Copy contents of the flash pages. Addresses must be aligned to page boundary.
+ * 
+ * On devices with more than 128kB flash, 16 bit word address is not enough
+ * for a function call above 0x20000, so there is also EIND used in that case.
+ * 
+ * If reset_mcu is true, watchdog is used to reset the MCU after pages are copied.
+ * That enables to copy a new version of application from upper half of the flash.
+ */
+#if FLASHEND > 65534
+void copy_flash_pages_cli(uint32_t dest, uint32_t src, uint16_t page_count, uint8_t reset_mcu) {
+  uint8_t sreg_save = SREG;  // save old SREG value
+  asm volatile("cli"); // disable interrupts
+#ifdef EIND
+  uint8_t eind = EIND;
+  EIND = FLASHEND / 0x20000;
+#endif
+  copy_flash_pages(dest, src, page_count, reset_mcu);
+#ifdef EIND
+  EIND = eind;
+#endif
+  SREG = sreg_save; // restore last interrupts state
+}
+#endif
 
 // Erase page in FLASH
 void optiboot_page_erase(optiboot_addr_t address) {
