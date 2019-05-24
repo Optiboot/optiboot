@@ -24,7 +24,7 @@ atmega2560_isp: atmega2560
 atmega2560_isp: TARGET = atmega2560
 atmega2560_isp: MCU_TARGET = atmega2560
 # 1024 byte boot, JTAG disabled
-atmega2560_isp: HFUSE ?= DE
+atmega2560_isp: HFUSE ?= DC
 # Full Swing xtal (16MHz) 16KCK/14CK+65ms
 atmega2560_isp: LFUSE ?= F7
 # 2.7V brownout
@@ -51,7 +51,7 @@ mega2560_isp: mega256
 mega2560_isp: TARGET = mega2560
 mega2560_isp: MCU_TARGET = atmega2560
 # 1024 byte boot, JTAG disabled
-mega2560_isp: HFUSE ?= DE
+mega2560_isp: HFUSE ?= DC
 # Full swing xtal (16MHz) 16KCK/14CK+65ms
 mega2560_isp: LFUSE ?= F7
 # 2.7V brownout
