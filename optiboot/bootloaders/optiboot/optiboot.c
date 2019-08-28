@@ -829,7 +829,7 @@ int main(void) {
 #if FLASHEND > (128*1024)
 #error "Can't use VIRTUAL_BOOT_PARTITION with more than 128k of Flash"
 #endif
-      if (address.word == RSTVECT_ADDRESS) {
+      if (address.word == RSTVEC_ADDRESS) {
 	// This is the reset vector page. We need to live-patch the
 	// code so the bootloader runs first.
 	//
@@ -846,20 +846,21 @@ int main(void) {
 // the save_vector is not necessarilly on the same flash page as the reset
 //  vector.  If it isn't, we've waiting to actually write it.
       } else if (address.word == SAVVEC_ADDRESS) {
-		saveVect0_sav = saveVect1_sav = buff.bptr[saveVect-SAVVEC_ADDRESS];
+	  saveVect0_sav = buff.bptr[saveVect0 - SAVVEC_ADDRESS];
+	  saveVect1_sav = buff.bptr[saveVect1 - SAVVEC_ADDRESS];
 
-        // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0 - SAVVEC_ADDRESS] = rstVect0_sav;
-        buff.bptr[saveVect1 - SAVVEC_ADDRESS] = rstVect1_sav;
-    }
+	  // Move RESET jmp target to 'save' vector
+	  buff.bptr[saveVect0 - SAVVEC_ADDRESS] = rstVect0_sav;
+	  buff.bptr[saveVect1 - SAVVEC_ADDRESS] = rstVect1_sav;
+      }
 #else 
         saveVect0_sav = buff.bptr[saveVect0];
-		saveVect1_sav = buff.bptr[saveVect1];
+	saveVect1_sav = buff.bptr[saveVect1];
 
         // Move RESET jmp target to 'save' vector
         buff.bptr[saveVect0] = rstVect0_sav;
         buff.bptr[saveVect1] = rstVect1_sav;
-	}
+    }
 #endif
 
 #else
