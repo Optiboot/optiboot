@@ -449,10 +449,14 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 
 /* Virtual boot partition support */
 #ifdef VIRTUAL_BOOT_PARTITION
+
+// RAM locations to save vector info (temporarilly)
 #define rstVect0_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+4))
 #define rstVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+5))
 #define saveVect0_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+6))
 #define saveVect1_sav (*(uint8_t*)(RAMSTART+SPM_PAGESIZE*2+7))
+
+#define RSTVEC_ADDRESS 0  // flash address where vectors start.
 // Vector to save original reset jump:
 //   SPM Ready is least probably used, so it's default
 //   if not, use old way WDT_vect_num,
@@ -473,6 +477,7 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #error Cant find SPM or WDT interrupt vector for this CPU
 #endif
 #endif //save_vect_num
+
 // check if it's on the same page (code assumes that)
 
 #if FLASHEND > 8192
@@ -484,17 +489,27 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 #define saveVect0 (save_vect_num*4+2)
 #define saveVect1 (save_vect_num*4+3)
 #define appstart_vec (save_vect_num*2)
-#else
-// AVRs with up to 8k of flash have 2-byte vectors, and use rjmp.
 
+// address of page that will have the saved vector
+#define SAVVEC_ADDRESS (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))
+
+#else
+
+// AVRs with up to 8k of flash have 2-byte vectors, and use rjmp.
 #define rstVect0 0
 #define rstVect1 1
 #define saveVect0 (save_vect_num*2)
 #define saveVect1 (save_vect_num*2+1)
 #define appstart_vec (save_vect_num)
+
+// address of page that will have the saved vector
+#define SAVVEC_ADDRESS (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))
 #endif
+
 #else
+
 #define appstart_vec (0)
+
 #endif // VIRTUAL_BOOT_PARTITION
 
 
@@ -780,6 +795,32 @@ int main(void) {
       verifySpace();
 
 #ifdef VIRTUAL_BOOT_PARTITION
+/*
+ *              How the Virtual Boot Partition works:
+ * At the beginning of a normal AVR program are a set of vectors that
+ * implement the interrupt mechanism.  Each vector is usually a single
+ * instruction that dispatches to the appropriate ISR.
+ * The instruction is normally an rjmp (on AVRs with 8k or less of flash)
+ * or jmp instruction, and the 0th vector is executed on reset and jumps
+ * to the start of the user program:
+ * vectors: jmp startup
+ *          jmp ISR1
+ *          jmp ISR2
+ *             :      ;; etc
+ *          jmp lastvector
+ * To implement the "Virtual Boot Partition", Optiboot detects when the
+ * flash page containing the vectors is being programmed, and replaces the
+ * startup vector with a jump to te beginning of Optiboot.  Then it saves
+ * the applications's startup vector in another (must be unused by the
+ * application), and finally programs the page with the changed vectors.
+ * Thereafter, on reset, the vector will dispatch to the beginning of
+ * Optiboot.  When Optiboot decides that it will run the user application,
+ * it fetches the saved start address from the unused vector, and jumps
+ * there.
+ * The logic is dependent on size of flash, and whether the reset vector is
+ * on the same flash page as the saved start address.
+ */
+
 #if FLASHEND > 8192
 /*
  * AVR with 4-byte ISR Vectors and "jmp"
@@ -788,7 +829,7 @@ int main(void) {
 #if FLASHEND > (128*1024)
 #error "Can't use VIRTUAL_BOOT_PARTITION with more than 128k of Flash"
 #endif
-      if (address.word == 0) {
+      if (address.word == RSTVECT_ADDRESS) {
 	// This is the reset vector page. We need to live-patch the
 	// code so the bootloader runs first.
 	//
@@ -796,19 +837,20 @@ int main(void) {
 	rstVect0_sav = buff.bptr[rstVect0];
 	rstVect1_sav = buff.bptr[rstVect1];
 
-
-        // Add jump to bootloader at RESET vector
+        // Add "jump to Optiboot" at RESET vector
         // WARNING: this works as long as 'main' is in first section
         buff.bptr[rstVect0] = ((uint16_t)main) & 0xFF;
         buff.bptr[rstVect1] = ((uint16_t)main) >> 8;
-#if (save_vect_num>SPM_PAGESIZE/4)
-	} else if (address.word == (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))) { //allow for any vector
-		saveVect0_sav = buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))];
-		saveVect1_sav = buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))];
+
+#if (SAVVEC_ADDRESS != RSTVEC_ADDRESS)
+// the save_vector is not necessarilly on the same flash page as the reset
+//  vector.  If it isn't, we've waiting to actually write it.
+      } else if (address.word == SAVVEC_ADDRESS) {
+		saveVect0_sav = saveVect1_sav = buff.bptr[saveVect-SAVVEC_ADDRESS];
 
         // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))] = rstVect0_sav;
-        buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/4)))] = rstVect1_sav;
+        buff.bptr[saveVect0 - SAVVEC_ADDRESS] = rstVect0_sav;
+        buff.bptr[saveVect1 - SAVVEC_ADDRESS] = rstVect1_sav;
     }
 #else 
         saveVect0_sav = buff.bptr[saveVect0];
@@ -834,31 +876,32 @@ int main(void) {
 	rstVect1_sav = buff.bptr[rstVect1];
 	addr16_t vect;
 	vect.word = ((uint16_t)main);
-    buff.bptr[0] = vect.bytes[0]; // rjmp to start of bootloader
-	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
-#if (save_vect_num > SPM_PAGESIZE/2)
-} else if (address.word == (SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))) { //allow for any vector
 	// Instruction is a relative jump (rjmp), so recalculate.
 	// an RJMP instruction is 0b1100xxxx xxxxxxxx, so we should be able to
 	// do math on the offsets without masking it off first.
+	// Note that rjmp is relative to the already incremented PC, so the
+	//  offset is one less than you might expect.
+	buff.bptr[0] = vect.bytes[0]; // rjmp to start of bootloader
+	buff.bptr[1] = vect.bytes[1] | 0xC0;  // make an "rjmp"
+#if (SAVVEC_ADDRESS != RSTVEC_ADDRESS)
+      } else if (address.word == SAVVEC_ADDRESS) {
 	addr16_t vect;
 	vect.bytes[0] = rstVect0_sav;
 	vect.bytes[1] = rstVect1_sav;
-	saveVect0_sav = buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))];
-	saveVect1_sav = buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))];
+	saveVect0_sav = buff.bptr[saveVect0 - SAVVEC_ADDRESS];
+	saveVect1_sav = buff.bptr[saveVect1 - SAVVEC_ADDRESS];
 	vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
         // Move RESET jmp target to 'save' vector
-        buff.bptr[saveVect0-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))] = vect.bytes[0];
-        buff.bptr[saveVect1-(SPM_PAGESIZE*(save_vect_num/(SPM_PAGESIZE/2)))] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+        buff.bptr[saveVect0 - SAVVEC_ADDRESS] = vect.bytes[0];
+        buff.bptr[saveVect1 - SAVVEC_ADDRESS] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
       }
-		
 #else
 
-		saveVect0_sav = buff.bptr[saveVect0];
-		saveVect1_sav = buff.bptr[saveVect1];
-		vect.bytes[0] = rstVect0_sav;
-		vect.bytes[1] = rstVect1_sav;
-		vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
+      saveVect0_sav = buff.bptr[saveVect0];
+      saveVect1_sav = buff.bptr[saveVect1];
+      vect.bytes[0] = rstVect0_sav;
+      vect.bytes[1] = rstVect1_sav;
+      vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
         // Move RESET jmp target to 'save' vector
     	buff.bptr[saveVect0] = vect.bytes[0];
     	buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
@@ -868,7 +911,6 @@ int main(void) {
       }
 
 #endif
-
 
 #endif // FLASHEND
 #endif // VBP
