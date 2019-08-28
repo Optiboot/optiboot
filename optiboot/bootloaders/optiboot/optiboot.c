@@ -165,6 +165,8 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Aug 2019						  */
+/* 8.1  WestfW Fix bug in calculation of Vboot offset     */
 /* Sep 2018						  */
 /* 8.0  WestfW (and Majekw and MCUDude)			  */
 /*      Include do_spm routine callable from the app      */
@@ -252,7 +254,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 8
-#define OPTIBOOT_MINVER 0
+#define OPTIBOOT_MINVER 1
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -839,13 +841,14 @@ int main(void) {
 
         // Add "jump to Optiboot" at RESET vector
         // WARNING: this works as long as 'main' is in first section
-        buff.bptr[rstVect0] = ((uint16_t)main) & 0xFF;
-        buff.bptr[rstVect1] = ((uint16_t)main) >> 8;
+        buff.bptr[rstVect0] = ((uint16_t)pre_main) & 0xFF;
+        buff.bptr[rstVect1] = ((uint16_t)pre_main) >> 8;
 
 #if (SAVVEC_ADDRESS != RSTVEC_ADDRESS)
 // the save_vector is not necessarilly on the same flash page as the reset
 //  vector.  If it isn't, we've waiting to actually write it.
       } else if (address.word == SAVVEC_ADDRESS) {
+	  // Save old values for Verify
 	  saveVect0_sav = buff.bptr[saveVect0 - SAVVEC_ADDRESS];
 	  saveVect1_sav = buff.bptr[saveVect1 - SAVVEC_ADDRESS];
 
@@ -854,6 +857,7 @@ int main(void) {
 	  buff.bptr[saveVect1 - SAVVEC_ADDRESS] = rstVect1_sav;
       }
 #else 
+        // Save old values for Verify
         saveVect0_sav = buff.bptr[saveVect0];
 	saveVect1_sav = buff.bptr[saveVect1];
 
@@ -876,7 +880,7 @@ int main(void) {
 	rstVect0_sav = buff.bptr[rstVect0];
 	rstVect1_sav = buff.bptr[rstVect1];
 	addr16_t vect;
-	vect.word = ((uint16_t)main);
+	vect.word = ((uint16_t)pre_main-1);
 	// Instruction is a relative jump (rjmp), so recalculate.
 	// an RJMP instruction is 0b1100xxxx xxxxxxxx, so we should be able to
 	// do math on the offsets without masking it off first.
@@ -889,8 +893,10 @@ int main(void) {
 	addr16_t vect;
 	vect.bytes[0] = rstVect0_sav;
 	vect.bytes[1] = rstVect1_sav;
+	// Save old values for Verify
 	saveVect0_sav = buff.bptr[saveVect0 - SAVVEC_ADDRESS];
 	saveVect1_sav = buff.bptr[saveVect1 - SAVVEC_ADDRESS];
+
 	vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
         // Move RESET jmp target to 'save' vector
         buff.bptr[saveVect0 - SAVVEC_ADDRESS] = vect.bytes[0];
@@ -898,19 +904,21 @@ int main(void) {
       }
 #else
 
+      // Save old values for Verify
       saveVect0_sav = buff.bptr[saveVect0];
       saveVect1_sav = buff.bptr[saveVect1];
+
       vect.bytes[0] = rstVect0_sav;
       vect.bytes[1] = rstVect1_sav;
       vect.word = (vect.word-save_vect_num); //substract 'save' interrupt position
-        // Move RESET jmp target to 'save' vector
-    	buff.bptr[saveVect0] = vect.bytes[0];
-    	buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
-    	// Add rjump to bootloader at RESET vector
-        vect.word = ((uint16_t)main); // (main) is always <= 0x0FFF; no masking needed.
-        buff.bptr[0] = vect.bytes[0]; // rjmp 0x1c00 instruction
-      }
-
+      // Move RESET jmp target to 'save' vector
+      buff.bptr[saveVect0] = vect.bytes[0];
+      buff.bptr[saveVect1] = (vect.bytes[1] & 0x0F)| 0xC0;  // make an "rjmp"
+      // Add rjmp to bootloader at RESET vector
+      vect.word = ((uint16_t)pre_main-1); // (main) is always <= 0x0FFF; no masking needed.
+      buff.bptr[0] = vect.bytes[0]; // rjmp 0x1c00 instruction
+  }
+  
 #endif
 
 #endif // FLASHEND
