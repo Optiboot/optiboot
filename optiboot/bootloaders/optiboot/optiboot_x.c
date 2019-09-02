@@ -330,8 +330,10 @@ int main(void) {
 #if LED_START_FLASHES > 0
     // Set up RTC counting at about 1/8s (input is 32kHz)
     RTC.CTRLA= RTC_PRESCALER_DIV4096_gc | RTC_RTCEN_bm;
+    RTC.DBGCTRL = 1; // enable during debug
 #endif
 
+    _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0);  // full speed clock
 
     MYUART_TXPORT.DIR |= MYUART_TXPIN; // set TX pin to output
     MYUART_TXPORT.OUT |= MYUART_TXPIN;  // and "1" as per datasheet
@@ -349,7 +351,7 @@ int main(void) {
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
     /* Set LED pin as output */
-    LED_PORT.DIR |= _BV(LED);
+    LED_PORT.DIR |= LED;
 #endif
 
 #if LED_START_FLASHES > 0
@@ -358,7 +360,7 @@ int main(void) {
 #else
 #if defined(LED_START_ON)
     /* Turn on LED to indicate starting bootloader (less code!) */
-    LED_PORT.OUT |= _BV(LED);
+    LED_PORT.OUT |= LED;
 #endif
 #endif
 
@@ -486,15 +488,14 @@ void putch(char ch) {
 
 uint8_t getch(void) {
     uint8_t ch, flags;
-    while (!(MYUART.STATUS & USART_RXCIF_bm)) {
-	return (MYUART.RXDATAL);
-    }
+    while (!(MYUART.STATUS & USART_RXCIF_bm))
+	;
     flags = MYUART.RXDATAH;
     ch = MYUART.RXDATAL;
     if ((flags & USART_FERR_bm) == 0)
 	watchdogReset();
 #ifdef LED_DATA_FLASH
-    LED_PORT.IN |= _BV(LED);
+    LED_PORT.IN |= LED;
 #endif
 
     return ch;
@@ -518,14 +519,14 @@ void verifySpace() {
 void flash_led(uint8_t count) {
     uint8_t last;
     while (count--) {
-	LED_PORT.IN |= _BV(LED);
+	LED_PORT.IN |= LED;
 	last = RTC.CNTL & 1;
 	while ((RTC.CNTL & 1) == last) {
 	    watchdogReset();
 	    if (MYUART.STATUS & USART_RXCIF_bm)
 		return;
 	}
-    } while (--count);
+    }
 }
 #endif
 
