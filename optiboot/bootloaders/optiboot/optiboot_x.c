@@ -134,6 +134,17 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #include <inttypes.h>
 #include <avr/io.h>
 
+FUSES = {
+//    .WDTCFG,  /* Watchdog Configuration */
+//    .BODCFG,  /* BOD Configuration */
+    .OSCCFG = 2,  /* Oscillator Configuration */
+//    .TCD0CFG,  /* TCD0 Configuration */
+    .SYSCFG0 = 0xC8,  /* RESET is active */
+    .SYSCFG1 = 0x06,  /* startup 32ms */
+//    .APPEND = 0,  /* Application Code Section End */
+    .BOOTEND = 2 /* Boot Section End */
+};
+
 /*
  * optiboot uses several "address" variables that are sometimes byte pointers,
  * sometimes word pointers. sometimes 16bit quantities, and sometimes built
@@ -203,7 +214,7 @@ typedef union {
  * some code space on parts with smaller pagesize by using a smaller int.
  */
 #if MAPPED_PROGMEM_PAGE_SIZE > 255
-typedef uint16_t pagelen_t ;
+typedef uint16_t pagelen_t;
 #define GETLENGTH(len) len = getch()<<8; len |= getch()
 #else
 typedef uint8_t pagelen_t;
@@ -230,7 +241,8 @@ static void getNch(uint8_t);
 #if LED_START_FLASHES > 0
 static inline void flash_led(uint8_t);
 #endif
-static inline void watchdogReset();
+#define watchdogReset()  __asm__ __volatile__ ("wdr\n")
+
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
@@ -287,6 +299,7 @@ int main(void) {
      * and still skip bootloader if not necessary
      */
     ch = RSTCTRL.RSTFR;
+    RSTCTRL.RSTFR = ch; // reset causes, for now.
 
     // Skip all logic and run bootloader if cause is cleared (application request)
     if (ch != 0) {
@@ -329,6 +342,8 @@ int main(void) {
 
 #if LED_START_FLASHES > 0
     // Set up RTC counting at about 1/8s (input is 32kHz)
+    while (RTC.STATUS & RTC_CTRLABUSY_bm)
+        ;  // RTC is used by startup logic (!) and might be busy.
     RTC.CTRLA= RTC_PRESCALER_DIV4096_gc | RTC_RTCEN_bm;
     RTC.DBGCTRL = 1; // enable during debug
 #endif
@@ -428,9 +443,9 @@ int main(void) {
 		address.word += MAPPED_EEPROM_START;
 	    }
 
-	    do
-		*address.bptr++ = getch();
-	    while (--length);
+	    do {
+		*(address.bptr++) = getch();
+	    } while (--length);
 
 	    // Read command terminator, start reply
 	    verifySpace();
@@ -529,13 +544,6 @@ void flash_led(uint8_t count) {
     }
 }
 #endif
-
-// Watchdog functions. These are only safe with interrupts turned off.
-void watchdogReset() {
-    __asm__ __volatile__ (
-	"wdr\n"
-	);
-}
 
 void watchdogConfig(uint8_t x) {
     _PROTECTED_WRITE(WDT.CTRLA, x);
