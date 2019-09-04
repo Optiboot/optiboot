@@ -254,7 +254,7 @@ static inline void flash_led(uint8_t);
 #endif
 
 /* everything that needs to run VERY early */
-void pre_main(void) {
+void pre_main (void) {
     // Allow convenient way of calling do_spm function - jump table,
     //   so entry to this function will always be here, indepedent of compilation,
     //   features etc
@@ -271,7 +271,7 @@ void pre_main(void) {
 
 
 /* main program starts here */
-int main(void) {
+int main (void) {
     uint8_t ch;
 
     /*
@@ -340,20 +340,12 @@ int main(void) {
 	}
     }
 
-#if LED_START_FLASHES > 0
-    // Set up RTC counting at about 1/8s (input is 32kHz)
-    while (RTC.STATUS & RTC_CTRLABUSY_bm)
-        ;  // RTC is used by startup logic (!) and might be busy.
-    RTC.CTRLA= RTC_PRESCALER_DIV4096_gc | RTC_RTCEN_bm;
-    RTC.DBGCTRL = 1; // enable during debug
-#endif
-
     _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0);  // full speed clock
 
     MYUART_TXPORT.DIR |= MYUART_TXPIN; // set TX pin to output
     MYUART_TXPORT.OUT |= MYUART_TXPIN;  // and "1" as per datasheet
 #if defined (MYUART_PMUX)
-    PORTMUX.USARTROUTEA |= MYUART_PMUX;  // alternate pinout to use
+    MYPMUX |= MYUART_PMUX;  // alternate pinout to use
 #endif
     MYUART.BAUD = BAUD_SETTING;
     MYUART.DBGCTRL = 1;  // run during debug
@@ -361,8 +353,8 @@ int main(void) {
     MYUART.CTRLA = 0;  // Interrupts: all off
     MYUART.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
 
-    // Set up watchdog to trigger after 1s
-//    watchdogConfig(WDT_PERIOD_1KCLK_gc);
+    // Set up watchdog to trigger after 8s
+    watchdogConfig(WDT_PERIOD_8KCLK_gc);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
     /* Set LED pin as output */
@@ -431,7 +423,7 @@ int main(void) {
 	}
 	/* Write memory, length is big endian and is in bytes */
 	else if(ch == STK_PROG_PAGE) {
-	    // PROGRAM PAGE - we support flash programming only, not EEPROM
+	    // PROGRAM PAGE - any kind of page!
 	    uint8_t desttype;
 
 	    GETLENGTH(length);
@@ -442,6 +434,7 @@ int main(void) {
 	    } else {
 		address.word += MAPPED_EEPROM_START;
 	    }
+	    // TODO: user row?
 
 	    do {
 		*(address.bptr++) = getch();
@@ -469,6 +462,8 @@ int main(void) {
 	    } else {
 		address.word += MAPPED_EEPROM_START;
 	    }
+	    // TODO: user row?
+
 	    do {
 		putch(*(address.bptr++));
 	    } while (--length);
@@ -495,13 +490,13 @@ int main(void) {
     }
 }
 
-void putch(char ch) {
+void putch (char ch) {
     while (0 == (MYUART.STATUS & USART_DREIF_bm))
 	;
     MYUART.TXDATAL = ch;
 }
 
-uint8_t getch(void) {
+uint8_t getch (void) {
     uint8_t ch, flags;
     while (!(MYUART.STATUS & USART_RXCIF_bm))
 	;
@@ -516,12 +511,12 @@ uint8_t getch(void) {
     return ch;
 }
 
-void getNch(uint8_t count) {
+void getNch (uint8_t count) {
     do getch(); while (--count);
     verifySpace();
 }
 
-void verifySpace() {
+void verifySpace () {
     if (getch() != CRC_EOP) {
 	watchdogConfig(WDT_PERIOD_8CLK_gc);    // shorten WD timeout
 	while (1)			      // and busy-loop so that WD causes
@@ -531,12 +526,16 @@ void verifySpace() {
 }
 
 #if LED_START_FLASHES > 0
-void flash_led(uint8_t count) {
-    uint8_t last;
+void flash_led (uint8_t count) {
+#ifdef __INT24_MAX__
+    __uint24 delay;
+#else
+    uint32_t delay;
+# warning no uin24
+#endif
     while (count--) {
 	LED_PORT.IN |= LED;
-	last = RTC.CNTL & 1;
-	while ((RTC.CNTL & 1) == last) {
+	for (delay = (F_CPU/200); delay; delay--) {
 	    watchdogReset();
 	    if (MYUART.STATUS & USART_RXCIF_bm)
 		return;
@@ -545,11 +544,9 @@ void flash_led(uint8_t count) {
 }
 #endif
 
-void watchdogConfig(uint8_t x) {
+void watchdogConfig (uint8_t x) {
     _PROTECTED_WRITE(WDT.CTRLA, x);
 }
-
-
 
 
 #ifndef APP_NOSPM
@@ -572,7 +569,7 @@ void watchdogConfig(uint8_t x) {
  *   data=0 in WRITE
  */
 static void do_nvmctrl(uint16_t address, uint8_t command, uint16_t data)  __attribute__ ((used));
-static void do_nvmctrl(uint16_t address, uint8_t command, uint16_t data) {
+static void do_nvmctrl (uint16_t address, uint8_t command, uint16_t data) {
     // Do spm stuff
 }
 #endif

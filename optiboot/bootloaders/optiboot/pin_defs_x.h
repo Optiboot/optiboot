@@ -670,6 +670,7 @@
 #define USART_ALTPMUX 1
 
 #if defined(__AVR_ATmega4809__)
+#define MYPMUX PORTMUX.USARTROUTEA
 # if (UARTTX == A0)
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
@@ -731,7 +732,37 @@
 #  define MYUART_TXPIN (1<<PORT4)
 #  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART2_gp)
 # endif
-#endif // ATmega4809
+#endif  // ATmega4809
+
+/*
+ * 8pin Tiny0 and Tiny1
+ */
+#if defined(__AVR_ATtiny402__) || defined(__AVR_ATtiny202__) || \
+    defined(__AVR_ATtiny412__) || defined(__AVR_ATtiny212__)
+#define MYPMUX PORTMUX.CTRLB
+# if (UARTTX == A6)
+#  ifndef USART0
+#   error Pin on USART0, but no USART0 exists
+#  endif
+#  define MYUART USART0
+#  define MYUART_TXPORT VPORTA
+#  define MYUART_TXPIN (1<<PORT0)
+# elif (UARTTX == A1)
+#  ifndef USART0
+#   error Pin on USART0, but no USART0 exists
+#  endif
+#  define MYUART USART0
+#  define MYUART_TXPORT VPORTA
+#  define MYUART_TXPIN (1<<PORT4)
+#  define MYUART_PMUX (USART_ALTPMUX)
+# endif
+#endif // Tiny402/etc
+
+#if defined(__ATtiny3216__) || defined(__ATtiny1606__)
+#endif
+#if defined(__ATtiny1614__) || defined(__ATtiny1604__)
+#endif
+
 
 #ifndef MYUART
 # warning No UARTTX pin specified.
