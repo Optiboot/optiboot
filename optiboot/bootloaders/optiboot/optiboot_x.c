@@ -246,7 +246,7 @@ static inline void flash_led(uint8_t);
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
- * lot of peripheral registers.  Let 0x100 be the default
+ * lot of peripheral registers.
  * Note that RAMSTART (for optiboot) need not be exactly at the start of RAM.
  */
 #if !defined(RAMSTART)  // newer versions of gcc avr-libc define RAMSTART
@@ -283,16 +283,13 @@ int main (void) {
     register addr16_t address;
     register pagelen_t  length;
 
-    // After the zero init loop, this is the first code to run.
+    // This is the first code to run.
     //
-    // This code makes the following assumptions:
+    // Optiboot C code makes the following assumptions:
     //  No interrupts will execute
     //  SP points to RAMEND
-    //  r1 contains zero
-    //
-    // If not, uncomment the following instructions:
-    // cli();
-    __asm__ __volatile__ ("clr __zero_reg__");
+
+    __asm__ __volatile__ ("clr __zero_reg__"); // known-zero required by avr-libc
 
     /*
      * Protect as much Reset Cause as possible for application
@@ -407,10 +404,7 @@ int main (void) {
 	    // LOAD ADDRESS
 	    address.bytes[0] = getch();
 	    address.bytes[1] = getch();
-#ifdef RAMPZ
-	    // Handle chips with more than 64k flash address space. (None yet)
-	    // Transfer top bit to LSB in RAMPZ
-#endif
+	    // ToDo: will there be mega-0 chips with >128k of RAM?
 	    address.word *= 2; // Convert from word address to byte address
 	    verifySpace();
 	}
@@ -632,3 +626,18 @@ OPT2FLASH(OPTIBOOT_CUSTOMVER);
 OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
 
 #endif
+
+// Dummy application that will loop back into the bootloader if not overwritten
+void  __attribute__((section( ".postapp")))
+      __attribute__((naked)) __attribute__((used)) app();
+void app() 
+{
+    uint8_t ch;
+    
+    ch = RSTCTRL.RSTFR;
+    RSTCTRL.RSTFR = ch; // reset causes
+    _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
+    for (long i=0; i < 1000000; i++) {
+        __asm__ __volatile__("wdr");
+    }
+}

@@ -746,21 +746,43 @@
 #  endif
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
-#  define MYUART_TXPIN (1<<PORT0)
+#  define MYUART_TXPIN (1<<PORT6)
 # elif (UARTTX == A1)
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
-#  define MYUART_TXPIN (1<<PORT4)
+#  define MYUART_TXPIN (1<<PORT1)
 #  define MYUART_PMUX (USART_ALTPMUX)
 # endif
 #endif // Tiny402/etc
 
-#if defined(__ATtiny3216__) || defined(__ATtiny1606__)
+/*
+ * 14pin Tiny0, Tiny1
+ */
+#if defined(__ATtiny1614__) || defined(__ATtiny1604__) || \
+    defined(__ATtiny814__)  || defined(__ATtiny804__)
+#define MYPMUX PORTMUX.CTRLB
+# if (UARTTX == B2)
+#  ifndef USART0
+#   error Pin on USART0, but no USART0 exists
+#  endif
+#  define MYUART USART0
+#  define MYUART_TXPORT VPORTB
+#  define MYUART_TXPIN (1<<PORT2)
+# elif (UARTTX == A1)
+#  ifndef USART0
+#   error Pin on USART0, but no USART0 exists
+#  endif
+#  define MYUART USART0
+#  define MYUART_TXPORT VPORTA
+#  define MYUART_TXPIN (1<<PORT1)
+#  define MYUART_PMUX (USART_ALTPMUX)
+# endif
 #endif
-#if defined(__ATtiny1614__) || defined(__ATtiny1604__)
+
+#if defined(__ATtiny3216__) || defined(__ATtiny1606__)
 #endif
 
 
