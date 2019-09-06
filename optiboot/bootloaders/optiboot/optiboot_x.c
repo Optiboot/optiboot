@@ -127,7 +127,7 @@
 #define OPTIBOOT_CUSTOMVER 0
 #endif
 
-unsigned const int __attribute__((section(".version"))) 
+unsigned const int __attribute__((section(".version"))) __attribute__((used)) 
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
 
@@ -135,13 +135,13 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #include <avr/io.h>
 
 FUSES = {
-//    .WDTCFG,  /* Watchdog Configuration */
-//    .BODCFG,  /* BOD Configuration */
-    .OSCCFG = 2,  /* Oscillator Configuration */
-//    .TCD0CFG,  /* TCD0 Configuration */
-    .SYSCFG0 = 0xC8,  /* RESET is active */
+    .WDTCFG = 0,  /* Watchdog Configuration */
+    .BODCFG = FUSE_BODCFG_DEFAULT,  /* BOD Configuration */
+    .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
+    .OSCCFG = 2, /* 20MHz */
+    .SYSCFG0 = 0xC4,  /* RESET is not yet */
     .SYSCFG1 = 0x06,  /* startup 32ms */
-//    .APPEND = 0,  /* Application Code Section End */
+    .APPEND = 0,  /* Application Code Section End */
     .BOOTEND = 2 /* Boot Section End */
 };
 
@@ -296,8 +296,8 @@ int main (void) {
      * and still skip bootloader if not necessary
      */
     ch = RSTCTRL.RSTFR;
-    RSTCTRL.RSTFR = ch; // reset causes, for now.
-
+//    RSTCTRL.RSTFR = ch; // reset causes, for now.
+    ch &= ~RSTCTRL_UPDIRF_bm; // clear "reset by UPDI."
     // Skip all logic and run bootloader if cause is cleared (application request)
     if (ch != 0) {
 	/*
@@ -350,8 +350,8 @@ int main (void) {
     MYUART.CTRLA = 0;  // Interrupts: all off
     MYUART.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
 
-    // Set up watchdog to trigger after 8s
-    watchdogConfig(WDT_PERIOD_8KCLK_gc);
+    // Set up watchdog to trigger after 1s
+    watchdogConfig(WDT_PERIOD_1KCLK_gc);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
     /* Set LED pin as output */
@@ -535,6 +535,7 @@ void flash_led (uint8_t count) {
 		return;
 	}
     }
+    watchdogReset(); // for breakpointing
 }
 #endif
 
@@ -636,6 +637,7 @@ void app()
     
     ch = RSTCTRL.RSTFR;
     RSTCTRL.RSTFR = ch; // reset causes
+    __asm__ __volatile__ ("jmp 0");  // similar to running off end of memory
     _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
     for (long i=0; i < 1000000; i++) {
         __asm__ __volatile__("wdr");

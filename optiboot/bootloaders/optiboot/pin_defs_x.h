@@ -759,10 +759,15 @@
 #endif // Tiny402/etc
 
 /*
- * 14pin Tiny0, Tiny1
+ * 14pin and 20pin Tiny0, Tiny1
+ *   The 14 and 20pin packages both conveniently have the UART on the
+ *   same port pins, and the same pinmux structure!
  */
-#if defined(__ATtiny1614__) || defined(__ATtiny1604__) || \
-    defined(__ATtiny814__)  || defined(__ATtiny804__)
+#if defined(__AVR_ATtiny1614__) || defined(__AVR_ATtiny1604__) ||	\
+    defined(__AVR_ATtiny814__)  || defined(__AVR_ATtiny804__) ||	\
+    defined(__AVR_ATtiny1606__) || defined(__AVR_ATtiny806__) ||	\
+    defined(__AVR_ATtiny406__) || defined(__AVR_ATtiny3216__) ||	\
+    defined(__AVR_ATtiny816__) || defined(__AVR_ATtiny416__)
 #define MYPMUX PORTMUX.CTRLB
 # if (UARTTX == B2)
 #  ifndef USART0
@@ -781,10 +786,6 @@
 #  define MYUART_PMUX (USART_ALTPMUX)
 # endif
 #endif
-
-#if defined(__ATtiny3216__) || defined(__ATtiny1606__)
-#endif
-
 
 #ifndef MYUART
 # warning No UARTTX pin specified.
