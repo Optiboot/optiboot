@@ -251,19 +251,23 @@ COMMON_OPTIONS += $(VERSION_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
+HELPTEXT += "Option UARTTX=pin            - describe UART for Mega0, Xtiny
 ifdef UART
 UART_CMD = -DUART=$(UART)
+endif
+ifdef UARTTX
+UART_CMD = -DUARTTX=$(UARTTX)
 endif
 
 
 # Not supported yet
-# ifdef TIMEOUT_MS
-# TIMEOUT_MS_CMD = -DTIMEOUT_MS=$(TIMEOUT_MS)
+# ifdef TIMEOUT
+# TIMEOUT_CMD = -DTIMEOUT_MS=$(TIMEOUT)
 # dummy = FORCE
 # endif
 #
 
-#.PRECIOUS: %.elf
+.PRECIOUS: %.elf
 
 #---------------------------------------------------------------------------
 # "Chip-level Platform" targets.

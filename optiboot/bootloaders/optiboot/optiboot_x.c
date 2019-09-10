@@ -137,8 +137,10 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 FUSES = {
     .WDTCFG = 0,  /* Watchdog Configuration */
     .BODCFG = FUSE_BODCFG_DEFAULT,  /* BOD Configuration */
-    .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
     .OSCCFG = 2, /* 20MHz */
+#ifdef FUSE_TCD0CFG_DEFAULT
+    .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
+#endif
     .SYSCFG0 = 0xC4,  /* RESET is not yet */
     .SYSCFG1 = 0x06,  /* startup 32ms */
     .APPEND = 0,  /* Application Code Section End */
@@ -290,42 +292,51 @@ int main (void) {
     //  SP points to RAMEND
 
     __asm__ __volatile__ ("clr __zero_reg__"); // known-zero required by avr-libc
-
+#define RESET_EXTERNAL (RSTCTRL_EXTRF_bm|RSTCTRL_UPDIRF_bm|RSTCTRL_SWRF_bm)
+#ifndef FANCY_RESET_LOGIC
+    ch = RSTCTRL.RSTFR;   // get reset cause
+    RSTCTRL.RSTFR = ch;   //  and reset them all!
+    if (ch & RSTCTRL_WDRF_bm) {
+	// Start the app.
+	__asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
+	watchdogConfig(WDT_PERIOD_OFF_gc);
+	__asm__ __volatile__ (
+	    "jmp app\n"
+	    );
+    }
+#else
     /*
      * Protect as much Reset Cause as possible for application
      * and still skip bootloader if not necessary
      */
     ch = RSTCTRL.RSTFR;
-//    RSTCTRL.RSTFR = ch; // reset causes, for now.
-    ch &= ~RSTCTRL_UPDIRF_bm; // clear "reset by UPDI."
-    // Skip all logic and run bootloader if cause is cleared (application request)
     if (ch != 0) {
 	/*
-	 * To run the boot loader, External Reset Flag must be set.
-	 * If not, we could make shortcut and jump directly to application code.
-	 * Also WDRF set with EXTRF is a result of Optiboot timeout, so we
-	 * shouldn't run bootloader in loop :-) That's why:
-	 *  1. application is running if WDRF is cleared
-	 *  2. we clear WDRF if it's set with EXTRF to avoid loops
-	 * One problematic scenario: broken application code sets watchdog timer 
-	 * without clearing MCUSR before and triggers it quickly. But it's
-	 * recoverable by power-on with pushed reset button.
+	 * We want to run the bootloader when an external reset has occurred.
+	 * On these mega0/XTiny chips, there are three types of ext reset:
+	 *  reset pin (may not exist), UPDI reset, and SW-request reset.
+	 * One of these reset causes, together with watchdog reset, should
+	 *  mean that Optiboot timed out, and it's time to run the app.
+	 * Other reset causes (notably poweron) should run the app directly.
+	 * If a user app wants to utilize and detect watchdog resets, it
+	 *  must make sure that the other reset causes are cleared.
 	 */
-	if ((ch & (RSTCTRL_WDRF_bm | RSTCTRL_EXTRF_bm)) != RSTCTRL_EXTRF_bm) { 
-	    if (ch & RSTCTRL_EXTRF_bm) {
+	if (ch & RSTCTRL_WDRF_bm) {
+	    if (ch & RESET_EXTERNAL) {
 		/*
-		 * Clear WDRF because it was most probably set by wdr in bootloader.
-		 * It's also needed to avoid loop by broken application which could
-		 * prevent entering bootloader.
-		 * '&' operation is skipped to spare few bytes as bits in MCUSR
-		 * can only be cleared.
+		 * Clear WDRF because it was most probably set by wdr in
+		 * bootloader.  It's also needed to avoid loop by broken
+		 * application which could prevent entering bootloader.
 		 */
 		RSTCTRL.RSTFR = RSTCTRL_WDRF_bm;
 	    }
+	}
+	if (!(ch & RESET_EXTERNAL)) {
 	    /* 
-	     * save the reset flags in the designated register
-	     * This can be saved in a main program by putting code in .init0 (which
-	     * executes before normal c init code) to save R2 to a global variable.
+	     * save the reset flags in the designated register.
+	     * This can be saved in a main program by putting code in
+	     * .init0 (which executes before normal c init code) to save R2
+	     * to a global variable.
 	     */
 	    __asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
 
@@ -336,7 +347,9 @@ int main (void) {
 		);
 	}
     }
+#endif // Fancy reset cause stuff
 
+    watchdogReset();
     _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0);  // full speed clock
 
     MYUART_TXPORT.DIR |= MYUART_TXPIN; // set TX pin to output
@@ -351,7 +364,7 @@ int main (void) {
     MYUART.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
 
     // Set up watchdog to trigger after 1s
-    watchdogConfig(WDT_PERIOD_1KCLK_gc);
+    watchdogConfig(WDT_PERIOD_8KCLK_gc);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
     /* Set LED pin as output */
@@ -360,11 +373,17 @@ int main (void) {
 
 #if LED_START_FLASHES > 0
     /* Flash onboard LED to signal entering of bootloader */
+# ifdef LED_INVERT
+    flash_led(LED_START_FLASHES * 2+1);
+# else
     flash_led(LED_START_FLASHES * 2);
+# endif
 #else
 #if defined(LED_START_ON)
+# ifndef LED_INVERT
     /* Turn on LED to indicate starting bootloader (less code!) */
     LED_PORT.OUT |= LED;
+# endif
 #endif
 #endif
 
@@ -405,7 +424,9 @@ int main (void) {
 	    address.bytes[0] = getch();
 	    address.bytes[1] = getch();
 	    // ToDo: will there be mega-0 chips with >128k of RAM?
+/*          UPDI chips apparently have byte-addressable FLASH ?
 	    address.word *= 2; // Convert from word address to byte address
+*/
 	    verifySpace();
 	}
 	else if(ch == STK_UNIVERSAL) {
@@ -540,6 +561,8 @@ void flash_led (uint8_t count) {
 #endif
 
 void watchdogConfig (uint8_t x) {
+    while(WDT.STATUS & WDT_SYNCBUSY_bm)
+	;
     _PROTECTED_WRITE(WDT.CTRLA, x);
 }
 

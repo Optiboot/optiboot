@@ -135,3 +135,26 @@ luminet_isp: EFUSE ?= FE
 luminet_isp: isp
 
 
+HELPTEXT += "target atmega4809    - ATmega4809\n"
+atmega4809: TARGET = atmega4809
+atmega4809: PROGRAM = optiboot_x
+atmega4809: MCU_TARGET = atmega4809
+atmega4809: CFLAGS += $(COMMON_OPTIONS) -DLED=A7 $(UART_CMD)
+atmega4809: AVR_FREQ ?= 20000000L
+atmega4809: LDSECTIONS  = -Wl,--section-start=.text=0 -Wl,--section-start=.version=0x1fe -Wl,--sections-start=.postapp=0x200
+atmega4809: $(PROGRAM)_atmega4809.hex
+ifndef PRODUCTION
+atmega4809: $(PROGRAM)_atmega4809.lst
+endif
+
+HELPTEXT += "target Xplained416    - ATtiny416 Xplained Nano\n"
+xplained416: TARGET = attiny416
+xplained416: PROGRAM = optiboot_x
+xplained416: MCU_TARGET = attiny416
+xplained416: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD) -DLED_INVERT=1
+xplained416: AVR_FREQ ?= 20000000L
+xplained416: LDSECTIONS  = -Wl,--section-start=.text=0 -Wl,--section-start=.version=0x1fe -Wl,--section-start=.postapp=0x200
+xplained416: $(PROGRAM)_attiny416.hex
+ifndef PRODUCTION
+xplained416: $(PROGRAM)_attiny416.lst
+endif
