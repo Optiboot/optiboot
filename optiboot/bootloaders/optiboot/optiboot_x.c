@@ -124,7 +124,7 @@
  */
 
 #if !defined(OPTIBOOT_CUSTOMVER)
-#define OPTIBOOT_CUSTOMVER 0
+# define OPTIBOOT_CUSTOMVER 0
 #endif
 
 unsigned const int __attribute__((section(".version"))) __attribute__((used)) 
@@ -141,7 +141,11 @@ FUSES = {
 #ifdef FUSE_TCD0CFG_DEFAULT
     .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
 #endif
-    .SYSCFG0 = 0xC4,  /* RESET is not yet */
+#ifdef RSTPIN
+    .SYSCFG0 =  RSTPINCFG_RST_gc | CRCSRC_NOCRC_gc, /* RESET is enabled */
+#else
+    .SYSCFG0 =  CRCSRC_NOCRC_gc | RSTPINCFG_UPDI_gc, /* RESET is not yet */
+#endif
     .SYSCFG1 = 0x06,  /* startup 32ms */
     .APPEND = 0,  /* Application Code Section End */
     .BOOTEND = 2 /* Boot Section End */
@@ -175,52 +179,68 @@ typedef union {
 #include "stk500.h"
 
 #ifndef LED_START_FLASHES
-#define LED_START_FLASHES 0
+# define LED_START_FLASHES 0
 #endif
 
 /* set the UART baud rate defaults */
 #ifndef BAUD_RATE
-#define BAUD_RATE   115200L // Highest rate Avrdude win32 will support
+# define BAUD_RATE   115200L // Highest rate Avrdude win32 will support
 #endif
 
 #define BAUD_SETTING ((F_CPU*4) / (BAUD_RATE))
 #define BAUD_ACTUAL ((64L*F_CPU)/(16L*BAUD_SETTING))
 
 #if BAUD_ACTUAL <= BAUD_RATE
-#define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
-#if BAUD_ERROR >= 5
-#error BAUD_RATE off by greater than -5%
-#elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
-#warning BAUD_RATE off by greater than -2%
-#endif
+# define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
+# if BAUD_ERROR >= 5
+#  error BAUD_RATE off by greater than -5%
+# elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
+#  warning BAUD_RATE off by greater than -2%
+# endif
 #else
-#define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
-#if BAUD_ERROR >= 5
-#error BAUD_RATE off by greater than 5%
-#elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
-#warning BAUD_RATE off by greater than 2%
-#endif
+# define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
+# if BAUD_ERROR >= 5
+#  error BAUD_RATE off by greater than 5%
+# elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
+#  warning BAUD_RATE off by greater than 2%
+# endif
 #endif
 
 #if BAUD_SETTING > 65635
-#error Unachievable baud rate (too slow) BAUD_RATE 
+# error Unachievable baud rate (too slow) BAUD_RATE 
 #endif // baud rate slow check
 #if (BAUD_SETTING - 1) < 3
-#if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
-#error Unachievable baud rate (too fast) BAUD_RATE 
-#endif
+# if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
+#  error Unachievable baud rate (too fast) BAUD_RATE 
+# endif
 #endif // baud rate fast check
 
+/*
+ * Watchdog timeout translations from human readable to config vals
+ */
+#ifndef WDTTIME
+# define WDTPERIOD WDT_PERIOD_1KCLK_gc  // 1 second
+#elif WDTTIME == 1
+# define WDTPERIOD WDT_PERIOD_1KCLK_gc  // 1 second
+#elif WDTTIME == 2
+# define WDTPERIOD WDT_PERIOD_2KCLK_gc  // 2 seconds
+#elif WDTTIME == 4
+# define WDTPERIOD WDT_PERIOD_4KCLK_gc  // 4 seconds
+#elif WDTTIME == 8
+# define WDTPERIOD WDT_PERIOD_8KCLK_gc  // 8 seconds
+#else
+#endif
+    
 /*
  * We can never load flash with more than 1 page at a time, so we can save
  * some code space on parts with smaller pagesize by using a smaller int.
  */
 #if MAPPED_PROGMEM_PAGE_SIZE > 255
 typedef uint16_t pagelen_t;
-#define GETLENGTH(len) len = getch()<<8; len |= getch()
+# define GETLENGTH(len) len = getch()<<8; len |= getch()
 #else
 typedef uint8_t pagelen_t;
-#define GETLENGTH(len) (void) getch() /* skip high byte */; len = getch()
+# define GETLENGTH(len) (void) getch() /* skip high byte */; len = getch()
 #endif
 
 
@@ -240,11 +260,12 @@ void __attribute__((noinline)) verifySpace();
 void __attribute__((noinline)) watchdogConfig(uint8_t x);
 
 static void getNch(uint8_t);
+
 #if LED_START_FLASHES > 0
 static inline void flash_led(uint8_t);
 #endif
-#define watchdogReset()  __asm__ __volatile__ ("wdr\n")
 
+#define watchdogReset()  __asm__ __volatile__ ("wdr\n")
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
@@ -258,8 +279,8 @@ static inline void flash_led(uint8_t);
 /* everything that needs to run VERY early */
 void pre_main (void) {
     // Allow convenient way of calling do_spm function - jump table,
-    //   so entry to this function will always be here, indepedent of compilation,
-    //   features etc
+    //   so entry to this function will always be here, indepedent
+    //    of compilation, features, etc
     __asm__ __volatile__ (
 	"	rjmp	1f\n"
 #ifndef APP_NOSPM
@@ -270,7 +291,6 @@ void pre_main (void) {
 	"1:\n"
 	);
 }
-
 
 /* main program starts here */
 int main (void) {
@@ -363,8 +383,9 @@ int main (void) {
     MYUART.CTRLA = 0;  // Interrupts: all off
     MYUART.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
 
-    // Set up watchdog to trigger after 1s
-    watchdogConfig(WDT_PERIOD_8KCLK_gc);
+    // Set up watchdog to trigger after a bit
+    //  (nominally:, 1s for autoreset, longer for manual)
+    watchdogConfig(WDTPERIOD);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
     /* Set LED pin as output */

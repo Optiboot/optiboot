@@ -260,12 +260,10 @@ UART_CMD = -DUARTTX=$(UARTTX)
 endif
 
 
-# Not supported yet
-# ifdef TIMEOUT
-# TIMEOUT_CMD = -DTIMEOUT_MS=$(TIMEOUT)
-# dummy = FORCE
-# endif
-#
+ifdef TIMEOUT
+TIMEOUT_CMD = -DWDTTIME=TIMEOUT
+dummy = FORCE
+endif
 
 .PRECIOUS: %.elf
 
