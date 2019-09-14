@@ -134,6 +134,11 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #include <inttypes.h>
 #include <avr/io.h>
 
+#if (!defined(__AVR_XMEGA__)) || (__AVR_ARCH__ != 103)
+#error CPU not supported by this version of Optiboot.
+#include <unsupported>  // include a non-existent file to stop compilation
+#endif
+
 FUSES = {
     .WDTCFG = 0,  /* Watchdog Configuration */
     .BODCFG = FUSE_BODCFG_DEFAULT,  /* BOD Configuration */
@@ -142,7 +147,7 @@ FUSES = {
     .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
 #endif
 #ifdef RSTPIN
-    .SYSCFG0 =  RSTPINCFG_RST_gc | CRCSRC_NOCRC_gc, /* RESET is enabled */
+    .SYSCFG0 =  CRCSRC_NOCRC_gc | RSTPINCFG_RST_gc, /* RESET is enabled */
 #else
     .SYSCFG0 =  CRCSRC_NOCRC_gc | RSTPINCFG_UPDI_gc, /* RESET is not yet */
 #endif
