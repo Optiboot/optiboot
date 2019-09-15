@@ -149,7 +149,11 @@ FUSES = {
 #ifdef RSTPIN
     .SYSCFG0 =  CRCSRC_NOCRC_gc | RSTPINCFG_RST_gc, /* RESET is enabled */
 #else
+# ifdef FUSE_RSTPINCFG_gm  // group mask will be defined for triple-func pins
     .SYSCFG0 =  CRCSRC_NOCRC_gc | RSTPINCFG_UPDI_gc, /* RESET is not yet */
+# else
+    .SYSCFG0 =  CRCSRC_NOCRC_gc, /* RESET is not yet */
+# endif
 #endif
     .SYSCFG1 = 0x06,  /* startup 32ms */
     .APPEND = 0,  /* Application Code Section End */
@@ -375,12 +379,12 @@ int main (void) {
 #endif // Fancy reset cause stuff
 
     watchdogReset();
-    _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0);  // full speed clock
+//    _PROTECTED_WRITE(CLKCTRL.MCLKCTRLB, 0);  // full speed clock
 
     MYUART_TXPORT.DIR |= MYUART_TXPIN; // set TX pin to output
     MYUART_TXPORT.OUT |= MYUART_TXPIN;  // and "1" as per datasheet
 #if defined (MYUART_PMUX)
-    MYPMUX |= MYUART_PMUX;  // alternate pinout to use
+    MYPMUX = MYUART_PMUX;  // alternate pinout to use
 #endif
     MYUART.BAUD = BAUD_SETTING;
     MYUART.DBGCTRL = 1;  // run during debug
@@ -614,7 +618,9 @@ void watchdogConfig (uint8_t x) {
  */
 static void do_nvmctrl(uint16_t address, uint8_t command, uint16_t data)  __attribute__ ((used));
 static void do_nvmctrl (uint16_t address, uint8_t command, uint16_t data) {
-    // Do spm stuff
+    _PROTECTED_WRITE(WDT.CTRLA, command);
+    while (NVMCTRL.STATUS & (NVMCTRL_FBUSY_bm|NVMCTRL_EEBUSY_bm))
+	; // wait for flash and EEPROM not busy, just in case.
 }
 #endif
 
@@ -686,6 +692,7 @@ void app()
     
     ch = RSTCTRL.RSTFR;
     RSTCTRL.RSTFR = ch; // reset causes
+    do_nvmctrl(0, NVMCTRL_CMD_PAGEBUFCLR_gc, 0); // reference this function!
     __asm__ __volatile__ ("jmp 0");  // similar to running off end of memory
     _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
     for (long i=0; i < 1000000; i++) {

@@ -80,6 +80,14 @@ endif
 dummy = FORCE
 endif
 
+HELPTEXT += "Option LED_INVERT=1          - Invert the 'on' state of the LED\n"
+ifdef LED_INVERT=1
+ifneq ($(LED_INVERT), 0)
+LEDINV_CMD = -DLED_INVERT=1
+endif
+dummy = FORCE
+endif
+
 
 # UART options
 

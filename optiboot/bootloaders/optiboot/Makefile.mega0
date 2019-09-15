@@ -20,7 +20,8 @@ export
 
 # defaults
 MCU_TARGET = atmega4809
-AVR_FREQ = 20000000
+# default CPU frequency is the internal osc (16 or 20MHz) divided by 6
+AVR_FREQ = 3333333
 
 LDSECTIONS  = -Wl,--section-start=.text=0 -Wl,--section-start=.postapp=0x200 \
 	      -Wl,--section-start=.version=0x1fe
@@ -28,7 +29,7 @@ BAUD_RATE=115200
 
 # If we have a PACKS directory specified, we should use it...
 ifdef PACKS
-PACK_OPT= -I $(PACKS)/include/ -B $(PACKS)/gcc/dev/$%
+PACK_OPT= -I $(PACKS)/include/ -B $(PACKS)/gcc/dev/$*
 endif
 GCCROOT =
 AVRDUDE_CONF =
@@ -54,7 +55,8 @@ OBJDUMP        = $(GCCROOT)avr-objdump
 SIZE           = $(GCCROOT)avr-size
 
 include parse_options.mk
-.PRECIOUS: %.elf
+
+.PRECIOUS: optiboot_%.elf
 
 ifndef PRODUCTION
 LISTING= $(OBJDUMP) -S 
@@ -88,12 +90,9 @@ optiboot_%.hex: optiboot_%.elf
 	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O ihex $< $@
 
 optiboot_%.elf:	optiboot_x.c FORCE
-	echo CPU_OPTIONS= $(CPU_OPTIONS)
-	echo LED_OPTIONS= $(LED_OPTIONS)
-	echo UART_OPTIONS=$(UART_OPTIONS)
 	$(CC) $(CFLAGS) $(CPU_OPTIONS) $(LED_OPTIONS) $(UART_OPTIONS) $(COMMON_OPTIONS) $(LDFLAGS) $(PACK_OPT) -mmcu=$* -o $@ $<
 	$(SIZE) $@
-	$(LISTING) $@ > optiboot_$*.lss
+	$(LISTING) $@ > optiboot_$*.lst
 
 
 #---------------------------------------------------------------------------
@@ -105,20 +104,32 @@ optiboot_%.elf:	optiboot_x.c FORCE
 #  appropriate specific options
 #---------------------------------------------------------------------------
 
-drazzy412:
-	$(MAKE) -f $(MF) optiboot_attiny412.hex UARTTX=A1 TIMEOUT=8 LED=A7
+drazzy%2:
+	$(MAKE) -f $(MF) optiboot_attiny$*2.hex UARTTX=A1 TIMEOUT=8 LED=A7
 
-drazzy402:
-	$(MAKE) -f $(MF) optiboot_attiny402.hex UARTTX=A1 TIMEOUT=8 LED=A7
+drazzy%4:
+	$(MAKE) -f $(MF) optiboot_attiny$*4.hex UARTTX=B2 TIMEOUT=8 LED=A7
 
-xplained416:
-	$(MAKE) -f $(MF) optiboot_attiny416.hex UARTTX=A1 TIMEOUT=8 LED=B5
+drazzy%6:
+	$(MAKE) -f $(MF) optiboot_attiny$*6.hex UARTTX=B2 TIMEOUT=8 LED=A7
 
-xplained4809:
+drazzy%7:
+	$(MAKE) -f $(MF) optiboot_attiny$*7.hex UARTTX=B2 TIMEOUT=8 LED=A7
+
+curiosity1607:
+	$(MAKE) -f $(MF) optiboot_attiny1607.hex UARTTX=B2 TIMEOUT=8 LED=B7 LED_INVERT=1
 
 curiosity4809:
+	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=B0 TIMEOUT=8 LED=F5 LED_INVERT=1
+
+xplained416:
+	$(MAKE) -f $(MF) optiboot_attiny416.hex UARTTX=A1 TIMEOUT=8 LED=B5 LED_INVERT=1
+
+xplained4809:
+	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=C0 TIMEOUT=8 LED=B5 LED_INVERT=1
 
 freeduino4809:
+	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=B4 TIMEOUT=1 LED=D6 RESETPIN=1
 
 freeduino4809chip:
 	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=F4 TIMEOUT=1 LED=A7 RESETPIN=1
