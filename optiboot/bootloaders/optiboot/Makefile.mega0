@@ -23,7 +23,7 @@ MCU_TARGET = atmega4809
 # default CPU frequency is the internal osc (16 or 20MHz) divided by 6
 AVR_FREQ = 3333333
 
-LDSECTIONS  = -Wl,--section-start=.text=0 -Wl,--section-start=.postapp=0x200 \
+LDSECTIONS  = -Wl,-ttext=0 -Wl,--section-start=.application=0x200 \
 	      -Wl,--section-start=.version=0x1fe
 BAUD_RATE=115200
 
@@ -87,7 +87,7 @@ HELPTEXT += "\n-------------\n\n"
 
 
 optiboot_%.hex: optiboot_%.elf
-	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O ihex $< $@
+	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -j .application -O ihex $< $@
 
 optiboot_%.elf:	optiboot_x.c FORCE
 	$(CC) $(CFLAGS) $(CPU_OPTIONS) $(LED_OPTIONS) $(UART_OPTIONS) $(COMMON_OPTIONS) $(LDFLAGS) $(PACK_OPT) -mmcu=$* -o $@ $<
@@ -104,35 +104,47 @@ optiboot_%.elf:	optiboot_x.c FORCE
 #  appropriate specific options
 #---------------------------------------------------------------------------
 
+HELPTEXT += "target optiboot_*.hex - Any approriate mega-0, tiny-0, or tiny-1\n"
+HELPTEXT += "                          ie: optiboot_atmega4809\n"
+HELPTEXT += "target drazzy402,412 - Dr Azzy's 8pin dev boards.\n"
 drazzy%2:
 	$(MAKE) -f $(MF) optiboot_attiny$*2.hex UARTTX=A1 TIMEOUT=8 LED=A7
 
+HELPTEXT += "target drazzy*4      - Dr Azzy's 14pin dev boards.\n"
 drazzy%4:
 	$(MAKE) -f $(MF) optiboot_attiny$*4.hex UARTTX=B2 TIMEOUT=8 LED=A7
 
+HELPTEXT += "target drazzy*6      - Dr Azzy's 20pin dev boards.\n"
 drazzy%6:
 	$(MAKE) -f $(MF) optiboot_attiny$*6.hex UARTTX=B2 TIMEOUT=8 LED=A7
 
+HELPTEXT += "target drazzy*7      - Dr Azzy's 24pin dev boards.\n"
 drazzy%7:
 	$(MAKE) -f $(MF) optiboot_attiny$*7.hex UARTTX=B2 TIMEOUT=8 LED=A7
 
+HELPTEXT += "target curiosity1607 - Microchip ATtiny1607 Curiosity Nano.\n"
 curiosity1607:
 	$(MAKE) -f $(MF) optiboot_attiny1607.hex UARTTX=B2 TIMEOUT=8 LED=B7 LED_INVERT=1
 
+HELPTEXT += "target curiosity4809 - Microchip ATmega4809 Curiosity Nano.\n"
 curiosity4809:
 	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=B0 TIMEOUT=8 LED=F5 LED_INVERT=1
 
+HELPTEXT += "target xplained416   - Microchip ATtiny416 Xplained Nano.\n"
 xplained416:
 	$(MAKE) -f $(MF) optiboot_attiny416.hex UARTTX=A1 TIMEOUT=8 LED=B5 LED_INVERT=1
 
+HELPTEXT += "target xplained4809  - Microchip ATmega4809 Xplained Pro.\n"
 xplained4809:
 	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=C0 TIMEOUT=8 LED=B5 LED_INVERT=1
 
+HELPTEXT += "target freeduino4809 - WestfW ATmega4809 Uno-style board.\n"
 freeduino4809:
 	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=B4 TIMEOUT=1 LED=D6 RESETPIN=1
 
+HELPTEXT += "target freeduino4809chip - WestfW ATmega4809 40pin DIP boards.\n"
 freeduino4809chip:
-	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=F4 TIMEOUT=1 LED=A7 RESETPIN=1
+	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=A4 TIMEOUT=1 LED=A7 RESETPIN=1
 
 #---------------------------------------------------------------------------
 #

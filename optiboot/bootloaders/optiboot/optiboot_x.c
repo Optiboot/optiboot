@@ -684,18 +684,19 @@ OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(
 #endif
 
 // Dummy application that will loop back into the bootloader if not overwritten
-void  __attribute__((section( ".postapp")))
-      __attribute__((naked)) __attribute__((used)) app();
+// This gives the bootloader somewhere to jump, and by referencing otherwise
+//  unused variables/functions in the bootloader, it prevents them from being
+//  omitted by the linker, with fewer mysterious link options.
+void  __attribute__((section( ".application")))
+      __attribute__((naked)) app();
 void app() 
 {
     uint8_t ch;
     
     ch = RSTCTRL.RSTFR;
     RSTCTRL.RSTFR = ch; // reset causes
+    *(volatile uint16_t *)(&optiboot_version);   // reference the version
     do_nvmctrl(0, NVMCTRL_CMD_PAGEBUFCLR_gc, 0); // reference this function!
-    __asm__ __volatile__ ("jmp 0");  // similar to running off end of memory
+    __asm__ __volatile__ ("jmp 0");    // similar to running off end of memory
     _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
-    for (long i=0; i < 1000000; i++) {
-        __asm__ __volatile__("wdr");
-    }
 }
