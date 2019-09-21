@@ -139,10 +139,26 @@ optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 #include <unsupported>  // include a non-existent file to stop compilation
 #endif
 
+/*
+ * Fuses.
+ * This is an example of what they'd be like, but some should not
+ * necessarilly be under control of the bootloader.  You'll need a
+ * a programmer that processes the .fuses section to actually get
+ * these programmed into the chip.
+ * The fuses actually REQUIRED by Optiboot are:
+ *  BOOTEND=2, SYSCFG0=(CRC off, RSTPIN as appropriate)
+ * On some chips, the "reset" pin can be either RESET or GPIO.
+ *  Other also have the UPDI option. If RESET is not enabled we won't be
+ *  able to auto-reset.  But if the UPDI pin is set to cause RESET, we
+ *  won't be able to reprogram the chip without HV UPDI (which is uncommon.)
+ * The settings show will set chips (ie m4809) with RESET/GPIO to use RESET,
+ *  and chips with RESET/GPIO/UPDI to leave it in UPDI mode - the bootloader
+ *  can still be started by a power-on RESET.
+ */
 FUSES = {
     .WDTCFG = 0,  /* Watchdog Configuration */
     .BODCFG = FUSE_BODCFG_DEFAULT,  /* BOD Configuration */
-    .OSCCFG = 2, /* 20MHz */
+    .OSCCFG = FREQSEL_20MHZ_gc, /* 20MHz */
 #ifdef FUSE_TCD0CFG_DEFAULT
     .TCD0CFG = FUSE_TCD0CFG_DEFAULT,  /* TCD0 Configuration */
 #endif
@@ -159,6 +175,7 @@ FUSES = {
     .APPEND = 0,  /* Application Code Section End */
     .BOOTEND = 2 /* Boot Section End */
 };
+
 
 /*
  * optiboot uses several "address" variables that are sometimes byte pointers,
@@ -191,38 +208,41 @@ typedef union {
 # define LED_START_FLASHES 0
 #endif
 
+/*
+ * The mega-0, tiny-0, and tiny-1 chips all reset to running on the
+ *  internal oscillator, with a prescaler of 6.  The internal oscillator
+ *  is either 20MHz or 16MHz, depending on a fuse setting - we can read
+ *  the fuse to figure our which.
+ * The BRG divisor is also fractional, permitting (afaik) any reasonable
+ *  bit rate between about 1000bps and 1Mbps.
+ * This makes the BRG generation a bit different than for prior processors.
+ */
 /* set the UART baud rate defaults */
 #ifndef BAUD_RATE
 # define BAUD_RATE   115200L // Highest rate Avrdude win32 will support
 #endif
+#ifdef F_CPU
+# warning F_CPU is ignored for this chip (run from internal osc.)
+#endif
+#ifdef SINGLESPEED
+# warning SINGLESPEED ignored for this chip.
+#endif
+#ifdef UART
+# warning UART is ignored for this chip (use UARTTX=PortPin instead)
+#endif
 
-#define BAUD_SETTING ((F_CPU*4) / (BAUD_RATE))
-#define BAUD_ACTUAL ((64L*F_CPU)/(16L*BAUD_SETTING))
+#define BAUD_SETTING_16 (((16000000/6)*64) / (16L*BAUD_RATE))
+#define BAUD_ACTUAL_16 ((64L*(16000000/6)) / (16L*BAUD_SETTING))
+#define BAUD_SETTING_20 (((20000000/6)*64) / (16L*BAUD_RATE))
+#define BAUD_ACTUAL_20 ((64L*(20000000/6)) / (16L*BAUD_SETTING))
 
-#if BAUD_ACTUAL <= BAUD_RATE
-# define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
-# if BAUD_ERROR >= 5
-#  error BAUD_RATE off by greater than -5%
-# elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
-#  warning BAUD_RATE off by greater than -2%
-# endif
-#else
-# define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
-# if BAUD_ERROR >= 5
-#  error BAUD_RATE off by greater than 5%
-# elif BAUD_ERROR >= 2  && !defined(PRODUCTION)
-#  warning BAUD_RATE off by greater than 2%
-# endif
+#if BAUD_SETTING_16 < 64   // divisor must be > 1.  Low bits are fraction.
+# error Unachievable baud rate (too fast) BAUD_RATE 
 #endif
 
 #if BAUD_SETTING > 65635
 # error Unachievable baud rate (too slow) BAUD_RATE 
 #endif // baud rate slow check
-#if (BAUD_SETTING - 1) < 3
-# if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
-#  error Unachievable baud rate (too fast) BAUD_RATE 
-# endif
-#endif // baud rate fast check
 
 /*
  * Watchdog timeout translations from human readable to config vals
@@ -386,7 +406,11 @@ int main (void) {
 #if defined (MYUART_PMUX)
     MYPMUX = MYUART_PMUX;  // alternate pinout to use
 #endif
-    MYUART.BAUD = BAUD_SETTING;
+    if ((FUSE_OSCCFG & FUSE_FREQSEL_gm) == FREQSEL_16MHZ_gc) {
+	MYUART.BAUD = BAUD_SETTING_16;
+    } else {
+	MYUART.BAUD = BAUD_SETTING_20;
+    }
     MYUART.DBGCTRL = 1;  // run during debug
     MYUART.CTRLC = (USART_CHSIZE_gm & USART_CHSIZE_8BIT_gc);  // Async, Parity Disabled, 1 StopBit
     MYUART.CTRLA = 0;  // Interrupts: all off
@@ -518,9 +542,9 @@ int main (void) {
 	else if(ch == STK_READ_SIGN) {
 	    // READ SIGN - return what Avrdude wants to hear
 	    verifySpace();
-	    putch(SIGNATURE_0);
-	    putch(SIGNATURE_1);
-	    putch(SIGNATURE_2);
+	    putch(SIGROW_DEVICEID0);
+	    putch(SIGROW_DEVICEID1);
+	    putch(SIGROW_DEVICEID2);
 	}
 	else if (ch == STK_LEAVE_PROGMODE) { /* 'Q' */
 	    // Adaboot no-wait mod
@@ -572,15 +596,11 @@ void verifySpace () {
 
 #if LED_START_FLASHES > 0
 void flash_led (uint8_t count) {
-#ifdef __INT24_MAX__
-    __uint24 delay;
-#else
-    uint32_t delay;
-# warning no uin24
-#endif
+    uint16_t delay;  // at 20MHz/6, a 16bit delay counter is enough
     while (count--) {
 	LED_PORT.IN |= LED;
-	for (delay = (F_CPU/200); delay; delay--) {
+	// delay assuming 20Mhz OSC.  It's only to "look about right", anyway.
+	for (delay = ((20E6/6)/150); delay; delay--) {
 	    watchdogReset();
 	    if (MYUART.STATUS & USART_RXCIF_bm)
 		return;
@@ -590,9 +610,14 @@ void flash_led (uint8_t count) {
 }
 #endif
 
+
+/*
+ * Change the watchdog configuration.
+ *  Could be a new timeout, could be off...
+ */
 void watchdogConfig (uint8_t x) {
     while(WDT.STATUS & WDT_SYNCBUSY_bm)
-	;
+	;  // Busy wait for sycnhronization is required!
     _PROTECTED_WRITE(WDT.CTRLA, x);
 }
 
@@ -663,21 +688,23 @@ OPTFLASHSECT const char f_LED[] = "LED=" LED_NAME;
 #ifdef SUPPORT_EEPROM
 OPT2FLASH(SUPPORT_EEPROM);
 #endif
+
 #ifdef BAUD_RATE
 OPT2FLASH(BAUD_RATE);
 #endif
-#ifdef UART
-OPT2FLASH(UART);
+#ifdef UARTTX
+OPTFLASHSECT const char f_uart[] = "UARTTX=" UART_NAME;
 #endif
 
 OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
 #ifdef BIGBOOT
 OPT2FLASH(BIGBOOT);
 #endif
-OPT2FLASH(F_CPU);
 OPTFLASHSECT const char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
 #ifdef OPTIBOOT_CUSTOMVER
+# if OPTIBOOT_CUSTOMVER != 0
 OPT2FLASH(OPTIBOOT_CUSTOMVER);
+# endif
 #endif
 OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);
 
@@ -698,5 +725,5 @@ void app()
     *(volatile uint16_t *)(&optiboot_version);   // reference the version
     do_nvmctrl(0, NVMCTRL_CMD_PAGEBUFCLR_gc, 0); // reference this function!
     __asm__ __volatile__ ("jmp 0");    // similar to running off end of memory
-    _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
+//    _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
 }

@@ -20,11 +20,11 @@ export
 
 # defaults
 MCU_TARGET = atmega4809
-# default CPU frequency is the internal osc (16 or 20MHz) divided by 6
-AVR_FREQ = 3333333
 
-LDSECTIONS  = -Wl,-ttext=0 -Wl,--section-start=.application=0x200 \
+LDSECTIONS  = -Wl,-section-start=.text=0 \
+	      -Wl,--section-start=.application=0x200 \
 	      -Wl,--section-start=.version=0x1fe
+
 BAUD_RATE=115200
 
 # If we have a PACKS directory specified, we should use it...
@@ -71,7 +71,7 @@ endif
 # A "Chip-level Platform" compiles for a particular chip, but probably does
 # not have "standard" values for things like clock speed, LED pin, etc.
 # Makes for chip-level platforms should usually explicitly define their
-# options like: "make atmega1285 AVR_FREQ=16000000L LED=D0"
+# options like: "make atmega4809 UARTTX=A4 LED=D0"
 #---------------------------------------------------------------------------
 #
 # Mega0, tiny0, tiny1 don't really have any chip-specific requirements.

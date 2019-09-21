@@ -123,9 +123,14 @@ TIMEOUT_CMD = -DWDTTIME=$(TIMEOUT)
 dummy = FORCE
 endif
 
-HELPTEXT += "RESETPIN=0/1                 - change RESET pin behavior\n"
+HELPTEXT += "Option RESETPIN=0/1          - change RESET pin behavior\n"
 ifdef RESETPIN
 RESETPIN_CMD = -DRSTPIN=$(RESETPIN)
+dummy = FORCE
+endif
+
+ifdef AVR_FREQ
+FCPU_CMD = -DF_CPU=$(AVR_FREQ)
 dummy = FORCE
 endif
 
@@ -133,13 +138,13 @@ HELPTEXT += "Option AVR_FREQ=<n>          - Clock rate of AVR CPU\n"
 
 
 LED_OPTIONS = $(LED_START_FLASHES_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(LED_START_ON_CMD)
-CPU_OPTIONS = -DF_CPU=$(AVR_FREQ) $(RESETPIN_CMD) $(TIMEOUT_CMD)
-COMMON_OPTIONS =  $(BIGBOOT_CMD) $(SUPPORT_EEPROM_CMD) $(APPSPM_CMD)
-COMMON_OPTIONS += $(VERSION_CMD)
+CPU_OPTIONS = $(RESETPIN_CMD) $(TIMEOUT_CMD) $(FCPU_CMD)
+COMMON_OPTIONS =  $(BIGBOOT_CMD) $(APPSPM_CMD) $(VERSION_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
-HELPTEXT += "Option UARTTX=pin            - describe UART for Mega0, Xtiny\n"
+HELPTEXT += "Option UARTTX=B5             - describe UART for Mega0, Xtiny\n"
 ifdef UART
 UART_CMD = -DUART=$(UART)
 endif

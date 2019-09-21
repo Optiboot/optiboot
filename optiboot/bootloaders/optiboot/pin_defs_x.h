@@ -672,6 +672,7 @@
 #if defined(__AVR_ATmega4809__)
 #define MYPMUX PORTMUX.USARTROUTEA
 # if (UARTTX == A0)
+#  define UART_NAME "A0"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
@@ -679,6 +680,7 @@
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT0)
 # elif (UARTTX == A4)
+#  define UART_NAME "A4"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
@@ -687,6 +689,7 @@
 #  define MYUART_TXPIN (1<<PORT4)
 #  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART0_gp)
 # elif (UARTTX == B0)
+#  define UART_NAME "B0"
 #  ifndef USART3
 #   error Pin on USART3, but no USART3 exists
 #  endif
@@ -694,6 +697,7 @@
 #  define MYUART_TXPORT VPORTB
 #  define MYUART_TXPIN (1<<PORT0)
 # elif (UARTTX == B4)
+#  define UART_NAME "B4"
 #  ifndef USART3
 #   error Pin on USART3, but no USART3 exists
 #  endif
@@ -702,6 +706,7 @@
 #  define MYUART_TXPIN (1<<PORT4)
 #  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART3_gp)
 # elif (UARTTX == C0)
+#  define UART_NAME "C0"
 #  ifndef USART1
 #   error Pin on USART1, but no USART1 exists
 #  endif
@@ -709,6 +714,7 @@
 #  define MYUART_TXPORT VPORTC
 #  define MYUART_TXPIN (1<<PORT0)
 # elif (UARTTX == C4)
+#  define UART_NAME "C4"
 #  ifndef USART1
 #   error Pin on USART1, but no USART1 exists
 #  endif
@@ -717,6 +723,7 @@
 #  define MYUART_TXPIN (1<<PORT4)
 #  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART1_gp)
 # elif (UARTTX == F0)
+#  define UART_NAME "F0"
 #  ifndef USART2
 #   error Pin on USART2, but no USART2 exists
 #  endif
@@ -724,6 +731,7 @@
 #  define MYUART_TXPORT VPORTF
 #  define MYUART_TXPIN (1<<PORT0)
 # elif (UARTTX == F4)
+#  define UART_NAME "F4"
 #  ifndef USART2
 #   error Pin on USART2, but no USART2 exists
 #  endif
@@ -741,6 +749,7 @@
     defined(__AVR_ATtiny412__) || defined(__AVR_ATtiny212__)
 #define MYPMUX PORTMUX.CTRLB
 # if (UARTTX == A6)
+#  define UART_NAME "A6"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
@@ -748,6 +757,7 @@
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT6)
 # elif (UARTTX == A1)
+#  define UART_NAME "A1"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
@@ -772,6 +782,7 @@
     defined(__AVR_ATtiny1607__)
 #define MYPMUX PORTMUX.CTRLB
 # if (UARTTX == B2)
+#  define UART_NAME "B2"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
@@ -779,6 +790,7 @@
 #  define MYUART_TXPORT VPORTB
 #  define MYUART_TXPIN (1<<PORT2)
 # elif (UARTTX == A1)
+#  define UART_NAME "A1"
 #  ifndef USART0
 #   error Pin on USART0, but no USART0 exists
 #  endif
