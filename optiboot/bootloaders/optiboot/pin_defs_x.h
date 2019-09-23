@@ -779,7 +779,7 @@
     defined(__AVR_ATtiny406__) || defined(__AVR_ATtiny3216__) ||	\
     defined(__AVR_ATtiny816__) || defined(__AVR_ATtiny416__) || \
     defined(__AVR_ATtiny1617__) || defined(__AVR_ATtiny3217__) || \
-    defined(__AVR_ATtiny1607__)
+    defined(__AVR_ATtiny1607__) || defined(__AVR_ATtiny817__)
 #define MYPMUX PORTMUX.CTRLB
 # if (UARTTX == B2)
 #  define UART_NAME "B2"
