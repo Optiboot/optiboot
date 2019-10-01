@@ -13,6 +13,9 @@ Optiboot is an easy to install upgrade to the Arduino bootloader within Arduino 
 
 Optiboot (an older version) is installed by default on the Arduino Uno and (as of 2018) official Arduino Nano boars.  It can be installed on all older mega8, 168 or 328 based Arduinos.
 
+## Optiboot_X
+As of 2019, Atmel was acquired by Microchip Inc, and released several "new" architectures with the AVR CPU.  These are known as the Mega-0, Tiny-0, and Tiny-1 Series.  While the basic CPU operation is about the same as older AVRs, the peripherals, including Flash self-programming, are significantly different.  This justified a new version of Optiboot with separate source code and Makefiles, which we're calling "optiboot_x" (the new AVR chips closely resemble the "AVR XMega" chips.)
+
 ## Additional Documentation
 More detailed documentation is being added (slowly) to the [repository wiki](https://github.com/Optiboot/optiboot/wiki).
 
@@ -32,6 +35,9 @@ There are also some major repositories of "generic" versions of cores for variou
   * [MiniCore by MCUdude](https://github.com/MCUdude/MiniCore) Supports most 28pin ATmega AVRs, including the cpus used by Uno/etc as well as the new cpus like the ATmega328PB.
   * [MajorCore by MCUdude](https://github.com/MCUdude/MajorCore) Supports a couple of relatively obsolete large AVRs, like ATmega8515 and ATmega162.
   * [ATTinyCore by Spence Konde](https://github.com/SpenceKonde/ATTinyCore) Supports many ATtiny AVRs, including ATtiny85, ATtiny1634, ATtiny84, and ATtiny841.
+  * [MegaCoreX by MCUdude] (https://github.com/MCUdude/MegaCoreX) Supports the Mega-0 Series AVRs (notably the ATmega480x and ATmega320x) (Using Optiboot_X.)
+  * [megaTinyCore by Spence Konde](https://github.com/SpenceKonde/megaTinyCore) Supports many of the Tiny-0 and Tiny-1 series AVR chips (using Optiboot_X.)
+
 
 If you need a new Optiboot feature not included in a pre-packaged core, the recommended procedure is to download or fork the source code, manually compile the version you need, and copy the .hex file to the existing board directory (after renaming the old .hex file, in case you need it back.)
 
