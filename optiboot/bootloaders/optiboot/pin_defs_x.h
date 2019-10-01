@@ -669,7 +669,10 @@
  */
 #define USART_ALTPMUX 1
 
-#if defined(__AVR_ATmega4809__)
+#if defined(__AVR_ATmega4809__) || defined(__AVR_ATmega4808__) || \
+    defined(__AVR_ATmega3209__) || defined(__AVR_ATmega3208__) || \
+    defined(__AVR_ATmega1609__) || defined(__AVR_ATmega1608__) || \
+    defined(__AVR_ATmega809__) || defined(__AVR_ATmega808__)
 #define MYPMUX PORTMUX.USARTROUTEA
 # if (UARTTX == A0)
 #  define UART_NAME "A0"

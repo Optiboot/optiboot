@@ -34,15 +34,27 @@ endif
 GCCROOT =
 AVRDUDE_CONF =
 
-STK500 = "C:\Program Files\Atmel\AVR Tools\STK500\Stk500.exe"
-STK500-1 = $(STK500) -e -d$(MCU_TARGET) -pf -vf -if$(PROGRAM)_$(TARGET).hex \
-           -lFF -LFF -f$(HFUSE)$(LFUSE) -EF8 -ms -q -cUSB -I200kHz -s -wt
-STK500-2 = $(STK500) -d$(MCU_TARGET) -ms -q -lCF -LCF -cUSB -I200kHz -s -wt
 #
 # End of build environment code.
 
 
 CC         = $(GCCROOT)avr-gcc
+RCC        = $(abspath $(CC))
+#$(info wildcard ("$(wildcard $(CC))",""))
+ifndef PRODUCTION
+$(info Using Compiler at: ${RCC})
+endif
+
+
+# If we have a PACKS directory specified, we should use it...
+ifdef PACKS
+PACK_OPT= -I $(PACKS)/include/ -B $(PACKS)/gcc/dev/$*
+ifndef PRODUCTION
+$(info   and Chip-defining PACKS at ${PACKS})
+endif
+endif
+
+
 OPTIMIZE = -Os -fno-split-wide-types -mrelax
 
 # Override is only needed by avr-lib build system.
@@ -132,11 +144,15 @@ curiosity4809:
 
 HELPTEXT += "target xplained416   - Microchip ATtiny416 Xplained Nano.\n"
 xplained416:
-	$(MAKE) -f $(MF) optiboot_attiny416.hex UARTTX=A1 TIMEOUT=8 LED=B5 LED_INVERT=1
+	$(MAKE) -f $(MF) optiboot_attiny416.hex UARTTX=A1 TIMEOUT=8 LED=B5 LED_INVERT=1 BAUD_RATE=57600
+
+HELPTEXT += "target xplained817   - Microchip ATtiny817 Xplained Mini.\n"
+xplained817:
+	$(MAKE) -f $(MF) optiboot_attiny817.hex UARTTX=B2 TIMEOUT=8 LED=C0 BAUD_RATE=57600
 
 HELPTEXT += "target xplained4809  - Microchip ATmega4809 Xplained Pro.\n"
 xplained4809:
-	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=C0 TIMEOUT=8 LED=B5 LED_INVERT=1
+	$(MAKE) -f $(MF) optiboot_atmega4809.hex UARTTX=C0 TIMEOUT=8 LED=B5 LED_INVERT=1 BAUD_RATE=115200
 
 HELPTEXT += "target freeduino4809 - WestfW ATmega4809 Uno-style board.\n"
 freeduino4809:
