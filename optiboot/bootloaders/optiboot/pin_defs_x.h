@@ -673,7 +673,7 @@
     defined(__AVR_ATmega3209__) || defined(__AVR_ATmega3208__) || \
     defined(__AVR_ATmega1609__) || defined(__AVR_ATmega1608__) || \
     defined(__AVR_ATmega809__) || defined(__AVR_ATmega808__)
-#define MYPMUX PORTMUX.USARTROUTEA
+#define MYPMUX_REG PORTMUX.USARTROUTEA
 # if (UARTTX == A0)
 #  define UART_NAME "A0"
 #  ifndef USART0
@@ -682,6 +682,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT0)
+#  define MYUART_PMUX_VAL (PORTMUX_USART0_DEFAULT_gc)
 # elif (UARTTX == A4)
 #  define UART_NAME "A4"
 #  ifndef USART0
@@ -690,7 +691,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT4)
-#  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART0_gp)
+#  define MYUART_PMUX_VAL (PORTMUX_USART0_ALT1_gc)
 # elif (UARTTX == B0)
 #  define UART_NAME "B0"
 #  ifndef USART3
@@ -699,6 +700,7 @@
 #  define MYUART USART3
 #  define MYUART_TXPORT VPORTB
 #  define MYUART_TXPIN (1<<PORT0)
+#  define MYUART_PMUX_VAL (PORTMUX_USART3_DEFAULT_gc)
 # elif (UARTTX == B4)
 #  define UART_NAME "B4"
 #  ifndef USART3
@@ -707,7 +709,7 @@
 #  define MYUART USART3
 #  define MYUART_TXPORT VPORTB
 #  define MYUART_TXPIN (1<<PORT4)
-#  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART3_gp)
+#  define MYUART_PMUX_VAL (PORTMUX_USART3_ALT1_gc)
 # elif (UARTTX == C0)
 #  define UART_NAME "C0"
 #  ifndef USART1
@@ -716,6 +718,7 @@
 #  define MYUART USART1
 #  define MYUART_TXPORT VPORTC
 #  define MYUART_TXPIN (1<<PORT0)
+#  define MYUART_PMUX_VAL (PORTMUX_USART1_DEFAULT_gc)
 # elif (UARTTX == C4)
 #  define UART_NAME "C4"
 #  ifndef USART1
@@ -724,7 +727,7 @@
 #  define MYUART USART1
 #  define MYUART_TXPORT VPORTC
 #  define MYUART_TXPIN (1<<PORT4)
-#  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART1_gp)
+#  define MYUART_PMUX_VAL (PORTMUX_USART1_ALT1_gc)
 # elif (UARTTX == F0)
 #  define UART_NAME "F0"
 #  ifndef USART2
@@ -733,6 +736,7 @@
 #  define MYUART USART2
 #  define MYUART_TXPORT VPORTF
 #  define MYUART_TXPIN (1<<PORT0)
+#  define MYUART_PMUX_VAL (PORTMUX_USART2_DEFAULT_gc)
 # elif (UARTTX == F4)
 #  define UART_NAME "F4"
 #  ifndef USART2
@@ -741,7 +745,7 @@
 #  define MYUART USART2
 #  define MYUART_TXPORT VPORTF
 #  define MYUART_TXPIN (1<<PORT4)
-#  define MYUART_PMUX (USART_ALTPMUX<<PORTMUX_USART2_gp)
+#  define MYUART_PMUX_VAL (PORTMUX_USART2_ALT1_gc)
 # endif
 #endif  // ATmega4809
 
@@ -750,7 +754,7 @@
  */
 #if defined(__AVR_ATtiny402__) || defined(__AVR_ATtiny202__) || \
     defined(__AVR_ATtiny412__) || defined(__AVR_ATtiny212__)
-#define MYPMUX PORTMUX.CTRLB
+#define MYPMUX_REG PORTMUX.CTRLB
 # if (UARTTX == A6)
 #  define UART_NAME "A6"
 #  ifndef USART0
@@ -759,6 +763,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT6)
+#  define MYUART_PMUX_VAL 0
 # elif (UARTTX == A1)
 #  define UART_NAME "A1"
 #  ifndef USART0
@@ -767,7 +772,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT1)
-#  define MYUART_PMUX (USART_ALTPMUX)
+#  define MYUART_PMUX_VAL (USART_ALTPMUX)
 # endif
 #endif // Tiny402/etc
 
@@ -783,7 +788,7 @@
     defined(__AVR_ATtiny816__) || defined(__AVR_ATtiny416__) || \
     defined(__AVR_ATtiny1617__) || defined(__AVR_ATtiny3217__) || \
     defined(__AVR_ATtiny1607__) || defined(__AVR_ATtiny817__)
-#define MYPMUX PORTMUX.CTRLB
+#define MYPMUX_REG PORTMUX.CTRLB
 # if (UARTTX == B2)
 #  define UART_NAME "B2"
 #  ifndef USART0
@@ -792,6 +797,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTB
 #  define MYUART_TXPIN (1<<PORT2)
+#  define MYUART_PMUX_VAL 0
 # elif (UARTTX == A1)
 #  define UART_NAME "A1"
 #  ifndef USART0
@@ -800,7 +806,7 @@
 #  define MYUART USART0
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT1)
-#  define MYUART_PMUX (USART_ALTPMUX)
+#  define MYUART_PMUX_VAL (USART_ALTPMUX)
 # endif
 #endif
 

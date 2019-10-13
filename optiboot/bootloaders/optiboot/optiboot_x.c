@@ -403,8 +403,8 @@ int main (void) {
 
     MYUART_TXPORT.DIR |= MYUART_TXPIN; // set TX pin to output
     MYUART_TXPORT.OUT |= MYUART_TXPIN;  // and "1" as per datasheet
-#if defined (MYUART_PMUX)
-    MYPMUX = MYUART_PMUX;  // alternate pinout to use
+#if defined (MYUART_PMUX_VAL)
+    MYPMUX_REG = MYUART_PMUX_VAL;  // alternate pinout to use
 #endif
     if ((FUSE_OSCCFG & FUSE_FREQSEL_gm) == FREQSEL_16MHZ_gc) {
 	MYUART.BAUD = BAUD_SETTING_16;
