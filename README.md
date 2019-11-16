@@ -35,7 +35,7 @@ There are also some major repositories of "generic" versions of cores for variou
   * [MiniCore by MCUdude](https://github.com/MCUdude/MiniCore) Supports most 28pin ATmega AVRs, including the cpus used by Uno/etc as well as the new cpus like the ATmega328PB.
   * [MajorCore by MCUdude](https://github.com/MCUdude/MajorCore) Supports a couple of relatively obsolete large AVRs, like ATmega8515 and ATmega162.
   * [ATTinyCore by Spence Konde](https://github.com/SpenceKonde/ATTinyCore) Supports many ATtiny AVRs, including ATtiny85, ATtiny1634, ATtiny84, and ATtiny841.
-  * [MegaCoreX by MCUdude] (https://github.com/MCUdude/MegaCoreX) Supports the Mega-0 Series AVRs (notably the ATmega480x and ATmega320x) (Using Optiboot_X.)
+  * [MegaCoreX by MCUdude](https://github.com/MCUdude/MegaCoreX) Supports the Mega-0 Series AVRs (notably the ATmega480x and ATmega320x) (Using Optiboot_X.)
   * [megaTinyCore by Spence Konde](https://github.com/SpenceKonde/megaTinyCore) Supports many of the Tiny-0 and Tiny-1 series AVR chips (using Optiboot_X.)
 
 
@@ -45,12 +45,12 @@ Nevertheless, there is an automatically installable Board Manager package that i
 
 The following instructions are based on using the Arduino "Board Manager", present in IDE versions 1.6.5 and later.
 
-  1. Find the desired Optiboot release on the [Optiboot Release page] (https://github.com/Optiboot/optiboot/releases).
+  1. Find the desired Optiboot release on the [Optiboot Release page](https://github.com/Optiboot/optiboot/releases).
   2. Use the "Copy link address" feature of your browser to copy the URL of the associated **.json** file.
   3. Paste this url into the "Additional Boards Manager URLs" field in the Arduino IDE "Preferences" pane. (Separate it from other URLs that might be present with a comma or click the icon to the right of the field to insert it on a new line.)
   4. After closing the Preferences window, the **Tools/Boards/Boards Manager** menu should include an entry for that version of Optiboot.  Select that entry and click the **Install** button.
 
-For additional installation information, see the [Optiboot AddingOptibootChipsToIde Wiki page] (https://github.com/Optiboot/optiboot/wiki/AddingOptibootChipsToIde)
+For additional installation information, see the [Optiboot AddingOptibootChipsToIde Wiki page](https://github.com/Optiboot/optiboot/wiki/AddingOptibootChipsToIde)
 
 
 <!---
