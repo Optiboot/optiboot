@@ -1,3 +1,38 @@
+Notes on GPLv2 WRT the Optiboot bootloader:
+
+In general, it can be hard to interpret exactly how the GPL license
+applies to microcontroller embedded software.  Assumptions about
+logically distinct applications, oepratnig systems, dynamically loaded
+libraries, and the end-user ability to re-compile, re-link, or
+re-install, don't quite "fit."
+
+There is a "Bootloader Exception" which seems applicable and I've
+included below, but it's current use seems to be in the PyInstaller
+utility, which is still very far from a Flashed microcontroller bootloader.
+
+The INTENT of the Optiboot maintainers is that Optiboot may be treated
+much like the operating system on a larger computer, and that it's
+GPLv2 status has no effect on the application itself.  That means that
+there are no restrictions to using Optiboot with commercial, closed
+source, or proprietary applications, and no "viral OSSW" infection of
+any applications by the bootloader.  The only requirement is that
+fixes and enhancements to Optiboot itself be fed back to the Optiboot
+project.
+
+
+
+
+Bootloader Exception
+
+In addition to the permissions in the GNU General Public License, the
+authors give you unlimited permission to link or embed compiled
+bootloader and related files into combinations with other programs,
+and to distribute those combinations without any restriction coming
+from the use of those files. (The General Public License restrictions
+do apply in other respects; for example, they cover modification of
+the files, and distribution when not linked into a combined
+executable.)
+
 
 
                     GNU GENERAL PUBLIC LICENSE
