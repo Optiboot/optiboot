@@ -25,7 +25,7 @@
 /*   High baud rate breaks compatibility with standard    */
 /*     Arduino flash settings                             */
 /*                                                        */
-/* Copyright 2013-2019 by Bill Westfield.                 */
+/* Copyright 2013-2020 by Bill Westfield.                 */
 /* Copyright 2010 by Peter Knight.                        */
 /*                                                        */
 /* This program is free software; you can redistribute it */
@@ -46,7 +46,7 @@
 /* 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA */
 /*                                                        */
 /* Licence can be viewed at                               */
-/* http://www.fsf.org/licenses/gpl.txt                    */
+/* https://github.com/Optiboot/optiboot/blob/master/LICENSE */
 /*                                                        */
 /**********************************************************/
 

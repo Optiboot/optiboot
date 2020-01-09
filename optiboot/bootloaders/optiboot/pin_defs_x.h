@@ -5,7 +5,7 @@
  * for selecting among various UARTs and LED possibilities using command-line
  * defines like "UART=2 LED=B5"
  *
- * Copyright 2013-2015 by Bill Westfield.
+ * Copyright 2013-2020 by Bill Westfield.
  * Copyright 2010 by Peter Knight.
  * This software is licensed under version 2 of the Gnu Public Licence.
  * See optiboot.c for details.
@@ -663,7 +663,6 @@
 #error Unrecognized LED name.  Should be like "B5"
 #endif
 
-
 /*
  * Handle devices with up to 4 uarts.  Rather inelegantly.
  */
@@ -746,6 +745,9 @@
 #  define MYUART_TXPORT VPORTF
 #  define MYUART_TXPIN (1<<PORT4)
 #  define MYUART_PMUX_VAL (PORTMUX_USART2_ALT1_gc)
+# else
+#  pragma GCC diagnostic warning "-Wfatal-errors"
+#  pragma GCC error "Invalid UARTTX pin for chip"
 # endif
 #endif  // ATmega4809
 
@@ -773,6 +775,9 @@
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT1)
 #  define MYUART_PMUX_VAL (USART_ALTPMUX)
+# else
+#  pragma GCC diagnostic warning "-Wfatal-errors"
+#  pragma GCC error "Invalid UARTTX pin for chip"
 # endif
 #endif // Tiny402/etc
 
@@ -807,6 +812,9 @@
 #  define MYUART_TXPORT VPORTA
 #  define MYUART_TXPIN (1<<PORT1)
 #  define MYUART_PMUX_VAL (USART_ALTPMUX)
+# else
+#  pragma GCC diagnostic warning "-Wfatal-errors"
+#  pragma GCC error "Invalid UARTTX pin for chip"
 # endif
 #endif
 
