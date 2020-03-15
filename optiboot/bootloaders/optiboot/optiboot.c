@@ -563,6 +563,10 @@ int main(void) {
   SP=RAMEND;  // This is done by hardware reset
 #endif
 
+#if defined(OSCCAL_VALUE)
+  OSCCAL = OSCCAL_VALUE;
+#endif
+
   /*
    * Protect as much from MCUSR as possible for application
    * and still skip bootloader if not necessary
