@@ -55,17 +55,17 @@ For additional installation information, see the [Optiboot AddingOptibootChipsTo
 
 <!---
   1. Download the latest using Git or the Zip download feature of GitHub.  If you download as a zip, also extract it.
-  1. You will need to be using a recent version of the [Arduino environment](http://arduino.cc), version 18 or later.
-  1. Create a 'hardware' directory inside your sketches folder.
-  1. Copy the optiboot directory into the hardware directory.
-  1. Restart the Arduino software. New boards will appear in the Tools>Board menu.
+  2. You will need to be using a recent version of the [Arduino environment](http://arduino.cc), version 18 or later.
+  3. Create a 'hardware' directory inside your sketches folder.
+  4. Copy the optiboot directory into the hardware directory.
+  5. Restart the Arduino software. New boards will appear in the Tools>Board menu.
 --->
 
 ## To burn Optiboot onto an Arduino board ##
-  1. Select the appropriate Optiboot board type (or non-Optiboot if you want to change back)
-  1. Connect your Arduino to an ISP programmer [[Installing]]
-  1. Use the 'Burn Bootloader' item in Arduino.
-  1. You can then upload sketches as normal, using the Optiboot board type.
+  1. Select the appropriate Optiboot board type (or non-Optiboot if you want to change back).
+  2. Connect your Arduino to an ISP programmer ([Installing](https://github.com/Optiboot/optiboot/wiki/InstallingOnChips)).
+  3. Use the 'Burn Bootloader' item in Arduino.
+  4. You can then upload sketches as normal, using the Optiboot board type.
 
 ----
 
