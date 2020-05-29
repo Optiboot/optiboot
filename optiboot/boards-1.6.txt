@@ -127,7 +127,7 @@ optiboot28.menu.cpu.atmega88.build.mcu=atmega88p
 
 
 ##############################################################
-## Optiboot on 32pin (SMT) CPUs (Nano, Pro Micro, etc.)
+## Optiboot on 32pin (SMT) CPUs (Nano, Pro Mini, etc.)
 ##############################################################
 
 optiboot32.name=Optiboot on 32-pin cpus
