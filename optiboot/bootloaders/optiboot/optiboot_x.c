@@ -71,9 +71,9 @@
 /* Flash LED when transferring data. For boards without   */
 /* TX or RX LEDs, or for people who like blinky lights.   */
 /*                                                        */
-/* TIMEOUT_MS:                                            */
-/* Bootloader timeout period, in milliseconds.            */
-/* 500,1000,2000,4000,8000 supported.                     */
+/* WDTIME:                                                */
+/* Bootloader timeout period, in seconds.                 */
+/* 1, 2, 4, 8 supported.                                  */
 /*                                                        */
 /* UART:                                                  */
 /* UART number (0..n) for devices with more than          */

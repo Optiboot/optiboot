@@ -121,9 +121,10 @@
 /* Support reading and writing from EEPROM. This is not   */
 /* used by Arduino, so off by default.                    */
 /*                                                        */
-/* TIMEOUT_MS:                                            */
-/* Bootloader timeout period, in milliseconds.            */
-/* 500,1000,2000,4000,8000 supported.                     */
+/* WDTIME:                                                */
+/* Bootloader timeout period, in seconds.                 */
+/*  1 and 2 seconds are available on all chips            */
+/*  4 and 8 are supported on most                         */
 /*                                                        */
 /* UART:                                                  */
 /* UART number (0..n) for devices with more than          */
@@ -379,11 +380,27 @@ typedef union {
 #define WATCHDOG_500MS  (_BV(WDP2) | _BV(WDP0) | _BV(WDE))
 #define WATCHDOG_1S     (_BV(WDP2) | _BV(WDP1) | _BV(WDE))
 #define WATCHDOG_2S     (_BV(WDP2) | _BV(WDP1) | _BV(WDP0) | _BV(WDE))
-#ifndef __AVR_ATmega8__
+#ifdef  WDP3
 #define WATCHDOG_4S     (_BV(WDP3) | _BV(WDE))
 #define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 #endif
 
+/*
+ * Watchdog timeout translations from human readable to config vals
+ */
+#ifndef WDTTIME
+# define WDTPERIOD WATCHDOG_1S  // 1 second default
+#elif WDTTIME == 1
+# define WDTPERIOD WATCHDOG_1S  // 1 second
+#elif WDTTIME == 2
+# define WDTPERIOD WATCHDOG_2S  // 2 seconds
+#elif defined(WDP3) && (WDTTIME == 4)
+# define WDTPERIOD WATCHDOG_4S  // 4 seconds
+#elif defined(WDP3) && (WDTTIME == 8)
+# define WDTPERIOD WATCHDOG_8S  // 8 seconds
+#else
+#error Invalid TIMEOUT
+#endif
 
 /*
  * We can never load flash with more than 1 page at a time, so we can save
@@ -688,8 +705,8 @@ int main(void) {
   #endif // mega8/etc
 #endif // soft_uart
 
-  // Set up watchdog to trigger after 1s
-  watchdogConfig(WATCHDOG_1S);
+  // Set up watchdog to trigger after desired timeout
+  watchdogConfig(WDTPERIOD);
 
 #if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
   /* Set LED pin as output */
