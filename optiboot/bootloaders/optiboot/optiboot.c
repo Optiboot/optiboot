@@ -131,6 +131,41 @@
 /* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
 /**********************************************************/
+
+/*
+ * default values.
+ */
+#if !defined(BIGBOOT)
+#  define BIGBOOT 0
+#endif
+#if !defined(SUPPORT_EEPROM)
+#  define SUPPORT_EEPROM 0
+#endif
+
+#if !defined(SOFT_UART)
+#  define SOFT_UART 0
+#endif
+#if !defined(UART)
+#define UART 0
+#endif
+#if !defined(SINGLESPEED)
+#define SINGLESPEED 0
+#endif
+
+#if !defined(APP_NOSPM)
+#define APP_NOSPM 0
+#endif
+
+#if !defined(LED_START_FLASHES)
+#define LED_START_FLASHES 0
+#endif
+#if !defined(LED_DATA_FLASH)
+#  define LED_DATA_FLASH 0
+#endif
+#if !defined(LED_START_ON)
+#  define LED_START_ON 0
+#endif
+
 
 /**********************************************************/
 /* Version Numbers!                                       */
@@ -313,10 +348,6 @@ typedef union {
  */
 #include "stk500.h"
 
-#ifndef LED_START_FLASHES
-#define LED_START_FLASHES 0
-#endif
-
 /* set the UART baud rate defaults */
 #ifndef BAUD_RATE
 #if F_CPU >= 8000000L
@@ -330,12 +361,8 @@ typedef union {
 #endif
 #endif
 
-#ifndef UART
-#define UART 0
-#endif
-
-#ifndef SOFT_UART
-#ifdef SINGLESPEED
+#if (SOFT_UART == 0)
+#if SINGLESPEED
 /* Single speed option */
 #define BAUD_SETTING (( (F_CPU + BAUD_RATE * 8L) / ((BAUD_RATE * 16L))) - 1 )
 #define BAUD_ACTUAL (F_CPU/(16 * ((BAUD_SETTING)+1)))
@@ -539,10 +566,10 @@ void pre_main(void) {
   //   features etc
   asm volatile (
     "	rjmp	1f\n"
-#ifndef APP_NOSPM
-    "	rjmp	do_spm\n"
-#else
+#if APP_NOSPM
     "   ret\n"   // if do_spm isn't include, return without doing anything
+#else
+    "	rjmp	do_spm\n"
 #endif
     "1:\n"
   );
@@ -675,11 +702,11 @@ int main(void) {
 #endif
 
 
-#ifndef SOFT_UART
+#if (SOFT_UART == 0)
   #if defined(__AVR_ATmega8__) || defined (__AVR_ATmega8515__) ||	\
       defined (__AVR_ATmega8535__) || defined (__AVR_ATmega16__) ||	\
       defined (__AVR_ATmega32__)
-  #ifndef SINGLESPEED
+#if (SINGLESPEED == 0)
   UCSRA = _BV(U2X); //Double speed mode USART
   #endif //singlespeed
   UCSRB = _BV(RXEN) | _BV(TXEN);  // enable Rx & Tx
@@ -695,7 +722,7 @@ int main(void) {
   LINCR = _BV(LENA) | _BV(LCMD2) | _BV(LCMD1) | _BV(LCMD0); 
   LINDAT=0;
     #else
-      #ifndef SINGLESPEED
+      #if (SINGLESPEED == 0)
   UART_SRA = _BV(U2X0); //Double speed mode USART0
       #endif
   UART_SRB = _BV(RXEN0) | _BV(TXEN0);
@@ -708,12 +735,12 @@ int main(void) {
   // Set up watchdog to trigger after desired timeout
   watchdogConfig(WDTPERIOD);
 
-#if (LED_START_FLASHES > 0) || defined(LED_DATA_FLASH) || defined(LED_START_ON)
+#if (LED_START_FLASHES > 0) || LED_DATA_FLASH || LED_START_ON
   /* Set LED pin as output */
   LED_DDR |= _BV(LED);
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
   /* Set TX pin as output */
   UART_DDR |= _BV(UART_TX_BIT);
 #endif
@@ -722,7 +749,7 @@ int main(void) {
   /* Flash onboard LED to signal entering of bootloader */
   flash_led(LED_START_FLASHES * 2);
 #else
-#if defined(LED_START_ON)
+#if LED_START_ON
   /* Turn on LED to indicate starting bootloader (less code!) */
   LED_PORT |= _BV(LED);
 #endif
@@ -983,7 +1010,7 @@ int main(void) {
 }
 
 void putch(char ch) {
-#ifndef SOFT_UART
+#if (SOFT_UART == 0)
   #ifndef LIN_UART
     while (!(UART_SRA & _BV(UDRE0))) {  /* Spin */ }
   #else
@@ -1021,7 +1048,7 @@ void putch(char ch) {
 uint8_t getch(void) {
   uint8_t ch;
 
-#ifdef LED_DATA_FLASH
+#if LED_DATA_FLASH
 #if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
     defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
     defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
@@ -1032,7 +1059,7 @@ uint8_t getch(void) {
 #endif
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
     watchdogReset();
   __asm__ __volatile__ (
     "1: sbic  %[uartPin],%[uartBit]\n"  // Wait for start edge
@@ -1079,7 +1106,7 @@ uint8_t getch(void) {
   ch = UART_UDR;
 #endif
 
-#ifdef LED_DATA_FLASH
+#if LED_DATA_FLASH
 #if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||	\
     defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||	\
     defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||	\
@@ -1093,7 +1120,7 @@ uint8_t getch(void) {
   return ch;
 }
 
-#ifdef SOFT_UART
+#if SOFT_UART
 // AVR305 equation: #define UART_B_VALUE (((F_CPU/BAUD_RATE)-23)/6)
 // Adding 3 to numerator simulates nearest rounding for more accurate baud rates
 #define UART_B_VALUE (((F_CPU/BAUD_RATE)-20)/6)
@@ -1158,7 +1185,7 @@ void flash_led(uint8_t count) {
     LED_PIN |= _BV(LED);
 #endif
     watchdogReset();
-#ifndef SOFT_UART
+#if (SOFT_UART == 0)
     /*
      * While in theory, the STK500 initial commands would be buffered
      *  by the UART hardware, avrdude sends several attempts in rather
@@ -1214,7 +1241,7 @@ static inline void writebuffer(int8_t memtype, addr16_t mybuff,
 {
     switch (memtype) {
     case 'E': // EEPROM
-#if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
+#if SUPPORT_EEPROM || BIGBOOT
         while(len--) {
 	    eeprom_write_byte((address.bptr++), *(mybuff.bptr++));
         }
@@ -1281,7 +1308,7 @@ static inline void read_mem(uint8_t memtype, addr16_t address, pagelen_t length)
 
     switch (memtype) {
 
-#if defined(SUPPORT_EEPROM) || defined(BIGBOOT)
+#if SUPPORT_EEPROM || BIGBOOT
     case 'E': // EEPROM
 	do {
 	    putch(eeprom_read_byte((address.bptr++)));
@@ -1316,7 +1343,7 @@ static inline void read_mem(uint8_t memtype, addr16_t address, pagelen_t length)
 }
 
 
-#ifndef APP_NOSPM
+#if (APP_NOSPM == 0)
 
 /*
  * Separate function for doing spm stuff
@@ -1369,7 +1396,7 @@ static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
 
 
 
-#ifdef BIGBOOT
+#if BIGBOOT
 /*
  * Optiboot is designed to fit in 512 bytes, with a minimum feature set.
  * Some chips have a minimum bootloader size of 1024 bytes, and sometimes
@@ -1390,34 +1417,34 @@ static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
 #define OPT2FLASH(o) OPTFLASHSECT const char f##o[] = #o "=" xstr(o)
 
 
-#ifdef LED_START_FLASHES
+#if LED_START_FLASHES
 OPT2FLASH(LED_START_FLASHES);
 #endif
-#ifdef LED_DATA_FLASH
+#if LED_DATA_FLASH
 OPT2FLASH(LED_DATA_FLASH);
 #endif
-#ifdef LED_START_ON
+#if LED_START_ON
 OPT2FLASH(LED_START_ON);
 #endif
 #ifdef LED_NAME
 OPTFLASHSECT const char f_LED[] = "LED=" LED_NAME;
 #endif
 
-#ifdef SUPPORT_EEPROM
+#if SUPPORT_EEPROM
 OPT2FLASH(SUPPORT_EEPROM);
 #endif
-#ifdef BAUD_RATE
+#if BAUD_RATE
 OPT2FLASH(BAUD_RATE);
 #endif
-#ifdef SOFT_UART
+#if SOFT_UART
 OPT2FLASH(SOFT_UART);
 #endif
-#ifdef UART
+#if defined(UART)
 OPT2FLASH(UART);
 #endif
 
 OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
-#ifdef BIGBOOT
+#if BIGBOOT
 OPT2FLASH(BIGBOOT);
 #endif
 #ifdef VIRTUAL_BOOT_PARTITION

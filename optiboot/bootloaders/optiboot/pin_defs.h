@@ -28,7 +28,7 @@
 #endif
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -42,7 +42,7 @@
  * Note that mega8/m32 still needs special handling, because ubrr is handled
  * differently.
  */
-#ifndef SOFT_UART
+#if (SOFT_UART == 0)
 #if UART == 0
 #if defined(UDR0)
 # define UART_SRA UCSR0A
@@ -94,7 +94,7 @@
 # define UART_SRL UBRR3L
 # define UART_UDR UDR3
 #endif
-#endif //end #ifndef SOFT_UART
+#endif //end #if SOFT_UART==0
 
 #if    defined(__AVR_ATmega8__)		\
     || defined (__AVR_ATmega32__)	\
@@ -137,7 +137,7 @@
 #define WDTCSR  WDTCR
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -180,7 +180,7 @@
 #endif
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -281,7 +281,7 @@
 #define UMSEL21 UMSEL1
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -303,7 +303,7 @@
 //#define SPMCR SPMCSR
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -324,7 +324,7 @@
 #endif
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -341,7 +341,7 @@
 #endif
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -375,7 +375,7 @@
 #define UCSZ01 UCSZ1
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -397,7 +397,7 @@
 #define WDTCSR WDTCR
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -413,7 +413,7 @@
 #endif
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -447,7 +447,7 @@
 #define UCSZ01 UCSZ1
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -469,7 +469,7 @@
 #define WDTCSR WDTCR
 
 /* Ports for soft UART */
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTE
 #define UART_PIN    PINE
 #define UART_DDR    DDRE
@@ -487,7 +487,7 @@
 #endif
 #define TIFR1 TIFR
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -505,7 +505,7 @@
 #define LED 	B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -522,7 +522,7 @@
 #define LED   B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -538,7 +538,7 @@
 #define LED   B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -555,7 +555,7 @@
 #define LED   B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -572,7 +572,7 @@
 #define LED   B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTB
 #define UART_PIN    PINB
 #define UART_DDR    DDRB
@@ -589,7 +589,7 @@
 #define LED   B2
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTB
 #define UART_PIN    PINB
 #define UART_DDR    DDRB
@@ -606,7 +606,7 @@
 #define LED   B3
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -623,7 +623,7 @@
 #define LED   B3
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
@@ -640,7 +640,7 @@
 #define LED   B5
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -657,7 +657,7 @@
 #define LED   B5
 #endif
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTD
 #define UART_PIN    PIND
 #define UART_DDR    DDRD
@@ -703,7 +703,7 @@
 #define U2X0 U2X
 
 
-#ifdef SOFT_UART
+#if SOFT_UART
 #define UART_PORT   PORTA
 #define UART_PIN    PINA
 #define UART_DDR    DDRA
