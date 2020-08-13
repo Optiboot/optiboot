@@ -134,4 +134,3 @@ luminet_isp: LFUSE ?= 62
 luminet_isp: EFUSE ?= FE
 luminet_isp: isp
 
-

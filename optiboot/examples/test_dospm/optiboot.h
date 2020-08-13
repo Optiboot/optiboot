@@ -1,5 +1,5 @@
 /*------------------------ Optiboot header file ----------------------------|
- |                  																												|
+ |                                                                          |
  | June 2015 by Marek Wodzinski, https://github.com/majekw                  |
  | Modified June 2016 by MCUdude, https://github.com/MCUdude                |
  | Modified Dec 2018 by Juraj Andrassy, https://github.com/jandrassy        |
@@ -9,11 +9,11 @@
  | from Optiboot bootloader memory.                                         |
  |                                                                          |
  | There are 5 convenient functions available here:                         |
- | * optiboot_page_erase - to erase a FLASH page 						                |
- | * optiboot_page_fill - to put words into temporary buffer			          |
- | * optiboot_page_write - to write contents of temporary buffer into FLASH |																			                            |
+ | * optiboot_page_erase - to erase a FLASH page                            |
+ | * optiboot_page_fill - to put words into temporary buffer                |
+ | * optiboot_page_write - to write contents of temporary buffer into FLASH |
  | * optiboot_readPage - higher level function to read a flash page and     |
- | 							          store it in an array           					 					|
+ |                         store it in an array                             |
  | * optiboot_writePage - higher level function to write content to         |
  |                         a flash page                                     |
  |                                                                          |
@@ -39,9 +39,10 @@
  *
  */
 
-  // 'typedef' (in following line) and 'const' (few lines below) are a way to define external function at some arbitrary address
-  typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
-  typedef void (*copy_flash_pages_t)(uint32_t dest, uint32_t src, uint16_t page_count, uint8_t reset);
+// 'typedef' (in following line) and 'const' (few lines below)
+//   are a way to define external function at some arbitrary address
+typedef void (*do_spm_t)(uint16_t address, uint8_t command, uint16_t data);
+typedef void (*copy_flash_pages_t)(uint32_t dest, uint32_t src, uint16_t page_count, uint8_t reset);
 
 
 /*
@@ -85,12 +86,14 @@ void do_spm_cli(optiboot_addr_t address, uint8_t command, uint16_t data) {
   uint8_t eind = EIND;
   EIND = FLASHEND / 0x20000;
 #endif
-  do_spm((address & 0xffff), command, data); // do_spm accepts only lower 16 bits of address
+  // do_spm accepts only lower 16 bits of address
+  do_spm((address & 0xffff), command, data);
 #ifdef EIND
   EIND = eind;
 #endif
 #else
-  do_spm(address, command, data); // 16 bit address - no problems to pass directly
+  // 16 bit address - no problems to pass directly
+  do_spm(address, command, data);
 #endif
   SREG = sreg_save; // restore last interrupts state
 }
@@ -145,7 +148,9 @@ void optiboot_page_write(optiboot_addr_t address) {
  */
 
 // Function to read a flash page and store it in an array (storage_array[])
-void optiboot_readPage(const uint8_t allocated_flash_space[], uint8_t storage_array[], uint16_t page, char blank_character)
+void optiboot_readPage(const uint8_t allocated_flash_space[],
+                       uint8_t storage_array[], uint16_t page,
+                       char blank_character)
 {
   uint8_t read_character;
   for(uint16_t j = 0; j < SPM_PAGESIZE; j++) 
@@ -159,8 +164,10 @@ void optiboot_readPage(const uint8_t allocated_flash_space[], uint8_t storage_ar
 }
 
 
-// Function to read a flash page and store it in an array (storage_array[]), but without blank_character
-void optiboot_readPage(const uint8_t allocated_flash_space[], uint8_t storage_array[], uint16_t page)
+// Function to read a flash page and store it in an array (storage_array[]),
+//   but without blank_character
+void optiboot_readPage(const uint8_t allocated_flash_space[],
+                       uint8_t storage_array[], uint16_t page)
 {
   uint8_t read_character;
   for(uint16_t j = 0; j < SPM_PAGESIZE; j++) 
@@ -173,7 +180,8 @@ void optiboot_readPage(const uint8_t allocated_flash_space[], uint8_t storage_ar
 
 
 // Function to write data to a flash page
-void optiboot_writePage(const uint8_t allocated_flash_space[], uint8_t data_to_store[], uint16_t page)
+void optiboot_writePage(const uint8_t allocated_flash_space[],
+                        uint8_t data_to_store[], uint16_t page)
 {
   uint16_t word_buffer = 0; 
        

@@ -23,6 +23,11 @@ WARNING: some targets don't compile with "make" 3.81 or 3.82 due to bug in it.  
 The Optiboot build procedure has been set up to allow a large set of customization options.  The general format of a build command is:
 
 ~~~~
+make help
+~~~~
+The "make help" command should output a list of possible options and targets, probably more complete and up-to-date than this documentation.
+
+~~~~
 make <platform>  <options>
 ~~~~
 Where <platform> is one of the named chips or boards implemented as normal targets in the makefile (ie "atmega328".) (the order may be reversed.) The implemented <options> include:
