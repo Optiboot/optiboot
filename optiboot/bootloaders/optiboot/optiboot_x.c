@@ -1,29 +1,14 @@
 /**********************************************************/
-/* Optiboot bootloader for Arduino                        */
+/* Optiboot bootloader for Mega0, Tiny0, Tiny1            */
 /*                                                        */
-/* http://optiboot.googlecode.com                         */
+/*   https://github.com/optiboot/optiboot                 */
 /*                                                        */
-/* Arduino-maintained version : See README.TXT            */
-/* http://code.google.com/p/arduino/                      */
-/*  It is the intent that changes not relevant to the     */
-/*  Arduino production envionment get moved from the      */
-/*  optiboot project to the arduino project in "lumps."   */
+/* Heavily optimised bootloader that is fast and small    */
+/* (512 bytes, 115200bps                                  */
 /*                                                        */
-/* Heavily optimised bootloader that is faster and        */
-/* smaller than the Arduino standard bootloader           */
-/*                                                        */
-/* Enhancements:                                          */
-/*   Fits in 512 bytes, saving 1.5K of code space         */
-/*   Higher baud rate speeds up programming               */
 /*   Written almost entirely in C                         */
 /*   Customisable timeout with accurate timeconstant      */
 /*                                                        */
-/* What you lose:                                         */
-/*   Implements a skeleton STK500 protocol which is       */
-/*     missing several features including EEPROM          */
-/*     programming and non-page-aligned writes            */
-/*   High baud rate breaks compatibility with standard    */
-/*     Arduino flash settings                             */
 /*                                                        */
 /* Copyright 2013-2020 by Bill Westfield.                 */
 /* Copyright 2010 by Peter Knight.                        */
@@ -84,16 +69,10 @@
 /**********************************************************/
 /* Version Numbers!                                       */
 /*                                                        */
-/* Arduino Optiboot now includes this Version number in   */
-/* the source and object code.                            */
+/* Optiboot now includes a Version number in  the source  */
+/*  and object code, and returns this value via STK500    */
 /*                                                        */
-/* Version 3 was released as zip from the optiboot        */
-/*  repository and was distributed with Arduino 0022.     */
-/* Version 4 starts with the arduino repository commit    */
-/*  that brought the arduino repository up-to-date with   */
-/*  the optiboot source tree changes since v3.            */
-/*    :                                                   */
-/* Version 9 splits off the Mega0/Xtiny support.          */
+/* The iniital Mega0/Xtiny support is version 9.          */
 /*  This is very different from normal AVR because of     */
 /*  changed peripherals and unified address space.        */
 /*                                                        */
@@ -214,7 +193,8 @@ typedef union {
  *  is either 20MHz or 16MHz, depending on a fuse setting - we can read
  *  the fuse to figure our which.
  * The BRG divisor is also fractional, permitting (afaik) any reasonable
- *  bit rate between about 1000bps and 1Mbps.
+ *  bit rate between about 1000bps and 115200bps. (higher bitrates would
+ *  require changing the default clock.)
  * This makes the BRG generation a bit different than for prior processors.
  */
 /* set the UART baud rate defaults */
@@ -225,7 +205,7 @@ typedef union {
 # warning F_CPU is ignored for this chip (run from internal osc.)
 #endif
 #ifdef SINGLESPEED
-# warning SINGLESPEED ignored for this chip.
+# warning SINGLESPEED ignored for this chip. (Fractional BRG)
 #endif
 #ifdef UART
 # warning UART is ignored for this chip (use UARTTX=PortPin instead)
