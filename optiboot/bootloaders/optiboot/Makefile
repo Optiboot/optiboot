@@ -220,7 +220,6 @@ dummy = FORCE
 endif
 endif
 
-
 HELPTEXT += "Option SOFT_UART=1           - use a software (bit-banged) UART\n"
 ifdef SOFT_UART
 ifneq ($(SOFT_UART), 0)
@@ -243,6 +242,14 @@ APPSPM_CMD = -DAPP_NOSPM=1
 endif
 endif
 
+HELPTEXT += "Option COPY_FLASH_PAGES_FNC=1      - add copy_flash_pages function\n"
+ifdef COPY_FLASH_PAGES_FNC
+ifneq ($(COPY_FLASH_PAGES_FNC), 0)
+COPY_FLASH_PAGES_FNC_CMD = -DCOPY_FLASH_PAGES_FNC
+dummy = FORCE
+endif
+endif
+
 HELPTEXT += "Option OSCCAL_VALUE=nnn      - set set OSCCAL_VALUE in bootloader\n"
 ifdef OSCCAL_VALUE
 OSCCAL_VALUE_CMD = -DOSCCAL_VALUE=$(OSCCAL_VALUE)
@@ -253,6 +260,7 @@ endif
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
+COMMON_OPTIONS += $(COPY_FLASH_PAGES_FNC_CMD) $(VERSION_CMD)
 COMMON_OPTIONS += $(OSCCAL_VALUE_CMD) $(VERSION_CMD) $(TIMEOUT_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
