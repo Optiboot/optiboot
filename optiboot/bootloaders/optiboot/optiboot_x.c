@@ -60,9 +60,9 @@
 /* Bootloader timeout period, in seconds.                 */
 /* 1, 2, 4, 8 supported.                                  */
 /*                                                        */
-/* UART:                                                  */
-/* UART number (0..n) for devices with more than          */
-/* one hardware uart (644P, 1284P, etc)                   */
+/* UARTTX:                                                */
+/* UART TX pin (B0, etc) for devices with more than       */
+/* one hardware uart, or alternative pins                 */
 /*                                                        */
 /**********************************************************/
 
@@ -520,7 +520,8 @@ int main (void) {
 
 	/* Get device signature bytes  */
 	else if(ch == STK_READ_SIGN) {
-	    // READ SIGN - return what Avrdude wants to hear
+	    // READ SIGN - return actual device signature from SIGROW
+	    // this enables the same binary to be ued on multiple chips.
 	    verifySpace();
 	    putch(SIGROW_DEVICEID0);
 	    putch(SIGROW_DEVICEID1);
@@ -605,30 +606,31 @@ void watchdogConfig (uint8_t x) {
 #ifndef APP_NOSPM
 
 /*
- * Separate function for doing spm stuff
- * It's needed for application to do SPM, as SPM instruction works only
- * from bootloader.
+ * Separate function for doing nvmctrl stuff.
+ * It's needed for application to do manipulate flash, since only the
+ *  bootloader can write or erase flash, or write to the flash alias areas.
+ * Note that this is significantly different in the details than the
+ *  do_spm() function provided on older AVRs.  Same "vector", though.
  *
  * How it works:
- * - do SPM
- * - wait for SPM to complete
- * - if chip have RWW/NRWW sections it does additionaly:
- *   - if command is WRITE or ERASE, AND data=0 then reenable RWW section
+ * - if the "command" is legal, write it to NVMCTRL.CTRLA
+ * - if the command is not legal, store data to *address
+ * - wait for NVM to complete
  *
- * In short:
- * If you play erase-fill-write, just set data to 0 in ERASE and WRITE
- * If you are brave, you have your code just below bootloader in NRWW section
- *   you could do fill-erase-write sequence with data!=0 in ERASE and
- *   data=0 in WRITE
+ * For example, to write a flash page:
+ *
  */
-static void do_nvmctrl(uint16_t address, uint8_t command, uint16_t data)  __attribute__ ((used));
-static void do_nvmctrl (uint16_t address, uint8_t command, uint16_t data) {
-    _PROTECTED_WRITE(WDT.CTRLA, command);
-    while (NVMCTRL.STATUS & (NVMCTRL_FBUSY_bm|NVMCTRL_EEBUSY_bm))
-	; // wait for flash and EEPROM not busy, just in case.
+static void do_nvmctrl(uint16_t address, uint8_t command, uint8_t data)  __attribute__ ((used));
+static void do_nvmctrl (uint16_t address, uint8_t command, uint8_t data) {
+    if (command <= NVMCTRL_CMD_gm) {
+	_PROTECTED_WRITE_SPM(NVMCTRL.CTRLA, command);
+	while (NVMCTRL.STATUS & (NVMCTRL_FBUSY_bm|NVMCTRL_EEBUSY_bm))
+	    ; // wait for flash and EEPROM not busy, just in case.
+    } else {
+	*(uint8_t *)address = data;
+    }
 }
 #endif
-
 
 
 #ifdef BIGBOOT
