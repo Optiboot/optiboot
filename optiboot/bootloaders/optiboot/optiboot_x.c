@@ -87,6 +87,8 @@
 /**********************************************************/
 /* Edit History:					  */
 /*							  */
+/* Sep 2020                                               */
+/* 9.1 fix do_nvmctrl                                     */
 /* Aug 2019						  */
 /* 9.0 Refactored for Mega0/Xtiny from optiboot.c         */
 /*   :                                                    */
@@ -94,7 +96,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 9
-#define OPTIBOOT_MINVER 0
+#define OPTIBOOT_MINVER 1
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
