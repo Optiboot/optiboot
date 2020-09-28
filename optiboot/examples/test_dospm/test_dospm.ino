@@ -49,7 +49,7 @@ uint16_t pageNumber;
 char returnToMenu;
 
 // The temporary data (data that's read or is about to get written) is stored here
-uint8_t ramBuffer[SPM_PAGESIZE];
+uint8_t ramBuffer[SPM_PAGESIZE+1];
 
 // This array allocates the space you'll be able to write to
 const uint8_t flashSpace[SPM_PAGESIZE * NUMBER_OF_PAGES] __attribute__ (( aligned(SPM_PAGESIZE) )) PROGMEM = {
@@ -71,6 +71,11 @@ void loop()
   Serial.println();
   Serial.println(F("|------------------------------------------------|"));
   Serial.println(F("| Welcome to the Optiboot flash writer example!  |"));
+#ifdef USE_NVMCTRL
+  Serial.println(F("| Running on mega0/xTiny with NVMCTRL support.   |"));
+#else
+  Serial.println(F("| Running on traditional AVR with SPM support.   |"));
+#endif
   Serial.print(F("| Each flash page is "));
   Serial.print(SPM_PAGESIZE);
   Serial.println(F(" bytes long.             |"));
@@ -155,6 +160,7 @@ void loop()
       Serial.print(F("\nContent of page "));
       Serial.print(pageNumber);
       Serial.println(F(":"));
+      ramBuffer[SPM_PAGESIZE] = 0;  // null terminate!
       Serial.println((char*)ramBuffer);
     }
 
