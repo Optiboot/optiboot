@@ -108,7 +108,7 @@
 # define OPTIBOOT_CUSTOMVER 0
 #endif
 
-unsigned const int __attribute__((section(".version"))) __attribute__((used)) 
+unsigned const int __attribute__((section(".version"))) __attribute__((used))
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
 
@@ -219,11 +219,11 @@ typedef union {
 #define BAUD_ACTUAL_20 ((64L*(20000000/6)) / (16L*BAUD_SETTING))
 
 #if BAUD_SETTING_16 < 64   // divisor must be > 1.  Low bits are fraction.
-# error Unachievable baud rate (too fast) BAUD_RATE 
+# error Unachievable baud rate (too fast) BAUD_RATE
 #endif
 
 #if BAUD_SETTING > 65635
-# error Unachievable baud rate (too slow) BAUD_RATE 
+# error Unachievable baud rate (too slow) BAUD_RATE
 #endif // baud rate slow check
 
 /*
@@ -241,7 +241,7 @@ typedef union {
 # define WDTPERIOD WDT_PERIOD_8KCLK_gc  // 8 seconds
 #else
 #endif
-    
+
 /*
  * We can never load flash with more than 1 page at a time, so we can save
  * some code space on parts with smaller pagesize by using a smaller int.
@@ -363,7 +363,7 @@ int main (void) {
 	    }
 	}
 	if (!(ch & RESET_EXTERNAL)) {
-	    /* 
+	    /*
 	     * save the reset flags in the designated register.
 	     * This can be saved in a main program by putting code in
 	     * .init0 (which executes before normal c init code) to save R2
@@ -646,7 +646,7 @@ static void do_nvmctrl (uint16_t address, uint8_t command, uint8_t data) {
  * information about how Optiboot was built (which options were selected,
  * what version, all in human-readable form (and extractable from the
  * binary with avr-strings.)
- * 
+ *
  * This can always be removed or trimmed if more actual program space
  * is needed in the future.  Currently the data occupies about 160 bytes,
  */
@@ -700,10 +700,10 @@ OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(
 //  omitted by the linker, with fewer mysterious link options.
 void  __attribute__((section( ".application")))
       __attribute__((naked)) app();
-void app() 
+void app()
 {
     uint8_t ch;
-    
+
     ch = RSTCTRL.RSTFR;
     RSTCTRL.RSTFR = ch; // reset causes
     *(volatile uint16_t *)(&optiboot_version);   // reference the version
