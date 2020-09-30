@@ -606,7 +606,6 @@ void watchdogConfig (uint8_t x) {
 
 
 #ifndef APP_NOSPM
-
 /*
  * Separate function for doing nvmctrl stuff.
  * It's needed for application to do manipulate flash, since only the
@@ -620,7 +619,10 @@ void watchdogConfig (uint8_t x) {
  * - wait for NVM to complete
  *
  * For example, to write a flash page:
- *
+ * Copy each byte with
+ *   do_nvmctrl(flashOffset+MAPPED_PROGMEM_START, 0xFF, *inputPtr);
+ * Erase and write page with
+ *   do_nvmctrl(0, NVMCTRL_CMD_PAGEERASEWRITE_gc, 0);
  */
 static void do_nvmctrl(uint16_t address, uint8_t command, uint8_t data)  __attribute__ ((used));
 static void do_nvmctrl (uint16_t address, uint8_t command, uint8_t data) {
