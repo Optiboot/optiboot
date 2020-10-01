@@ -9,6 +9,7 @@
 class parserCore {
 private:
   char *buffer;
+  char *lastToken;
   byte lineLen;
   Stream *S;
 
@@ -32,6 +33,7 @@ public:
   uint8_t getLineWait(void); /* wait for a full line of input */
   void reset(void);          /* reset the parser */
   int number();              /* parse a number */
+  int lastNumber();
   boolean eol();             /* check for EOL */
   uint8_t termChar();        /* return the terminating char of last token */
   int8_t keyword(const char *keys);  /* keyword with partial matching */

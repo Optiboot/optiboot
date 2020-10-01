@@ -1,5 +1,5 @@
 /*
-   test_reset
+   demo_reset
    May 2015 by Bill Westfield (WestfW)
    Released to the public domain.
 

@@ -123,6 +123,13 @@ int parserCore::number()
   return -1;
 }
 
+int parserCore::lastNumber()
+{
+  if (lastToken && *lastToken) {
+    return strtol(lastToken, 0, 0);
+  }
+  return -1;
+}
 /*
  * eol
  * return true if we're at the end of the line.
@@ -145,7 +152,7 @@ uint8_t parserCore::termChar ()
 }
 
 /*
- *  cliCharacter
+ *  Character
  */
 
 /*
@@ -169,7 +176,8 @@ char *parserCore::token ()
   }
   termchar = buffer[parsePtr];
   buffer[parsePtr++] = 0;  // replace the delimiter with null
-  return &buffer[i];  // convert position to pointer for retval
+  lastToken = &buffer[i];
+  return lastToken;  // convert position to pointer for retval
 }
 
 /*
