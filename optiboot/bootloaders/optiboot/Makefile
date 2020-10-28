@@ -134,7 +134,7 @@ CC         = $(GCCROOT)avr-gcc
 HELPTEXT += "Option AVR_FREQ=<n>          - Clock rate of AVR CPU\n"
 
 
-override CFLAGS        = -g -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) -DF_CPU=$(AVR_FREQ) $(DEFS)
+override CFLAGS        += -g -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) -DF_CPU=$(AVR_FREQ) $(DEFS)
 override LDFLAGS       = $(LDSECTIONS) -Wl,--relax -nostartfiles
 
 OBJCOPY        = $(GCCROOT)avr-objcopy
