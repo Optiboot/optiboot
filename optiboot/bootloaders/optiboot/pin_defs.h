@@ -316,6 +316,7 @@
 /* Mega support */
 #if    defined(__AVR_ATmega640__)	\
     || defined(__AVR_ATmega1280__)	\
+    || defined(__AVR_ATmega128RFA1__)	\
     || defined(__AVR_ATmega2560__)
 /*------------------------------------------------------------------------ */
 /* Onboard LED is connected to pin PB7 on Arduino Mega */ 
