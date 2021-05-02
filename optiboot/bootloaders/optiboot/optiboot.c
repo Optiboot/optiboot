@@ -8,7 +8,7 @@
 /* Arduino-maintained version : See README.TXT            */
 /* http://code.google.com/p/arduino/                      */
 /*  It is the intent that changes not relevant to the     */
-/*  Arduino production environment get moved from the      */
+/*  Arduino production environment get moved from the     */
 /*  optiboot project to the arduino project in "lumps."   */
 /*                                                        */
 /* Heavily optimised bootloader that is faster and        */
@@ -29,23 +29,15 @@
 /*   High baud rate breaks compatibility with standard    */
 /*     Arduino flash settings                             */
 /*                                                        */
-/* Fully supported:                                       */
-/*   ATmega168 based devices  (Diecimila etc)             */
-/*   ATmega328P based devices (Duemilanove etc)           */
-/*                                                        */
-/* Beta test (believed working.)                          */
-/*   ATmega8 based devices (Arduino legacy)               */
-/*   ATmega328 non-picopower devices                      */
-/*   ATmega644P based devices (Sanguino)                  */
-/*   ATmega1284P based devices                            */
-/*   ATmega1280 based devices (Arduino Mega)              */
-/*   ATmega2560 based devices (Arduino Mega)              */
-/*                                                        */
-/* Alpha test                                             */
-/*   ATmega32                                             */
-/*                                                        */
-/* Work in progress:                                      */
-/*   ATtiny84 based devices (Luminet)                     */
+/* Supported Devices:                                     */
+/*   With the merges of Spence Konde's ATTinyCore         */
+/*     https://github.com/SpenceKonde/ATTinyCore          */
+/*   and MCUDude's MightyCore, MiniCore, MegaCore, etc    */
+/*     https://github.com/MCUdude                         */
+/*   the number of supported chips and configurations     */
+/*   has become quite large.  Try "make help" for a list  */
+/*   Not all chips have received the same amount of       */
+/*   overall attention.  Some version may have bugs.      */
 /*                                                        */
 /* Does not support:                                      */
 /*   USB based devices (eg. Teensy, Leonardo)             */
@@ -68,8 +60,9 @@
 /*   AVR305                Atmel Application Note         */
 /*                                                        */
 
-/* Copyright 2013-2015 by Bill Westfield.                 */
+/* Copyright 2013-2021 by Bill Westfield.                 */
 /* Copyright 2010 by Peter Knight.                        */
+/*  Note that many others have made major contributions!  */
 /*                                                        */
 /* This program is free software; you can redistribute it */
 /* and/or modify it under the terms of the GNU General    */
@@ -89,7 +82,7 @@
 /* 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA */
 /*                                                        */
 /* Licence can be viewed at                               */
-/* http://www.fsf.org/licenses/gpl.txt                    */
+/* http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt   */
 /*                                                        */
 /**********************************************************/
 
@@ -100,15 +93,42 @@
 /*                                                        */
 /**********************************************************/
 /*                                                        */
-/* BIGBOOT:                                              */
+/* BIGBOOT:                                               */
 /* Build a 1k bootloader, not 512 bytes. This turns on    */
-/* extra functionality.                                   */
+/* extra functionality; notably EEPROM                    */
+/*                                                        */
+/* NO_APP_SPM:                                            */
+/* omit the code that allows applications to "call" the   */
+/* bootloader to perform SPM operations.                  */
+/*                                                        */
+/* SUPPORT_EEPROM:                                        */
+/* Support reading and writing from EEPROM. This is not   */
+/* used by Arduino, so off by default.                    */
+/*                                                        */
+/* WDTTIME:                                               */
+/* Bootloader timeout period, in seconds.                 */
+/*  1 and 2 seconds are available on all chips            */
+/*  4 and 8 are supported on most                         */
+/*                                                        */
+/* ----------  Comm features                              */
+/* UART:                                                  */
+/* UART number (0..n) for devices with more than          */
+/* one hardware uart (644P, 1284P, etc)                   */
 /*                                                        */
 /* BAUD_RATE:                                             */
 /* Set bootloader baud rate.                              */
 /*                                                        */
+/* SINGLESPEED:                                           */
+/* do not use "U2X" mode for UART initialization. This    */
+/* can be useful for some bit rates.                      */
+/*                                                        */
 /* SOFT_UART:                                             */
 /* Use AVR305 soft-UART instead of hardware UART.         */
+/*                                                        */
+/* ----------  LED behavior                               */
+/* LED:                                                   */
+/* Which pin to use for the LED flashs.  This is a pin    */
+/* name like "B5"                                         */
 /*                                                        */
 /* LED_START_FLASHES:                                     */
 /* Number of LED flashes on bootup.                       */
@@ -117,18 +137,9 @@
 /* Flash LED when transferring data. For boards without   */
 /* TX or RX LEDs, or for people who like blinky lights.   */
 /*                                                        */
-/* SUPPORT_EEPROM:                                        */
-/* Support reading and writing from EEPROM. This is not   */
-/* used by Arduino, so off by default.                    */
-/*                                                        */
-/* WDTIME:                                                */
-/* Bootloader timeout period, in seconds.                 */
-/*  1 and 2 seconds are available on all chips            */
-/*  4 and 8 are supported on most                         */
-/*                                                        */
-/* UART:                                                  */
-/* UART number (0..n) for devices with more than          */
-/* one hardware uart (644P, 1284P, etc)                   */
+/* LED_START_ON:                                          */
+/* Instead of blinking, turn the LED on when we start,    */
+/* and off when it exits.  Slightly smaller code.         */
 /*                                                        */
 /**********************************************************/
 
@@ -412,9 +423,9 @@ typedef union {
 #define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 #endif
 
-/*
- * Watchdog timeout translations from human readable to config vals
- */
+  /*
+   * Watchdog timeout translations from human readable to config vals
+   */
 #ifndef WDTTIME
 # define WDTPERIOD WATCHDOG_1S  // 1 second default
 #elif WDTTIME == 1
@@ -718,7 +729,7 @@ int main(void) {
   LINCR = (1 << LSWRES);
   //LINBRRL = (((F_CPU * 10L / 32L / BAUD_RATE) + 5L) / 10L) - 1;
   LINBRRL=(uint8_t)BAUD_SETTING;
-  LINBTR = (1 << LDISR) | (8 << LBT0);
+  LINBTR = (1 << LDISR) | (8 << LBT0); 
   LINCR = _BV(LENA) | _BV(LCMD2) | _BV(LCMD1) | _BV(LCMD0);
   LINDAT=0;
 #else
@@ -760,7 +771,7 @@ int main(void) {
     /* get character from UART */
     ch = getch();
 
-    if(ch == STK_GET_PARAMETER) {
+    if (ch == STK_GET_PARAMETER) {
       unsigned char which = getch();
       verifySpace();
       /*
@@ -803,7 +814,7 @@ int main(void) {
       address.word *= 2; // Convert from word address to byte address
       verifySpace();
     }
-    else if(ch == STK_UNIVERSAL) {
+    else if (ch == STK_UNIVERSAL) {
 #ifdef RAMPZ
       // LOAD_EXTENDED_ADDRESS is needed in STK_UNIVERSAL for addressing more than 128kB
       if ( AVR_OP_LOAD_EXT_ADDR == getch() ) {
@@ -826,7 +837,7 @@ int main(void) {
 #endif
     }
     /* Write memory, length is big endian and is in bytes */
-    else if(ch == STK_PROG_PAGE) {
+    else if (ch == STK_PROG_PAGE) {
       // PROGRAM PAGE - we support flash programming only, not EEPROM
       uint8_t desttype;
       uint8_t *bufPtr;
@@ -983,7 +994,7 @@ int main(void) {
 
     }
 /* Read memory block mode, length is big endian.  */
-    else if(ch == STK_READ_PAGE) {
+    else if (ch == STK_READ_PAGE) {
       uint8_t desttype;
       GETLENGTH(length);
 
@@ -995,7 +1006,7 @@ int main(void) {
     }
 
 /* Get device signature bytes  */
-    else if(ch == STK_READ_SIGN) {
+    else if (ch == STK_READ_SIGN) {
       // READ SIGN - return what Avrdude wants to hear
       verifySpace();
       putch(SIGNATURE_0);
@@ -1092,7 +1103,7 @@ uint8_t getch(void) {
     );
 #else
 #ifndef LIN_UART
-  while(!(UART_SRA & _BV(RXC0)))  {  /* Spin */ }
+  while (!(UART_SRA & _BV(RXC0)))  {  /* Spin */ }
   if (!(UART_SRA & _BV(FE0))) {
     /*
      * A Framing Error indicates (probably) that something is talking
@@ -1105,7 +1116,7 @@ uint8_t getch(void) {
     watchdogReset();
   }
 #else
-  while(!(LINSIR & _BV(LRXOK)))  {  /* Spin */ }
+  while (!(LINSIR & _BV(LRXOK)))  {  /* Spin */ }
   if (!(LINSIR & _BV(LFERR))) {
     watchdogReset();  /* Eventually abort if wrong speed */
   }
@@ -1146,7 +1157,7 @@ uint8_t getch(void) {
 void uartDelay() {
   __asm__ __volatile__ (
     "  ldi r25,%[count]\n"
-    "1:  dec r25\n"
+    "1: dec r25\n"
     "  brne 1b\n"
     "  ret\n"
     ::[count] "M" (UART_B_VALUE)
@@ -1174,13 +1185,13 @@ void flash_led(uint8_t count) {
 #if defined(__AVR_ATtiny261__)||defined(__AVR_ATtiny461__)||defined(__AVR_ATtiny861__) || defined(__AVR_ATtiny25__)||defined(__AVR_ATtiny45__)||defined(__AVR_ATtiny85__)
     TCNT1 = -(F_CPU/(8196*16));
     TIFR = _BV(TOV1);
-    while(!(TIFR & _BV(TOV1)));
+    while (!(TIFR & _BV(TOV1)));
 #elif defined(__AVR_ATtiny43__)
 #error "LED flash for Tiny43 not yet supported"
 #else
     TCNT1 = -(F_CPU/(1024*16));
     TIFR1 = _BV(TOV1);
-    while(!(TIFR1 & _BV(TOV1)));
+    while (!(TIFR1 & _BV(TOV1)));
 #endif
 
 #if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||       \
@@ -1249,7 +1260,7 @@ static inline void writebuffer(int8_t memtype, addr16_t mybuff,
   switch (memtype) {
   case 'E': // EEPROM
 #if SUPPORT_EEPROM || BIGBOOT
-    while(len--) {
+    while (len--) {
       eeprom_write_byte((address.bptr++), *(mybuff.bptr++));
     }
 #else

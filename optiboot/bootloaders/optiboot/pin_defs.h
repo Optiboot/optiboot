@@ -893,7 +893,7 @@
 
 
 /*
- * A statement like "#if LED == B0" will evaluation (in the preprocessor)
+ * A statement like "#if LED == B0" will evaluate (in the preprocessor)
  * to #if C0 == B0, and then to #if 0x301 == 0x201
  */
 #if LED == B0
