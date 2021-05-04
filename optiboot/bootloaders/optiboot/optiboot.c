@@ -317,6 +317,7 @@ unsigned const int __attribute__((section(".version")))
 optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
 
 
+#define __AVR_LIBC_DEPRECATED_ENABLE__ 1  // don't poison MCUSR on some chips
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -615,7 +616,7 @@ int main(void) {
   defined(__AVR_ATmega8535__) || defined (__AVR_ATmega16__) ||  \
   defined (__AVR_ATmega32__) || defined (__AVR_ATmega64__)  ||  \
   defined (__AVR_ATmega128__) || defined (__AVR_ATmega162__)
-  SP=RAMEND;  // This is done by hardware reset
+  SP=RAMEND;  // This is done by hardware reset on newer chips
 #endif
 
 #if defined(OSCCAL_VALUE)
@@ -629,13 +630,11 @@ int main(void) {
    * Code by MarkG55
    * see discussion in https://github.com/Optiboot/optiboot/issues/97
    */
-#if defined(__AVR_ATmega8515__) || defined(__AVR_ATmega8535__) ||       \
-  defined(__AVR_ATmega16__)   || defined(__AVR_ATmega162__) ||          \
-  defined (__AVR_ATmega128__)
-  ch = MCUCSR;
-#else
-  ch = MCUSR;
+#ifndef MCUSR  // Backward compatability with old AVRs
+#define MCUSR MCUCSR
 #endif
+  ch = MCUSR;
+
   // Skip all logic and run bootloader if MCUSR is cleared (application request)
   if (ch != 0) {
     /*
@@ -658,14 +657,7 @@ int main(void) {
          * '&' operation is skipped to spare few bytes as bits in MCUSR
          * can only be cleared.
          */
-#if defined(__AVR_ATmega8515__) || defined(__AVR_ATmega8535__) ||       \
-  defined(__AVR_ATmega16__)   || defined(__AVR_ATmega162__) ||          \
-  defined(__AVR_ATmega128__)
-        // Fix missing definitions in avr-libc
-        MCUCSR = ~(_BV(WDRF));
-#else
         MCUSR = ~(_BV(WDRF));
-#endif
       }
       /*
        * save the reset flags in the designated register
@@ -1062,18 +1054,22 @@ void putch(char ch) {
 #endif
 }
 
-uint8_t getch(void) {
-  uint8_t ch;
-
-#if LED_DATA_FLASH
+static void inline toggle_led(void) {
 #if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||       \
   defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||         \
   defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||         \
   defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
   LED_PORT ^= _BV(LED);
 #else
-  LED_PIN |= _BV(LED);
+  LED_PIN |= _BV(LED);  // Newer AVRs can toggle by writing PINx
 #endif
+}
+    
+uint8_t getch(void) {
+  uint8_t ch;
+
+#if LED_DATA_FLASH
+  toggle_led();
 #endif
 
 #if SOFT_UART
@@ -1125,14 +1121,7 @@ uint8_t getch(void) {
 #endif
 
 #if LED_DATA_FLASH
-#if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||       \
-  defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||         \
-  defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||         \
-  defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
-  LED_PORT ^= _BV(LED);
-#else
-  LED_PIN |= _BV(LED);
-#endif
+  toggle_led();
 #endif
 
   return ch;
@@ -1194,14 +1183,7 @@ void flash_led(uint8_t count) {
     while (!(TIFR1 & _BV(TOV1)));
 #endif
 
-#if defined(__AVR_ATmega8__)    || defined(__AVR_ATmega8515__) ||       \
-  defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__)   ||         \
-  defined(__AVR_ATmega162__)  || defined(__AVR_ATmega32__)   ||         \
-  defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
-    LED_PORT ^= _BV(LED);
-#else
-    LED_PIN |= _BV(LED);
-#endif
+    toggle_led();
     watchdogReset();
 #if (SOFT_UART == 0)
     /*
