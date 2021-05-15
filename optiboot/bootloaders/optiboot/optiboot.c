@@ -110,6 +110,17 @@
 /*  1 and 2 seconds are available on all chips            */
 /*  4 and 8 are supported on most                         */
 /*                                                        */
+/* NO_START_APP_ON_POR:                                   */
+/* If NO_START_APP_ON_POR is set, the bootloader will     */
+/* also run on power-on                                   */
+/*                                                        */
+/* START_APP_ON_EXTR:                                     */
+/* If START_APP_ON_EXTR is set, the bootloader will not   */
+/* run in the event of an external reset.                 */
+/*                                                        */
+/* If both are set, the bootloader will only run if the   */
+/* app jumps directly to it.                              */
+/*                                                        */
 /* ----------  Comm features                              */
 /* UART:                                                  */
 /* UART number (0..n) for devices with more than          */
@@ -152,7 +163,18 @@
 #if !defined(SUPPORT_EEPROM)
 #  define SUPPORT_EEPROM 0
 #endif
+#if !defined(APP_NOSPM)
+#  define APP_NOSPM 0
+#endif
+#if !defined(START_APP_ON_EXTR)
+#  define START_APP_ON_EXTR 0
+#endif
+#if !defined(NO_START_APP_ON_POR)
+#  define NO_START_APP_ON_POR 0
+#endif
 
+
+/* UART options */
 #if !defined(SOFT_UART)
 #  define SOFT_UART 0
 #endif
@@ -163,10 +185,7 @@
 #define SINGLESPEED 0
 #endif
 
-#if !defined(APP_NOSPM)
-#define APP_NOSPM 0
-#endif
-
+/* LED Options */
 #if !defined(LED_START_FLASHES)
 #define LED_START_FLASHES 0
 #endif
@@ -301,7 +320,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 8
-#define OPTIBOOT_MINVER 1
+#define OPTIBOOT_MINVER 2
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -479,7 +498,7 @@ static inline void writebuffer(int8_t memtype, addr16_t mybuff,
 static inline void read_mem(uint8_t memtype,
                             addr16_t, pagelen_t len);
 
-#ifdef SOFT_UART
+#if SOFT_UART
 void uartDelay() __attribute__ ((naked));
 #endif
 
@@ -647,7 +666,16 @@ int main(void) {
      * One problematic scenario: broken application code sets watchdog timer
      * without clearing MCUSR before and triggers it quickly. But it's
      * recoverable by power-on with pushed reset button.
+     *
+     * If NO_START_APP_ON_POR is defined, run bootloader after POR.
+     * This allows use with reset disabled: power on and immediately
+     * program.
+     *
+     * If START_APP_ON_EXTR is defined, don't run bootloader after
+     * an external reset - only useful in combination with above,
+     * for some unusual use cases.
      */
+#if (START_APP_ON_EXTR == 0 && NO_START_APP_ON_POR == 0) //normal behavior
     if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) {
       if (ch & _BV(EXTRF)) {
         /*
@@ -657,8 +685,39 @@ int main(void) {
          * '&' operation is skipped to spare few bytes as bits in MCUSR
          * can only be cleared.
          */
-        MCUSR = ~(_BV(WDRF));
+        if ((uint16_t)&MCUSR > 0x1F) {
+          MCUSR = ~(_BV(WDRF));
+        } else {
+          MCUSR &= ~(_BV(WDRF));  // accessible via CBI
+        }
       }
+#elif (START_APP_ON_EXTR && NO_START_APP_ON_POR)
+    if ((ch & (_BV(PORF) | _BV(WDRF) | _BV(EXTRF))) != _BV(PORF)) {              // Run app unless only PORF is set
+      if ((ch & (_BV(PORF) | _BV(WDRF)))==(_BV(PORF) | _BV(WDRF))) {              // If PORF and WDRF are set, could be from us, so reset WDRF.
+        /*
+         * Clear WDRF because it was most probably set by wdr in bootloader.
+         * It's also needed to avoid loop by broken application which could
+         * prevent entering bootloader.
+         * '&= allows CBI to be used, saves flash
+         */
+        MCUSR &= ~(_BV(WDRF));
+      }
+#elif ((START_APP_ON_EXTR == 0) && NO_START_APP_ON_POR)
+    if (ch & _BV(WDRF) )  {                                                     // WDRF is set, go to app
+      if (ch & (_BV(PORF) | _BV(EXTRF))) {                                      // Unless ONLY WDRF is set, it could be from us, so reset WDRF
+        /*
+         * Clear WDRF because it was most probably set by wdr in bootloader.
+         * It's also needed to avoid loop by broken application which could
+         * prevent entering bootloader.
+         * '&= allows CBI to be used, saves flash
+         */
+        MCUSR &= ~(_BV(WDRF));
+      }
+#else // START_APP_ON_EXTR but neither  NO_START_APP_ON_WDR and NO_START_APP_ON_POR
+#warning "Bootloader can only start via app request because "
+#warning "START_APP_ON_EXTR is defined and NO_START_APP_ON_POR isn't"
+    if (1) { //makes the braces line up - always start the app
+#endif
       /*
        * save the reset flags in the designated register
        * This can be saved in a main program by putting code in .init0 (which
@@ -689,7 +748,7 @@ int main(void) {
 #endif //VIRTUAL_BOOT_PARTITION
         );
     }
-  }
+  } //end handling of MCUSR !=0
 
 #if LED_START_FLASHES > 0
   // Set up Timer 1 for timeout counter

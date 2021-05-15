@@ -249,11 +249,41 @@ OSCCAL_VALUE_CMD = -DOSCCAL_VALUE=$(OSCCAL_VALUE)
 dummy = FORCE
 endif
 
+HELPTEXT += "Option BOOT_ON_POR           - Run bootloader on power-on\n"
+ifdef NO_START_APP_ON_POR
+ifneq ($(NO_START_APP_ON_POR),0)
+POR_CMD = -DNO_START_APP_ON_POR=1
+dummy = FORCE
+endif
+endif
+
+ifdef BOOT_ON_POR
+ifneq ($(NO_START_APP_ON_POR),0)
+POR_CMD = -DNO_START_APP_ON_POR=1
+dummy = FORCE
+endif
+endif
+
+HELPTEXT += "Option APP_ON_EXTR           - Run App on External Reset\n"
+ifdef START_APP_ON_EXTR
+ifneq ($(START_APP_ON_EXTR),0)
+EXTR_CMD = -DSTART_APP_ON_EXTR=1
+dummy = FORCE
+endif
+endif
+ifdef APP_ON_EXTR
+ifneq ($(START_APP_ON_EXTR),0)
+EXTR_CMD = -DSTART_APP_ON_EXTR=1
+dummy = FORCE
+endif
+endif
+
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
 COMMON_OPTIONS += $(OSCCAL_VALUE_CMD) $(VERSION_CMD) $(TIMEOUT_CMD)
+COMMON_OPTIONS += $(POR_CMD) $(EXTR_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
