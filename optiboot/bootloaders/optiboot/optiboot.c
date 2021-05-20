@@ -652,6 +652,39 @@ int main(void) {
 #ifndef MCUSR  // Backward compatability with old AVRs
 #define MCUSR MCUCSR
 #endif
+#if (START_APP_ON_EXTR == 0 && NO_START_APP_ON_POR == 0)
+  /*
+   * Normal behavior.  Start if EXTRF in on and WDRF is off
+   */
+#  define APP_START_REASONS ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF))
+#  define WDRF_CLR_REASONS (ch & _BV(EXTRF))
+#elif (START_APP_ON_EXTR && NO_START_APP_ON_POR)
+  /*
+   * If NO_START_APP_ON_POR is defined, run bootloader after POR.
+   * This allows use with reset disabled: power on and immediately
+   * program.
+   */
+#  define APP_START_REASONS ((ch & (_BV(PORF) | _BV(WDRF) | _BV(EXTRF))) != _BV(PORF))
+#  define WDRF_CLR_REASONS ((ch & (_BV(PORF) | _BV(WDRF))) == (_BV(PORF) | _BV(WDRF)))
+#elif ((START_APP_ON_EXTR == 0) && NO_START_APP_ON_POR)
+  /*
+   * If START_APP_ON_EXTR is defined, don't run bootloader after
+   * an external reset - only useful in combination with above,
+   * for some unusual use cases.
+   */
+#  define APP_START_REASONS (ch & _BV(WDRF))
+#  define WDRF_CLR_REASONS (ch & (_BV(PORF) | _BV(EXTRF)))
+#else
+  /*
+   * Only run bootloader via jmp to 0 with MCUSR==0.
+   * Probably an error.
+   */
+#  warning "Bootloader can only start via app request because "
+#  warning "START_APP_ON_EXTR is defined and NO_START_APP_ON_POR isn't"
+#  define APP_START_REASONS 1 /* Always start rge App. */
+#  define WDRF_CLR_REASONS 0  /* Never clear WDRF */
+#endif
+
   ch = MCUSR;
 
   // Skip all logic and run bootloader if MCUSR is cleared (application request)
@@ -666,58 +699,19 @@ int main(void) {
      * One problematic scenario: broken application code sets watchdog timer
      * without clearing MCUSR before and triggers it quickly. But it's
      * recoverable by power-on with pushed reset button.
-     *
-     * If NO_START_APP_ON_POR is defined, run bootloader after POR.
-     * This allows use with reset disabled: power on and immediately
-     * program.
-     *
-     * If START_APP_ON_EXTR is defined, don't run bootloader after
-     * an external reset - only useful in combination with above,
-     * for some unusual use cases.
      */
-#if (START_APP_ON_EXTR == 0 && NO_START_APP_ON_POR == 0) //normal behavior
-    if ((ch & (_BV(WDRF) | _BV(EXTRF))) != _BV(EXTRF)) {
-      if (ch & _BV(EXTRF)) {
+
+    if (APP_START_REASONS) {
+      if (WDRF_CLR_REASONS) {
         /*
-         * Clear WDRF because it was most probably set by wdr in bootloader.
-         * It's also needed to avoid loop by broken application which could
-         * prevent entering bootloader.
-         * '&' operation is skipped to spare few bytes as bits in MCUSR
-         * can only be cleared.
+         * Clear WDRF if it was most probably set by wdr in bootloader.
          */
         if ((uint16_t)&MCUSR > 0x1F) {
-          MCUSR = ~(_BV(WDRF));
+          MCUSR = ~(_BV(WDRF));   // optimize to LDI/OUT
         } else {
-          MCUSR &= ~(_BV(WDRF));  // accessible via CBI
+          MCUSR &= ~(_BV(WDRF));  // or optimize to CBI if possible
         }
       }
-#elif (START_APP_ON_EXTR && NO_START_APP_ON_POR)
-    if ((ch & (_BV(PORF) | _BV(WDRF) | _BV(EXTRF))) != _BV(PORF)) {              // Run app unless only PORF is set
-      if ((ch & (_BV(PORF) | _BV(WDRF)))==(_BV(PORF) | _BV(WDRF))) {              // If PORF and WDRF are set, could be from us, so reset WDRF.
-        /*
-         * Clear WDRF because it was most probably set by wdr in bootloader.
-         * It's also needed to avoid loop by broken application which could
-         * prevent entering bootloader.
-         * '&= allows CBI to be used, saves flash
-         */
-        MCUSR &= ~(_BV(WDRF));
-      }
-#elif ((START_APP_ON_EXTR == 0) && NO_START_APP_ON_POR)
-    if (ch & _BV(WDRF) )  {                                                     // WDRF is set, go to app
-      if (ch & (_BV(PORF) | _BV(EXTRF))) {                                      // Unless ONLY WDRF is set, it could be from us, so reset WDRF
-        /*
-         * Clear WDRF because it was most probably set by wdr in bootloader.
-         * It's also needed to avoid loop by broken application which could
-         * prevent entering bootloader.
-         * '&= allows CBI to be used, saves flash
-         */
-        MCUSR &= ~(_BV(WDRF));
-      }
-#else // START_APP_ON_EXTR but neither  NO_START_APP_ON_WDR and NO_START_APP_ON_POR
-#warning "Bootloader can only start via app request because "
-#warning "START_APP_ON_EXTR is defined and NO_START_APP_ON_POR isn't"
-    if (1) { //makes the braces line up - always start the app
-#endif
       /*
        * save the reset flags in the designated register
        * This can be saved in a main program by putting code in .init0 (which
