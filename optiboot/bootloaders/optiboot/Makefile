@@ -236,6 +236,12 @@ SS_CMD = -DSINGLESPEED=1
 endif
 endif
 
+HELPTEXT += "Option RS485=B0              - Pin for optional rs485 tx enable\n"
+ifdef RS485
+RS485_CMD = -DRS485=$(RS485)
+dummy = FORCE
+endif
+
 HELPTEXT += "Option NO_APP_SPM=1          - disallow application call of do_spm\n"
 ifdef NO_APP_SPM
 ifneq ($(NO_APP_SPM),0)
@@ -283,7 +289,7 @@ COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
 COMMON_OPTIONS += $(OSCCAL_VALUE_CMD) $(VERSION_CMD) $(TIMEOUT_CMD)
-COMMON_OPTIONS += $(POR_CMD) $(EXTR_CMD)
+COMMON_OPTIONS += $(POR_CMD) $(EXTR_CMD) $(RS485_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"

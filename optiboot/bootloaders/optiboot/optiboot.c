@@ -136,6 +136,14 @@
 /* SOFT_UART:                                             */
 /* Use AVR305 soft-UART instead of hardware UART.         */
 /*                                                        */
+/* RS485:                                                 */
+/* Either a pin (ex: "B5") or a pin followed by _INV      */
+/* (ex: "B5_INV") which indicates inverted polarity.      */
+/* This pin will be held low while transmitting in order  */
+/* to control the direction pin of an RS485 tranciever    */
+/*  (RS485 support by Vladimir Dronnikov (github.com/dvv) */
+/*    as used in github.com/SodaqMoja/optiboot )          */
+/*                                                        */
 /* ----------  LED behavior                               */
 /* LED:                                                   */
 /* Which pin to use for the LED flashs.  This is a pin    */
@@ -788,6 +796,15 @@ int main(void) {
 #endif // mega8/etc
 #endif // soft_uart
 
+#ifdef RS485
+  RS485_DDR |= _BV(RS485);
+  #ifdef RS485_INVERT
+  RS485_PORT |= _BV(RS485);
+  #else
+  RS485_PORT &= ~_BV(RS485);
+  #endif
+#endif
+
   // Set up watchdog to trigger after desired timeout
   watchdogConfig(WDTPERIOD);
 
@@ -1073,15 +1090,51 @@ int main(void) {
 
 void putch(char ch) {
 #if (SOFT_UART == 0)
+  // Hardware UARTs.
 #ifndef LIN_UART
+#ifdef RS485
+  uint8_t x;
+  do {
+    x = UART_SRA;
+  } while (!(x & _BV(UDRE0)));
+  // clear transmitted flag
+  x |= _BV(TXC0);
+  UART_SRA = x;
+  // put transceiver to output mode
+# ifdef RS485_INVERT
+  RS485_PORT &= ~_BV(RS485);
+# else
+  RS485_PORT |= _BV(RS485);
+# endif
+  // put char
+  UART_UDR = ch;
+  // wait for char transmitted
+  while (!(UART_SRA & _BV(TXC0))) {  /* Spin */ }
+  // put transceiver to input mode
+# ifdef RS485_INVERT
+  RS485_PORT |= _BV(RS485);
+# else
+  RS485_PORT &= ~_BV(RS485);
+# endif
+#else //not RS485
   while (!(UART_SRA & _BV(UDRE0))) {  /* Spin */ }
-#else
+  UART_UDR = ch;
+#endif
+#else //is LIN UART
   while (!(LINSIR & _BV(LTXOK)))   {  /* Spin */ }
+  UART_UDR = ch;
 #endif
 
-  UART_UDR = ch;
+#else // SOFT_UART
 
-#else
+#ifdef RS485
+  // put transceiver to output mode
+  #ifdef RS485_INVERT
+  RS485_PORT &= ~_BV(RS485);
+  #else
+  RS485_PORT |= _BV(RS485);
+  #endif
+#endif
   __asm__ __volatile__ (
     "   com %[ch]\n" // ones complement, carry set
     "   sec\n"
@@ -1104,7 +1157,16 @@ void putch(char ch) {
     :
     "r25"
     );
+
+#ifdef RS485
+  // put transceiver to input mode
+  #ifdef RS485_INVERT
+  RS485_PORT |= _BV(RS485);
+  #else
+  RS485_PORT &= ~_BV(RS485);
+  #endif
 #endif
+#endif // SOFT_UART
 }
 
 static void inline toggle_led(void) {
@@ -1117,7 +1179,7 @@ static void inline toggle_led(void) {
   LED_PIN |= _BV(LED);  // Newer AVRs can toggle by writing PINx
 #endif
 }
-    
+
 uint8_t getch(void) {
   uint8_t ch;
 
