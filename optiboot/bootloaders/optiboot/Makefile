@@ -228,6 +228,16 @@ SOFT_UART_CMD = -DSOFT_UART=1
 dummy = FORCE
 endif
 endif
+HELPTEXT += "Option SOFTTX=B5             - pin for software UART xmit \n"
+ifdef SOFTTX
+SOFT_UART_CMD += -DSOFTTX=$(SOFTTX)
+dummy = FORCE
+endif
+HELPTEXT += "Option SOFTRX=B6             - pin for software UART receive\n"
+ifdef SOFTRX
+SOFT_UART_CMD += -DSOFTRX=$(SOFTRX)
+dummy = FORCE
+endif
 
 HELPTEXT += "Option SINGLESPEED=1         - do not use U2X mode on UART\n"
 ifdef SINGLESPEED
