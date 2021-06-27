@@ -1,5 +1,5 @@
 /*
- * pin_defs.h
+ * pin_defs_x.h
  * optiboot helper defining the default pin assignments (LED, SOFT_UART)
  * for the various chips that are supported.  This also has some ugly macros
  * for selecting among various UARTs and LED possibilities using command-line
@@ -13,8 +13,7 @@
 
 
 /*
- * ------------------------------------------------------------------------
- * A bunch of macros to enable the LED to be specifed as "B5" for bit 5 
+ * A bunch of macros to enable the LED to be specified as "B5" for bit 5
  * of port B, and similar.
  * We define symbols for all the legal combination of port/bit on a chip,
  * and do pre-processor tests to see if there's a match.  This ends up
@@ -199,411 +198,411 @@
 #define LED_NAME "B0"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == B1
 #define LED_NAME "B1"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == B2
 #define LED_NAME "B2"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == B3
 #define LED_NAME "B3"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == B4
 #define LED_NAME "B4"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == B5
 #define LED_NAME "B5"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == B6
 #define LED_NAME "B6"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == B7
 #define LED_NAME "B7"
 #undef LED
 #define LED_PORT    VPORTB
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == C0
 #define LED_NAME "C0"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == C1
 #define LED_NAME "C1"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == C2
 #define LED_NAME "C2"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == C3
 #define LED_NAME "C3"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == C4
 #define LED_NAME "C4"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == C5
 #define LED_NAME "C5"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == C6
 #define LED_NAME "C6"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == C7
 #define LED_NAME "C7"
 #undef LED
 #define LED_PORT    VPORTC
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == D0
 #define LED_NAME "D0"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == D1
 #define LED_NAME "D1"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == D2
 #define LED_NAME "D2"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == D3
 #define LED_NAME "D3"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == D4
 #define LED_NAME "D4"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == D5
 #define LED_NAME "D5"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == D6
 #define LED_NAME "D6"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == D7
 #define LED_NAME "D7"
 #undef LED
 #define LED_PORT    VPORTD
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == E0
 #define LED_NAME "E0"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == E1
 #define LED_NAME "E1"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == E2
 #define LED_NAME "E2"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == E3
 #define LED_NAME "E3"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == E4
 #define LED_NAME "E4"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == E5
 #define LED_NAME "E5"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == E6
 #define LED_NAME "E6"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == E7
 #define LED_NAME "E7"
 #undef LED
 #define LED_PORT    VPORTE
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == F0
 #define LED_NAME "F0"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == F1
 #define LED_NAME "F1"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == F2
 #define LED_NAME "F2"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == F3
 #define LED_NAME "F3"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == F4
 #define LED_NAME "F4"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == F5
 #define LED_NAME "F5"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == F6
 #define LED_NAME "F6"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == F7
 #define LED_NAME "F7"
 #undef LED
 #define LED_PORT    VPORTF
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == G0
 #define LED_NAME "G0"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == G1
 #define LED_NAME "G1"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == G2
 #define LED_NAME "G2"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == G3
 #define LED_NAME "G3"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == G4
 #define LED_NAME "G4"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == G5
 #define LED_NAME "G5"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == G6
 #define LED_NAME "G6"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == G7
 #define LED_NAME "G7"
 #undef LED
 #define LED_PORT    VPORTG
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == H0
 #define LED_NAME "H0"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == H1
 #define LED_NAME "H1"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == H2
 #define LED_NAME "H2"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == H3
 #define LED_NAME "H3"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == H4
 #define LED_NAME "H4"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == H5
 #define LED_NAME "H5"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == H6
 #define LED_NAME "H6"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == H7
 #define LED_NAME "H7"
 #undef LED
 #define LED_PORT    VPORTH
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == J0
 #define LED_NAME "J0"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == J1
 #define LED_NAME "J1"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == J2
 #define LED_NAME "J2"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == J3
 #define LED_NAME "J3"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == J4
 #define LED_NAME "J4"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == J5
 #define LED_NAME "J5"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == J6
 #define LED_NAME "J6"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == J7
 #define LED_NAME "J7"
 #undef LED
 #define LED_PORT    VPORTJ
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == K0
 #define LED_NAME "K0"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == K1
 #define LED_NAME "K1"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == K2
 #define LED_NAME "K2"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == K3
 #define LED_NAME "K3"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == K4
 #define LED_NAME "K4"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == K5
 #define LED_NAME "K5"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == K6
 #define LED_NAME "K6"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == K7
 #define LED_NAME "K7"
 #undef LED
 #define LED_PORT    VPORTK
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == L0
 #define LED_NAME "L0"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == L1
 #define LED_NAME "L1"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == L2
 #define LED_NAME "L2"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == L3
 #define LED_NAME "L3"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == L4
 #define LED_NAME "L4"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == L5
 #define LED_NAME "L5"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == L6
 #define LED_NAME "L6"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == L7
 #define LED_NAME "L7"
 #undef LED
 #define LED_PORT    VPORTL
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #elif LED == A0
 #define LED_NAME "A0"
@@ -614,42 +613,42 @@
 #else
 #define LED_PORT    VPORTA
 #endif
-#define LED	    (1<<PORT0)
+#define LED         (1<<PORT0)
 #elif LED == A1
 #define LED_NAME "A1"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT1)
+#define LED         (1<<PORT1)
 #elif LED == A2
 #define LED_NAME "A2"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT2)
+#define LED         (1<<PORT2)
 #elif LED == A3
 #define LED_NAME "A3"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT3)
+#define LED         (1<<PORT3)
 #elif LED == A4
 #define LED_NAME "A4"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT4)
+#define LED         (1<<PORT4)
 #elif LED == A5
 #define LED_NAME "A5"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT5)
+#define LED         (1<<PORT5)
 #elif LED == A6
 #define LED_NAME "A6"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT6)
+#define LED         (1<<PORT6)
 #elif LED == A7
 #define LED_NAME "A7"
 #undef LED
 #define LED_PORT    VPORTA
-#define LED	    (1<<PORT7)
+#define LED         (1<<PORT7)
 
 #else
 // Stop compilation right away, so we don't get more errors.
@@ -786,10 +785,10 @@
  *   The 14, 20, and 24pin packages all conveniently have the UART on the
  *   same port pins, and the same pinmux structure!
  */
-#if defined(__AVR_ATtiny1614__) || defined(__AVR_ATtiny1604__) ||	\
-    defined(__AVR_ATtiny814__)  || defined(__AVR_ATtiny804__) ||	\
-    defined(__AVR_ATtiny1606__) || defined(__AVR_ATtiny806__) ||	\
-    defined(__AVR_ATtiny406__) || defined(__AVR_ATtiny3216__) ||	\
+#if defined(__AVR_ATtiny1614__) || defined(__AVR_ATtiny1604__) ||       \
+    defined(__AVR_ATtiny814__)  || defined(__AVR_ATtiny804__) ||        \
+    defined(__AVR_ATtiny1606__) || defined(__AVR_ATtiny806__) ||        \
+    defined(__AVR_ATtiny406__) || defined(__AVR_ATtiny3216__) ||        \
     defined(__AVR_ATtiny816__) || defined(__AVR_ATtiny416__) || \
     defined(__AVR_ATtiny1617__) || defined(__AVR_ATtiny3217__) || \
     defined(__AVR_ATtiny1607__) || defined(__AVR_ATtiny817__)
