@@ -15,15 +15,18 @@ HELPTEXT = "\n"
 PROGRAM    = optiboot_x
 MF:= $(MAKEFILE_LIST)
 
-# export symbols to recursive makes (for ISP)
-export
-
 # defaults
 MCU_TARGET = atmega4809
 
+ifdef BIGBOOT
+LDSECTIONS  = -Wl,-section-start=.text=0 \
+	      -Wl,--section-start=.application=0x400 \
+	      -Wl,--section-start=.version=0x3fe
+else
 LDSECTIONS  = -Wl,-section-start=.text=0 \
 	      -Wl,--section-start=.application=0x200 \
 	      -Wl,--section-start=.version=0x1fe
+endif
 
 BAUD_RATE=115200
 
@@ -33,6 +36,9 @@ PACK_OPT= -I $(PACKS)/include/ -B $(PACKS)/gcc/dev/$*
 endif
 #AVRGCCROOT =
 AVRDUDE_CONF =
+
+# export symbols to recursive makes (for ISP)
+export
 
 #
 # End of build environment code.
@@ -100,7 +106,8 @@ HELPTEXT += "\n-------------\n\n"
 
 optiboot_%.hex: optiboot_%.elf
 	$(OBJCOPY) -j .text -j .data -j .version --set-section-flags .version=alloc,load -O ihex $< $@
-
+	@echo Bare Bootloader size
+	$(SIZE) $@
 #
 # Note that the .application section is not normally copied to the
 #  .hex file.  The .application section is useful for detecting growth
@@ -115,7 +122,8 @@ optiboot_%.hex: optiboot_%.elf
 
 optiboot_%.elf:	optiboot_x.c FORCE
 	$(CC) $(CFLAGS) $(CPU_OPTIONS) $(LED_OPTIONS) $(UART_OPTIONS) $(COMMON_OPTIONS) $(LDFLAGS) $(PACK_OPT) -mmcu=$* -o $@ $<
-	$(SIZE) $@
+	@echo Bootloader size with skeleton App
+	@$(SIZE) $@
 	$(LISTING) $@ > optiboot_$*.lst
 
 
