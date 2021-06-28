@@ -398,6 +398,10 @@ int main (void) {
   MYUART.CTRLA = 0;  // Interrupts: all off
   MYUART.CTRLB = USART_RXEN_bm | USART_TXEN_bm;
 
+#ifdef RS485
+  RS485_PORT.DIR |= _BV(RS485_BIT);
+#endif
+
   // Set up watchdog to trigger after a bit
   //  (nominally:, 1s for autoreset, longer for manual)
   watchdogConfig(WDTPERIOD);
@@ -542,7 +546,32 @@ int main (void) {
   }
 }
 
+#if RS485
+inline void rs485_txon() {
+# ifdef RS485_INVERT
+  RS485_PORT.OUT &= ~_BV(RS485_BIT);
+# else
+  RS485_PORT.OUT |= _BV(RS485_BIT);
+# endif
+}
+inline void rs485_txoff() {
+// First, wait for any pending transmits to finish.
+  MYUART.STATUS = USART_TXCIF_bm;  // This clears the TX complete flag
+  while ((MYUART.STATUS & USART_TXCIF_bm) == 0)
+    ; // spin loop waiting for TX Complete (could be immediately)
+# ifdef RS485_INVERT
+  RS485_PORT.OUT |= _BV(RS485_BIT);
+# else
+  RS485_PORT.OUT &= ~_BV(RS485_BIT);
+# endif
+}
+#else // provide null functions to be optimized away.
+inline void rs485_txon() {}
+inline void rs485_txoff() {}
+#endif
+
 void putch (char ch) {
+  rs485_txon();  // turn on and leave on till we're done xmitting.
   while (0 == (MYUART.STATUS & USART_DREIF_bm))
     ;
   MYUART.TXDATAL = ch;
@@ -550,6 +579,7 @@ void putch (char ch) {
 
 uint8_t getch (void) {
   uint8_t ch, flags;
+  rs485_txoff();    // To receive, turn off transmitter
   while (!(MYUART.STATUS & USART_RXCIF_bm))
     ;
   flags = MYUART.RXDATAH;
@@ -571,8 +601,8 @@ void getNch (uint8_t count) {
 void verifySpace () {
   if (getch() != CRC_EOP) {
     watchdogConfig(WDT_PERIOD_8CLK_gc);    // shorten WD timeout
-    while (1)                             // and busy-loop so that WD causes
-      ;                                 //  a reset and app start.
+    while (1)                         // and busy-loop so that WD causes
+      ;                               //  a reset and app start.
   }
   putch(STK_INSYNC);
 }
@@ -657,6 +687,7 @@ static void do_nvmctrl (uint16_t address, uint8_t command, uint8_t data) {
 #define OPTFLASHSECT __attribute__((section(".fini8")))
 #define OPT2FLASH(o) OPTFLASHSECT const char f##o[] = #o "=" xstr(o)
 
+__attribute__((section(".fini9"))) const char f_delimit = 0xFF;
 
 #ifdef LED_START_FLASHES
 OPT2FLASH(LED_START_FLASHES);
@@ -675,6 +706,9 @@ OPTFLASHSECT const char f_LED[] = "LED=" LED_NAME;
 OPT2FLASH(SUPPORT_EEPROM);
 #endif
 
+#if defined(RS485)
+OPTFLASHSECT const char f_rs485[] = "RS485=" RS485_NAME;
+#endif
 #ifdef BAUD_RATE
 OPT2FLASH(BAUD_RATE);
 #endif

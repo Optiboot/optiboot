@@ -820,3 +820,7 @@
 #ifndef MYUART
 # warning No UARTTX pin specified.
 #endif
+
+#ifdef RS485
+#include "pins_rs485.h"
+#endif

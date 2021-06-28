@@ -114,6 +114,12 @@ SS_CMD = -DSINGLESPEED=1
 endif
 endif
 
+HELPTEXT += "Option RS485=B0              - Pin for optional rs485 tx enable\n"
+ifdef RS485
+RS485_CMD = -DRS485=$(RS485)
+dummy = FORCE
+endif
+
 
 #CPU Options
 
@@ -152,4 +158,4 @@ ifdef UARTTX
 UART_CMD = -DUARTTX=$(UARTTX)
 endif
 
-UART_OPTIONS = $(UART_CMD) $(BAUD_RATE_CMD) $(SOFT_UART_CMD) $(SS_CMD)
+UART_OPTIONS = $(UART_CMD) $(BAUD_RATE_CMD) $(SOFT_UART_CMD) $(SS_CMD) $(RS485_CMD)
