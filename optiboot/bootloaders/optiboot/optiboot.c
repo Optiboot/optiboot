@@ -797,11 +797,11 @@ int main(void) {
 #endif // soft_uart
 
 #ifdef RS485
-  RS485_DDR |= _BV(RS485);
+  RS485_DDR |= _BV(RS485_BIT);
   #ifdef RS485_INVERT
-  RS485_PORT |= _BV(RS485);
+  RS485_PORT |= _BV(RS485_BIT);
   #else
-  RS485_PORT &= ~_BV(RS485);
+  RS485_PORT &= ~_BV(RS485_BIT);
   #endif
 #endif
 
@@ -1102,9 +1102,9 @@ void putch(char ch) {
   UART_SRA = x;
   // put transceiver to output mode
 # ifdef RS485_INVERT
-  RS485_PORT &= ~_BV(RS485);
+  RS485_PORT &= ~_BV(RS485_BIT);
 # else
-  RS485_PORT |= _BV(RS485);
+  RS485_PORT |= _BV(RS485_BIT);
 # endif
   // put char
   UART_UDR = ch;
@@ -1112,9 +1112,9 @@ void putch(char ch) {
   while (!(UART_SRA & _BV(TXC0))) {  /* Spin */ }
   // put transceiver to input mode
 # ifdef RS485_INVERT
-  RS485_PORT |= _BV(RS485);
+  RS485_PORT |= _BV(RS485_BIT);
 # else
-  RS485_PORT &= ~_BV(RS485);
+  RS485_PORT &= ~_BV(RS485_BIT);
 # endif
 #else //not RS485
   while (!(UART_SRA & _BV(UDRE0))) {  /* Spin */ }
@@ -1130,9 +1130,9 @@ void putch(char ch) {
 #ifdef RS485
   // put transceiver to output mode
   #ifdef RS485_INVERT
-  RS485_PORT &= ~_BV(RS485);
+  RS485_PORT &= ~_BV(RS485_BIT);
   #else
-  RS485_PORT |= _BV(RS485);
+  RS485_PORT |= _BV(RS485_BIT);
   #endif
 #endif
   __asm__ __volatile__ (
@@ -1161,9 +1161,9 @@ void putch(char ch) {
 #ifdef RS485
   // put transceiver to input mode
   #ifdef RS485_INVERT
-  RS485_PORT |= _BV(RS485);
+  RS485_PORT |= _BV(RS485_BIT);
   #else
-  RS485_PORT &= ~_BV(RS485);
+  RS485_PORT &= ~_BV(RS485_BIT);
   #endif
 #endif
 #endif // SOFT_UART
@@ -1528,6 +1528,9 @@ static void do_spm(uint16_t address, uint8_t command, uint16_t data) {
  */
 #define xstr(s) str(s)
 #define str(s) #s
+
+__attribute__((section(".fini9"))) const char f_delimit = 0xFF;
+
 #define OPTFLASHSECT __attribute__((section(".fini8")))
 #define OPT2FLASH(o) OPTFLASHSECT const char f##o[] = #o "=" xstr(o)
 
@@ -1548,6 +1551,10 @@ OPTFLASHSECT const char f_LED[] = "LED=" LED_NAME;
 #if SUPPORT_EEPROM
 OPT2FLASH(SUPPORT_EEPROM);
 #endif
+
+#if defined(RS485)
+OPTFLASHSECT const char f_rs485[] = "RS485=" RS485_NAME;
+#endif
 #if BAUD_RATE
 OPT2FLASH(BAUD_RATE);
 #endif
@@ -1567,7 +1574,7 @@ OPTFLASHSECT const char f_boot[] = "Virtual_Boot_Partition";
 #endif
 OPT2FLASH(F_CPU);
 OPTFLASHSECT const char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
-#ifdef OPTIBOOT_CUSTOMVER
+#if OPTIBOOT_CUSTOMVER
 OPT2FLASH(OPTIBOOT_CUSTOMVER);
 #endif
 OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(OPTIBOOT_MINVER);

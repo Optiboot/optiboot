@@ -1,3 +1,8 @@
+#ifdef __AVR_XMEGA__
+#define _mkPort(a) V##a
+#else
+#define _mkPort(a) a
+#endif
 
 #define PIN_INVERTED 0x8000
 #define A0_INV (PIN_INVERTED + A0)
@@ -91,1344 +96,1168 @@
 
 #if RS485 == B0
 #define RS485_NAME "B0"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB0
+#define RS485_BIT     PIN0
 #elif RS485 == B1
 #define RS485_NAME "B1"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB1
+#define RS485_BIT     PIN1
 #elif RS485 == B2
 #define RS485_NAME "B2"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB2
+#define RS485_BIT     PIN2
 #elif RS485 == B3
 #define RS485_NAME "B3"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB3
+#define RS485_BIT     PIN3
 #elif RS485 == B4
 #define RS485_NAME "B4"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB4
+#define RS485_BIT     PIN4
 #elif RS485 == B5
 #define RS485_NAME "B5"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB5
+#define RS485_BIT     PIN5
 #elif RS485 == B6
 #define RS485_NAME "B6"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB6
+#define RS485_BIT     PIN6
 #elif RS485 == B7
 #define RS485_NAME "B7"
-#undef RS485
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB7
+#define RS485_BIT     PIN7
 
 #elif RS485 == C0
 #define RS485_NAME "C0"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC0
+#define RS485_BIT     PIN0
 #elif RS485 == C1
 #define RS485_NAME "C1"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC1
+#define RS485_BIT     PIN1
 #elif RS485 == C2
 #define RS485_NAME "C2"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC2
+#define RS485_BIT     PIN2
 #elif RS485 == C3
 #define RS485_NAME "C3"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC3
+#define RS485_BIT     PIN3
 #elif RS485 == C4
 #define RS485_NAME "C4"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC4
+#define RS485_BIT     PIN4
 #elif RS485 == C5
 #define RS485_NAME "C5"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC5
+#define RS485_BIT     PIN5
 #elif RS485 == C6
 #define RS485_NAME "C6"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC6
+#define RS485_BIT     PIN6
 #elif RS485 == C7
 #define RS485_NAME "C7"
-#undef RS485
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC7
+#define RS485_BIT     PIN7
 
 #elif RS485 == D0
 #define RS485_NAME "D0"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND0
+#define RS485_BIT     PIN0
 #elif RS485 == D1
 #define RS485_NAME "D1"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND1
+#define RS485_BIT     PIN1
 #elif RS485 == D2
 #define RS485_NAME "D2"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND2
+#define RS485_BIT     PIN2
 #elif RS485 == D3
 #define RS485_NAME "D3"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND3
+#define RS485_BIT     PIN3
 #elif RS485 == D4
 #define RS485_NAME "D4"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND4
+#define RS485_BIT     PIN4
 #elif RS485 == D5
 #define RS485_NAME "D5"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND5
+#define RS485_BIT     PIN5
 #elif RS485 == D6
 #define RS485_NAME "D6"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND6
+#define RS485_BIT     PIN6
 #elif RS485 == D7
 #define RS485_NAME "D7"
-#undef RS485
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND7
+#define RS485_BIT     PIN7
 
 #elif RS485 == E0
 #define RS485_NAME "E0"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE0
+#define RS485_BIT     PIN0
 #elif RS485 == E1
 #define RS485_NAME "E1"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE1
+#define RS485_BIT     PIN1
 #elif RS485 == E2
 #define RS485_NAME "E2"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE2
+#define RS485_BIT     PIN2
 #elif RS485 == E3
 #define RS485_NAME "E3"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE3
+#define RS485_BIT     PIN3
 #elif RS485 == E4
 #define RS485_NAME "E4"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE4
+#define RS485_BIT     PIN4
 #elif RS485 == E5
 #define RS485_NAME "E5"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE5
+#define RS485_BIT     PIN5
 #elif RS485 == E6
 #define RS485_NAME "E6"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE6
+#define RS485_BIT     PIN6
 #elif RS485 == E7
 #define RS485_NAME "E7"
-#undef RS485
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE7
+#define RS485_BIT     PIN7
 
 #elif RS485 == F0
 #define RS485_NAME "F0"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF0
+#define RS485_BIT     PIN0
 #elif RS485 == F1
 #define RS485_NAME "F1"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF1
+#define RS485_BIT     PIN1
 #elif RS485 == F2
 #define RS485_NAME "F2"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF2
+#define RS485_BIT     PIN2
 #elif RS485 == F3
 #define RS485_NAME "F3"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF3
+#define RS485_BIT     PIN3
 #elif RS485 == F4
 #define RS485_NAME "F4"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF4
+#define RS485_BIT     PIN4
 #elif RS485 == F5
 #define RS485_NAME "F5"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF5
+#define RS485_BIT     PIN5
 #elif RS485 == F6
 #define RS485_NAME "F6"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF6
+#define RS485_BIT     PIN6
 #elif RS485 == F7
 #define RS485_NAME "F7"
-#undef RS485
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF7
+#define RS485_BIT     PIN7
 
 #elif RS485 == G0
 #define RS485_NAME "G0"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING0
+#define RS485_BIT     PIN0
 #elif RS485 == G1
 #define RS485_NAME "G1"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING1
+#define RS485_BIT     PIN1
 #elif RS485 == G2
 #define RS485_NAME "G2"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING2
+#define RS485_BIT     PIN2
 #elif RS485 == G3
 #define RS485_NAME "G3"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING3
+#define RS485_BIT     PIN3
 #elif RS485 == G4
 #define RS485_NAME "G4"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING4
+#define RS485_BIT     PIN4
 #elif RS485 == G5
 #define RS485_NAME "G5"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING5
+#define RS485_BIT     PIN5
 #elif RS485 == G6
 #define RS485_NAME "G6"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING6
+#define RS485_BIT     PIN6
 #elif RS485 == G7
 #define RS485_NAME "G7"
-#undef RS485
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING7
+#define RS485_BIT     PIN7
 
 #elif RS485 == H0
 #define RS485_NAME "H0"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH0
+#define RS485_BIT     PIN0
 #elif RS485 == H1
 #define RS485_NAME "H1"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH1
+#define RS485_BIT     PIN1
 #elif RS485 == H2
 #define RS485_NAME "H2"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH2
+#define RS485_BIT     PIN2
 #elif RS485 == H3
 #define RS485_NAME "H3"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH3
+#define RS485_BIT     PIN3
 #elif RS485 == H4
 #define RS485_NAME "H4"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH4
+#define RS485_BIT     PIN4
 #elif RS485 == H5
 #define RS485_NAME "H5"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH5
+#define RS485_BIT     PIN5
 #elif RS485 == H6
 #define RS485_NAME "H6"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH6
+#define RS485_BIT     PIN6
 #elif RS485 == H7
 #define RS485_NAME "H7"
-#undef RS485
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH7
+#define RS485_BIT     PIN7
 
 #elif RS485 == J0
 #define RS485_NAME "J0"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ0
+#define RS485_BIT     PIN0
 #elif RS485 == J1
 #define RS485_NAME "J1"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ1
+#define RS485_BIT     PIN1
 #elif RS485 == J2
 #define RS485_NAME "J2"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ2
+#define RS485_BIT     PIN2
 #elif RS485 == J3
 #define RS485_NAME "J3"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ3
+#define RS485_BIT     PIN3
 #elif RS485 == J4
 #define RS485_NAME "J4"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ4
+#define RS485_BIT     PIN4
 #elif RS485 == J5
 #define RS485_NAME "J5"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ5
+#define RS485_BIT     PIN5
 #elif RS485 == J6
 #define RS485_NAME "J6"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ6
+#define RS485_BIT     PIN6
 #elif RS485 == J7
 #define RS485_NAME "J7"
-#undef RS485
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ7
+#define RS485_BIT     PIN7
 
 #elif RS485 == K0
 #define RS485_NAME "K0"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK0
+#define RS485_BIT     PIN0
 #elif RS485 == K1
 #define RS485_NAME "K1"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK1
+#define RS485_BIT     PIN1
 #elif RS485 == K2
 #define RS485_NAME "K2"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK2
+#define RS485_BIT     PIN2
 #elif RS485 == K3
 #define RS485_NAME "K3"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK3
+#define RS485_BIT     PIN3
 #elif RS485 == K4
 #define RS485_NAME "K4"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK4
+#define RS485_BIT     PIN4
 #elif RS485 == K5
 #define RS485_NAME "K5"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK5
+#define RS485_BIT     PIN5
 #elif RS485 == K6
 #define RS485_NAME "K6"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK6
+#define RS485_BIT     PIN6
 #elif RS485 == K7
 #define RS485_NAME "K7"
-#undef RS485
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK7
+#define RS485_BIT     PIN7
 
 #elif RS485 == L0
 #define RS485_NAME "L0"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL0
+#define RS485_BIT     PIN0
 #elif RS485 == L1
 #define RS485_NAME "L1"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL1
+#define RS485_BIT     PIN1
 #elif RS485 == L2
 #define RS485_NAME "L2"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL2
+#define RS485_BIT     PIN2
 #elif RS485 == L3
 #define RS485_NAME "L3"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL3
+#define RS485_BIT     PIN3
 #elif RS485 == L4
 #define RS485_NAME "L4"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL4
+#define RS485_BIT     PIN4
 #elif RS485 == L5
 #define RS485_NAME "L5"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL5
+#define RS485_BIT     PIN5
 #elif RS485 == L6
 #define RS485_NAME "L6"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL6
+#define RS485_BIT     PIN6
 #elif RS485 == L7
 #define RS485_NAME "L7"
-#undef RS485
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL7
+#define RS485_BIT     PIN7
 
 #elif RS485 == A0
 #define RS485_NAME "A0"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA0
+#define RS485_BIT     PIN0
 #elif RS485 == A1
 #define RS485_NAME "A1"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA1
+#define RS485_BIT     PIN1
 #elif RS485 == A2
 #define RS485_NAME "A2"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA2
+#define RS485_BIT     PIN2
 #elif RS485 == A3
 #define RS485_NAME "A3"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA3
+#define RS485_BIT     PIN3
 #elif RS485 == A4
 #define RS485_NAME "A4"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA4
+#define RS485_BIT     PIN4
 #elif RS485 == A5
 #define RS485_NAME "A5"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA5
+#define RS485_BIT     PIN5
 #elif RS485 == A6
 #define RS485_NAME "A6"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA6
+#define RS485_BIT     PIN6
 #elif RS485 == A7
 #define RS485_NAME "A7"
-#undef RS485
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA7
+#define RS485_BIT     PIN7
 #elif RS485 == B0_INV
 #define RS485_NAME "B0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB0
+#define RS485_BIT     PIN0
 #elif RS485 == B1_INV
 #define RS485_NAME "B1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB1
+#define RS485_BIT     PIN1
 #elif RS485 == B2_INV
 #define RS485_NAME "B2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB2
+#define RS485_BIT     PIN2
 #elif RS485 == B3_INV
 #define RS485_NAME "B3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB3
+#define RS485_BIT     PIN3
 #elif RS485 == B4_INV
 #define RS485_NAME "B4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB4
+#define RS485_BIT     PIN4
 #elif RS485 == B5_INV
 #define RS485_NAME "B5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB5
+#define RS485_BIT     PIN5
 #elif RS485 == B6_INV
 #define RS485_NAME "B6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB6
+#define RS485_BIT     PIN6
 #elif RS485 == B7_INV
 #define RS485_NAME "B7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRB
-#define RS485_PORT    PORTB
+#define RS485_PORT    _mkPort(PORTB)
 #define RS485_PIN     PINB
-#define RS485         PINB7
+#define RS485_BIT     PIN7
 
 #elif RS485 == C0_INV
 #define RS485_NAME "C0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC0
+#define RS485_BIT     PIN0
 #elif RS485 == C1_INV
 #define RS485_NAME "C1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC1
+#define RS485_BIT     PIN1
 #elif RS485 == C2_INV
 #define RS485_NAME "C2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC2
+#define RS485_BIT     PIN2
 #elif RS485 == C3_INV
 #define RS485_NAME "C3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC3
+#define RS485_BIT     PIN3
 #elif RS485 == C4_INV
 #define RS485_NAME "C4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC4
+#define RS485_BIT     PIN4
 #elif RS485 == C5_INV
 #define RS485_NAME "C5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC5
+#define RS485_BIT     PIN5
 #elif RS485 == C6_INV
 #define RS485_NAME "C6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC6
+#define RS485_BIT     PIN6
 #elif RS485 == C7_INV
 #define RS485_NAME "C7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRC
-#define RS485_PORT    PORTC
+#define RS485_PORT    _mkPort(PORTC)
 #define RS485_PIN     PINC
-#define RS485         PINC7
+#define RS485_BIT     PIN7
 
 #elif RS485 == D0_INV
 #define RS485_NAME "D0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND0
+#define RS485_BIT     PIN0
 #elif RS485 == D1_INV
 #define RS485_NAME "D1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND1
+#define RS485_BIT     PIN1
 #elif RS485 == D2_INV
 #define RS485_NAME "D2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND2
+#define RS485_BIT     PIN2
 #elif RS485 == D3_INV
 #define RS485_NAME "D3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND3
+#define RS485_BIT     PIN3
 #elif RS485 == D4_INV
 #define RS485_NAME "D4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND4
+#define RS485_BIT     PIN4
 #elif RS485 == D5_INV
 #define RS485_NAME "D5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND5
+#define RS485_BIT     PIN5
 #elif RS485 == D6_INV
 #define RS485_NAME "D6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND6
+#define RS485_BIT     PIN6
 #elif RS485 == D7_INV
 #define RS485_NAME "D7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRD
-#define RS485_PORT    PORTD
+#define RS485_PORT    _mkPort(PORTD)
 #define RS485_PIN     PIND
-#define RS485         PIND7
+#define RS485_BIT     PIN7
 
 #elif RS485 == E0_INV
 #define RS485_NAME "E0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE0
+#define RS485_BIT     PIN0
 #elif RS485 == E1_INV
 #define RS485_NAME "E1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE1
+#define RS485_BIT     PIN1
 #elif RS485 == E2_INV
 #define RS485_NAME "E2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE2
+#define RS485_BIT     PIN2
 #elif RS485 == E3_INV
 #define RS485_NAME "E3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE3
+#define RS485_BIT     PIN3
 #elif RS485 == E4_INV
 #define RS485_NAME "E4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE4
+#define RS485_BIT     PIN4
 #elif RS485 == E5_INV
 #define RS485_NAME "E5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE5
+#define RS485_BIT     PIN5
 #elif RS485 == E6_INV
 #define RS485_NAME "E6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE6
+#define RS485_BIT     PIN6
 #elif RS485 == E7_INV
 #define RS485_NAME "E7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRE
-#define RS485_PORT    PORTE
+#define RS485_PORT    _mkPort(PORTE)
 #define RS485_PIN     PINE
-#define RS485         PINE7
+#define RS485_BIT     PIN7
 
 #elif RS485 == F0_INV
 #define RS485_NAME "F0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF0
+#define RS485_BIT     PIN0
 #elif RS485 == F1_INV
 #define RS485_NAME "F1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF1
+#define RS485_BIT     PIN1
 #elif RS485 == F2_INV
 #define RS485_NAME "F2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF2
+#define RS485_BIT     PIN2
 #elif RS485 == F3_INV
 #define RS485_NAME "F3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF3
+#define RS485_BIT     PIN3
 #elif RS485 == F4_INV
 #define RS485_NAME "F4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF4
+#define RS485_BIT     PIN4
 #elif RS485 == F5_INV
 #define RS485_NAME "F5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF5
+#define RS485_BIT     PIN5
 #elif RS485 == F6_INV
 #define RS485_NAME "F6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF6
+#define RS485_BIT     PIN6
 #elif RS485 == F7_INV
 #define RS485_NAME "F7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRF
-#define RS485_PORT    PORTF
+#define RS485_PORT    _mkPort(PORTF)
 #define RS485_PIN     PINF
-#define RS485         PINF7
+#define RS485_BIT     PIN7
 
 #elif RS485 == G0_INV
 #define RS485_NAME "G0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING0
+#define RS485_BIT     PIN0
 #elif RS485 == G1_INV
 #define RS485_NAME "G1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING1
+#define RS485_BIT     PIN1
 #elif RS485 == G2_INV
 #define RS485_NAME "G2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING2
+#define RS485_BIT     PIN2
 #elif RS485 == G3_INV
 #define RS485_NAME "G3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING3
+#define RS485_BIT     PIN3
 #elif RS485 == G4_INV
 #define RS485_NAME "G4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING4
+#define RS485_BIT     PIN4
 #elif RS485 == G5_INV
 #define RS485_NAME "G5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING5
+#define RS485_BIT     PIN5
 #elif RS485 == G6_INV
 #define RS485_NAME "G6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING6
+#define RS485_BIT     PIN6
 #elif RS485 == G7_INV
 #define RS485_NAME "G7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRG
-#define RS485_PORT    PORTG
+#define RS485_PORT    _mkPort(PORTG)
 #define RS485_PIN     PING
-#define RS485         PING7
+#define RS485_BIT     PIN7
 
 #elif RS485 == H0_INV
 #define RS485_NAME "H0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH0
+#define RS485_BIT     PIN0
 #elif RS485 == H1_INV
 #define RS485_NAME "H1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH1
+#define RS485_BIT     PIN1
 #elif RS485 == H2_INV
 #define RS485_NAME "H2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH2
+#define RS485_BIT     PIN2
 #elif RS485 == H3_INV
 #define RS485_NAME "H3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH3
+#define RS485_BIT     PIN3
 #elif RS485 == H4_INV
 #define RS485_NAME "H4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH4
+#define RS485_BIT     PIN4
 #elif RS485 == H5_INV
 #define RS485_NAME "H5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH5
+#define RS485_BIT     PIN5
 #elif RS485 == H6_INV
 #define RS485_NAME "H6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH6
+#define RS485_BIT     PIN6
 #elif RS485 == H7_INV
 #define RS485_NAME "H7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRH
-#define RS485_PORT    PORTH
+#define RS485_PORT    _mkPort(PORTH)
 #define RS485_PIN     PINH
-#define RS485         PINH7
+#define RS485_BIT     PIN7
 
 #elif RS485 == J0_INV
 #define RS485_NAME "J0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ0
+#define RS485_BIT     PIN0
 #elif RS485 == J1_INV
 #define RS485_NAME "J1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ1
+#define RS485_BIT     PIN1
 #elif RS485 == J2_INV
 #define RS485_NAME "J2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ2
+#define RS485_BIT     PIN2
 #elif RS485 == J3_INV
 #define RS485_NAME "J3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ3
+#define RS485_BIT     PIN3
 #elif RS485 == J4_INV
 #define RS485_NAME "J4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ4
+#define RS485_BIT     PIN4
 #elif RS485 == J5_INV
 #define RS485_NAME "J5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ5
+#define RS485_BIT     PIN5
 #elif RS485 == J6_INV
 #define RS485_NAME "J6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ6
+#define RS485_BIT     PIN6
 #elif RS485 == J7_INV
 #define RS485_NAME "J7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRJ
-#define RS485_PORT    PORTJ
+#define RS485_PORT    _mkPort(PORTJ)
 #define RS485_PIN     PINJ
-#define RS485         PINJ7
+#define RS485_BIT     PIN7
 
 #elif RS485 == K0_INV
 #define RS485_NAME "K0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK0
+#define RS485_BIT     PIN0
 #elif RS485 == K1_INV
 #define RS485_NAME "K1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK1
+#define RS485_BIT     PIN1
 #elif RS485 == K2_INV
 #define RS485_NAME "K2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK2
+#define RS485_BIT     PIN2
 #elif RS485 == K3_INV
 #define RS485_NAME "K3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK3
+#define RS485_BIT     PIN3
 #elif RS485 == K4_INV
 #define RS485_NAME "K4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK4
+#define RS485_BIT     PIN4
 #elif RS485 == K5_INV
 #define RS485_NAME "K5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK5
+#define RS485_BIT     PIN5
 #elif RS485 == K6_INV
 #define RS485_NAME "K6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK6
+#define RS485_BIT     PIN6
 #elif RS485 == K7_INV
 #define RS485_NAME "K7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRK
-#define RS485_PORT    PORTK
+#define RS485_PORT    _mkPort(PORTK)
 #define RS485_PIN     PINK
-#define RS485         PINK7
+#define RS485_BIT     PIN7
 
 #elif RS485 == L0_INV
 #define RS485_NAME "L0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL0
+#define RS485_BIT     PIN0
 #elif RS485 == L1_INV
 #define RS485_NAME "L1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL1
+#define RS485_BIT     PIN1
 #elif RS485 == L2_INV
 #define RS485_NAME "L2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL2
+#define RS485_BIT     PIN2
 #elif RS485 == L3_INV
 #define RS485_NAME "L3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL3
+#define RS485_BIT     PIN3
 #elif RS485 == L4_INV
 #define RS485_NAME "L4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL4
+#define RS485_BIT     PIN4
 #elif RS485 == L5_INV
 #define RS485_NAME "L5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL5
+#define RS485_BIT     PIN5
 #elif RS485 == L6_INV
 #define RS485_NAME "L6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL6
+#define RS485_BIT     PIN6
 #elif RS485 == L7_INV
 #define RS485_NAME "L7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRL
-#define RS485_PORT    PORTL
+#define RS485_PORT    _mkPort(PORTL)
 #define RS485_PIN     PINL
-#define RS485         PINL7
+#define RS485_BIT     PIN7
 
 #elif RS485 == A0_INV
 #define RS485_NAME "A0_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA0
+#define RS485_BIT     PIN0
 #elif RS485 == A1_INV
 #define RS485_NAME "A1_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA1
+#define RS485_BIT     PIN1
 #elif RS485 == A2_INV
 #define RS485_NAME "A2_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA2
+#define RS485_BIT     PIN2
 #elif RS485 == A3_INV
 #define RS485_NAME "A3_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA3
+#define RS485_BIT     PIN3
 #elif RS485 == A4_INV
 #define RS485_NAME "A4_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA4
+#define RS485_BIT     PIN4
 #elif RS485 == A5_INV
 #define RS485_NAME "A5_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA5
+#define RS485_BIT     PIN5
 #elif RS485 == A6_INV
 #define RS485_NAME "A6_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA6
+#define RS485_BIT     PIN6
 #elif RS485 == A7_INV
 #define RS485_NAME "A7_INV"
-#undef RS485
 #define RS485_INVERT
 #define RS485_DDR     DDRA
-#define RS485_PORT    PORTA
+#define RS485_PORT    _mkPort(PORTA)
 #define RS485_PIN     PINA
-#define RS485         PINA7
+#define RS485_BIT     PIN7
 #else
 #error -------------------------------------------
 #error Unrecognized RS485 name.  Should be like "B5"
