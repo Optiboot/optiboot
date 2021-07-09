@@ -87,6 +87,8 @@
 /**********************************************************/
 /* Edit History:                                          */
 /*                                                        */
+/* Jun 2021                                               */
+/* 9.2 add rs485 support and SpenceKonde's startup code   */
 /* Sep 2020                                               */
 /* 9.1 fix do_nvmctrl                                     */
 /* Aug 2019                                               */
@@ -96,7 +98,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 9
-#define OPTIBOOT_MINVER 1
+#define OPTIBOOT_MINVER 2
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -276,7 +278,7 @@ static void getNch(uint8_t);
 static inline void flash_led(uint8_t);
 #endif
 
-#define watchdogReset()  __asm__ __volatile__ ("wdr\n")
+#define watchdogReset()  __asm__ __volatile__ ("  wdr\n")
 
 /*
  * RAMSTART should be self-explanatory.  It's bigger on parts with a
@@ -322,17 +324,44 @@ int main (void) {
   //  No interrupts will execute
   //  SP points to RAMEND
 
-  __asm__ __volatile__ ("clr __zero_reg__"); // known-zero required by avr-libc
+  __asm__ __volatile__ ("  clr __zero_reg__\n"); // known-zero required by avr-libc
 #define RESET_EXTERNAL (RSTCTRL_EXTRF_bm|RSTCTRL_UPDIRF_bm|RSTCTRL_SWRF_bm)
 #ifndef FANCY_RESET_LOGIC
   ch = RSTCTRL.RSTFR;   // get reset cause
-  RSTCTRL.RSTFR = ch;   //  and reset them all!
-  if (ch & RSTCTRL_WDRF_bm) {
-    // Start the app.
-    __asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
+#ifdef START_APP_ON_POR
+  /*
+   * If WDRF is set OR nothing except BORF and PORF are set, that's
+   * not bootloader entry condition so jump to app - this is for when
+   * UPDI pin is used as reset, so we go straight to app on start.
+   * 11/14: NASTY bug - we also need to check for no reset flags being
+   * set (ie, direct entry) and run bootloader in that case, otherwise
+   * bootloader won't run, among other things, after fresh bootloading!
+   */
+
+  if (ch && (ch & RSTCTRL_WDRF_bm ||
+             (!(ch & (~(RSTCTRL_BORF_bm | RSTCTRL_PORF_bm)))))) {
+# ifdef KeepBracesMatched
+  }
+# endif
+#else
+  /*
+   * If WDRF is set OR nothing except BORF is set, that's not
+   * bootloader entry condition so jump to app - let's see if this
+   * works okay or not...
+   */
+  if (ch && (ch & RSTCTRL_WDRF_bm || (!(ch & (~RSTCTRL_BORF_bm))))) {
+#endif
+    /* Start the app.
+     * Dont bother trying to stuff it in r2, which requires heroic
+     * effort to fish out we'll put it in GPIOR0 where it won't get
+     * stomped on.
+     */
+    // __asm__ __volatile__ ("  mov r2, %0\n" :: "r" (ch));
+    RSTCTRL.RSTFR = ch; //clear the reset causes before jumping to app...
+    GPIOR0 = ch; // but, stash the reset cause in GPIOR0 for use by app...
     watchdogConfig(WDT_PERIOD_OFF_gc);
-    __asm__ __volatile__ (
-      "jmp app\n"
+    __asm__ __volatile__(
+      "  jmp app\n"
       );
   }
 #else
@@ -345,12 +374,12 @@ int main (void) {
     /*
      * We want to run the bootloader when an external reset has occurred.
      * On these mega0/XTiny chips, there are three types of ext reset:
-     *  reset pin (may not exist), UPDI reset, and SW-request reset.
+     * reset pin (may not exist), UPDI reset, and SW-request reset.
      * One of these reset causes, together with watchdog reset, should
-     *  mean that Optiboot timed out, and it's time to run the app.
+     * mean that Optiboot timed out, and it's time to run the app.
      * Other reset causes (notably poweron) should run the app directly.
      * If a user app wants to utilize and detect watchdog resets, it
-     *  must make sure that the other reset causes are cleared.
+     * must make sure that the other reset causes are cleared.
      */
     if (ch & RSTCTRL_WDRF_bm) {
       if (ch & RESET_EXTERNAL) {
@@ -369,12 +398,12 @@ int main (void) {
        * .init0 (which executes before normal c init code) to save R2
        * to a global variable.
        */
-      __asm__ __volatile__ ("mov r2, %0\n" :: "r" (ch));
+      __asm__ __volatile__("  mov r2, %0\n" :: "r"(ch));
 
       // switch off watchdog
       watchdogConfig(WDT_PERIOD_OFF_gc);
-      __asm__ __volatile__ (
-        "jmp 512\n"
+      __asm__ __volatile__(
+        "  jmp app\n"
         );
     }
   }
@@ -575,11 +604,11 @@ void putch (char ch) {
   while (0 == (MYUART.STATUS & USART_DREIF_bm))
     ;
   MYUART.TXDATAL = ch;
+  rs485_txoff();    // To receive, turn off transmitter
 }
 
 uint8_t getch (void) {
   uint8_t ch, flags;
-  rs485_txoff();    // To receive, turn off transmitter
   while (!(MYUART.STATUS & USART_RXCIF_bm))
     ;
   flags = MYUART.RXDATAH;
@@ -735,7 +764,7 @@ OPTFLASHSECT const char f_version[] = "Version=" xstr(OPTIBOOT_MAJVER) "." xstr(
 //  unused variables/functions in the bootloader, it prevents them from being
 //  omitted by the linker, with fewer mysterious link options.
 void  __attribute__((section( ".application")))
-__attribute__((naked)) app();
+      __attribute__((naked)) app();
 void app()
 {
   uint8_t ch;
@@ -744,6 +773,8 @@ void app()
   RSTCTRL.RSTFR = ch; // reset causes
   *(volatile uint16_t *)(&optiboot_version);   // reference the version
   do_nvmctrl(0, NVMCTRL_CMD_PAGEBUFCLR_gc, 0); // reference this function!
-  __asm__ __volatile__ ("jmp 0");    // similar to running off end of memory
+  __asm__ __volatile__ (
+    "  jmp 0\n"     // similar to running off end of memory
+    );
 //    _PROTECTED_WRITE(RSTCTRL.SWRR, 1); // cause new reset
 }
