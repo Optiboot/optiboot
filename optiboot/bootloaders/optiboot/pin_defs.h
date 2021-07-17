@@ -482,6 +482,122 @@
 #endif
 
 /*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega32U2__)
+/*------------------------------------------------------------------------ */
+
+#if !defined(LED)
+#define LED         D5
+#endif
+
+/*
+ * Handle devices with up to 4 uarts (eg m1280.)  Rather inelegantly.
+ * Note that mega8/m32 still needs special handling, because ubrr is handled
+ * differently.
+ */
+#if (SOFT_UART == 0)
+#if UART == 0
+#error UART == 0, but no UART0 on device
+#elif UART == 1
+#if !defined(UDR1)
+#error UART == 1, but no UART1 on device
+#endif
+# define UART_SRA UCSR1A
+# define UART_SRB UCSR1B
+# define UART_SRC UCSR1C
+# define UART_SRL UBRR1L
+# define UART_UDR UDR1
+#elif UART == 2
+#error UART == 2, but no UART2 on device
+#elif UART == 3
+#error UART == 3, but no UART3 on device
+#endif
+#endif //end #if SOFT_UART==0
+
+/* Fix different register names */
+#define MPCM0   MPCM1
+#define U2X0    U2X1
+#define UPE0    UPE1
+#define DOR0    DOR1
+#define FE0     FE1
+#define UDRE0   UDRE1
+#define TXC0    TXC1
+#define RXC0    RXC1
+
+#define TXB80   TXB81
+#define RXB80   RXB81
+#define UCSZ02  UCSZ21
+#define TXEN0   TXEN1
+#define RXEN0   RXEN1
+#define UDRIE0  UDRIE1
+#define TXCIE0  TXCIE1
+#define RXCIE0  RXCIE1
+
+#define UCPOL0  UCPOL1
+#define UCSZ00  UCSZ01
+#define UCSZ01  UCSZ11
+#define USBS0   USBS1
+#define UPM00   UPM01
+#define UPM01   UPM11
+#define UMSEL00 UMSEL01
+#define UMSEL01 UMSEL11
+
+/* Ports for soft UART */
+#if SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 3
+#define UART_RX_BIT 2
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
+/*------------------------------------------------------------------------ */
+
+#if !defined(LED)
+#define LED         C7
+#endif
+
+/* Fix different register names */
+#define MPCM0   MPCM1
+#define U2X0    U2X1
+#define UPE0    UPE1
+#define DOR0    DOR1
+#define FE0     FE1
+#define UDRE0   UDRE1
+#define TXC0    TXC1
+#define RXC0    RXC1
+
+#define TXB80   TXB81
+#define RXB80   RXB81
+#define UCSZ02  UCSZ21
+#define TXEN0   TXEN1
+#define RXEN0   RXEN1
+#define UDRIE0  UDRIE1
+#define TXCIE0  TXCIE1
+#define RXCIE0  RXCIE1
+
+#define UCPOL0  UCPOL1
+#define UCSZ00  UCSZ01
+#define UCSZ01  UCSZ11
+#define USBS0   USBS1
+#define UPM00   UPM01
+#define UPM01   UPM11
+#define UMSEL00 UMSEL01
+#define UMSEL01 UMSEL11
+
+/* Ports for soft UART */
+#if SOFT_UART
+#define UART_PORT   PORTD
+#define UART_PIN    PIND
+#define UART_DDR    DDRD
+#define UART_TX_BIT 3
+#define UART_RX_BIT 2
+#endif
+#endif
+
+/*------------------------------------------------------------------------ */
 #if defined(__AVR_ATtiny1634__)
 /*------------------------------------------------------------------------ */
 /* LED is on C0 */

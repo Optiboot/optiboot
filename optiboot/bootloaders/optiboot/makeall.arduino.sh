@@ -30,3 +30,11 @@ make xplained328pb $*
 make atmega8 $*
 make atmega168 $*
 make atmega328 $*
+
+#
+# AVR USB MCUs
+make atmega8u2
+make atmega16u2
+make atmega32u2
+make atmega16u4
+make atmega32u4

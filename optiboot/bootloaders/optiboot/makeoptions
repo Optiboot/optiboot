@@ -30,6 +30,7 @@ make atmega328 SUPPORT_EEPROM=1
 make atmega328 LED=J1
 # no such led
 make atmega328 LED=fred
+# no such port
 make atmega328 UART=1
 #
 #invalid bit rates
