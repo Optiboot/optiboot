@@ -1,4 +1,4 @@
-## Optiboot Bootloader for Arduino and Atmel AVR ##
+## Optiboot Bootloader for Arduino and Atmel AVR-USB-MCUs like AtMega32u4 ##
 
 ![docs/optiboot.png](docs/optiboot.png)
 
