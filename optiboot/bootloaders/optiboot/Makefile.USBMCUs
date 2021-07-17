@@ -30,6 +30,15 @@ endif
 atmega8u2:
 	"$(MAKE)" atmega8u2atUART	BAUD_RATE=115200 UART=1
 
+atmega8u2_isp: atmega8u2
+atmega8u2_isp: TARGET = atmega8u2
+atmega8u2_isp: MCU_TARGET = atmega8u2
+atmega8u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
+atmega8u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega8u2_isp: EFUSE ?= FE   # 2.7V brownout
+atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega8u2_isp: isp
+
 #-----------------------
 # ATmega 16u2
 #-----------------------
@@ -46,6 +55,15 @@ endif
 atmega16u2:
 	"$(MAKE)" atmega16u2atUART UART=1
 
+atmega16u2_isp: atmega16u2
+atmega16u2_isp: TARGET = atmega16u2
+atmega16u2_isp: MCU_TARGET = atmega16u2
+atmega16u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
+atmega16u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega16u2_isp: EFUSE ?= FE   # 2.7V brownout
+atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega16u2_isp: isp
+
 #-----------------------
 # ATmega 32u2
 #-----------------------
@@ -61,6 +79,15 @@ atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega32u2:
 	"$(MAKE)" atmega32u2atUART UART=1
+
+atmega32u2_isp: atmega32u2
+atmega32u2_isp: TARGET = atmega32u2
+atmega32u2_isp: MCU_TARGET = atmega32u2
+atmega32u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
+atmega32u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u2_isp: EFUSE ?= FE   # 2.7V brownout
+atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega32u2_isp: isp
 
 #-----------------------
 # ATmega 16u4
@@ -79,6 +106,16 @@ atmega16u4:
 # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 	"$(MAKE)" atmega16u4atUART UART=1
 
+atmega16u4_isp: atmega16u4
+atmega16u4_isp: TARGET = atmega16u4
+atmega16u4_isp: MCU_TARGET = atmega16u4
+atmega16u4_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
+atmega16u4_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega16u4_isp: EFUSE ?= FB   # 2.6V brownout
+atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega16u4_isp: isp
+
+
 #-----------------------
 # ATmega 32u4
 #-----------------------
@@ -95,4 +132,13 @@ endif
 atmega32u4:
 # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 	"$(MAKE)" atmega32u4atUART UART=1 LED_START_FLASHES=0
+
+atmega32u4_isp: atmega32u4
+atmega32u4_isp: TARGET = atmega32u4
+atmega32u4_isp: MCU_TARGET = atmega32u4
+atmega32u4_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
+atmega32u4_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u4_isp: EFUSE ?= FB   # 2.6V brownout
+atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega32u4_isp: isp
 
