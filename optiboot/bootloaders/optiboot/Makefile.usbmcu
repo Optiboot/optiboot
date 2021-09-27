@@ -25,10 +25,10 @@ atmega8u2atUART: AVR_FREQ ?= 16000000L
 atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
-atmega8u2atUART1: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
+atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega8u2:
-	"$(MAKE)" atmega8u2atUART	BAUD_RATE=115200 UART=1
+	"$(MAKE)" atmega8u2atUART UART=1
 
 atmega8u2_isp: atmega8u2
 atmega8u2_isp: TARGET = atmega8u2
@@ -36,7 +36,7 @@ atmega8u2_isp: MCU_TARGET = atmega8u2
 atmega8u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
 atmega8u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
 atmega8u2_isp: EFUSE ?= FE   # 2.7V brownout
-atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega8u2_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
 atmega8u2_isp: isp
 
 #-----------------------
@@ -61,7 +61,7 @@ atmega16u2_isp: MCU_TARGET = atmega16u2
 atmega16u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
 atmega16u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
 atmega16u2_isp: EFUSE ?= FE   # 2.7V brownout
-atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega16u2_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
 atmega16u2_isp: isp
 
 #-----------------------
@@ -86,7 +86,7 @@ atmega32u2_isp: MCU_TARGET = atmega32u2
 atmega32u2_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
 atmega32u2_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
 atmega32u2_isp: EFUSE ?= FE   # 2.7V brownout
-atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega32u2_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
 atmega32u2_isp: isp
 
 #-----------------------
@@ -112,7 +112,7 @@ atmega16u4_isp: MCU_TARGET = atmega16u4
 atmega16u4_isp: HFUSE ?= DE   # 512 byte boot, JTAG disabled
 atmega16u4_isp: LFUSE ?= FF   # Full Swing xtal (16MHz) 16KCK/14CK+65ms
 atmega16u4_isp: EFUSE ?= FB   # 2.6V brownout
-atmega32u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
+atmega16u4_isp: LOCK  ?= 2F   # APP protect mode 1, BL protect mode 2
 atmega16u4_isp: isp
 
 
