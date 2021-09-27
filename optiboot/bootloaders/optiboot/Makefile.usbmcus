@@ -28,7 +28,7 @@ ifndef PRODUCTION
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega8u2:
-	"$(MAKE)" atmega8u2atUART UART=1
+	"$(MAKE)" atmega8u2atUART UART?=1
 
 atmega8u2_isp: atmega8u2
 atmega8u2_isp: TARGET = atmega8u2
@@ -53,7 +53,7 @@ ifndef PRODUCTION
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega16u2:
-	"$(MAKE)" atmega16u2atUART UART=1
+	"$(MAKE)" atmega16u2atUART UART?=1
 
 atmega16u2_isp: atmega16u2
 atmega16u2_isp: TARGET = atmega16u2
@@ -78,7 +78,7 @@ ifndef PRODUCTION
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega32u2:
-	"$(MAKE)" atmega32u2atUART UART=1
+	"$(MAKE)" atmega32u2atUART UART?=1
 
 atmega32u2_isp: atmega32u2
 atmega32u2_isp: TARGET = atmega32u2
@@ -104,7 +104,7 @@ atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega16u4:
 # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
-	"$(MAKE)" atmega16u4atUART UART=1
+	"$(MAKE)" atmega16u4atUART UART?=1 LED_START_FLASHES?=0
 
 atmega16u4_isp: atmega16u4
 atmega16u4_isp: TARGET = atmega16u4
@@ -131,7 +131,7 @@ atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega32u4:
 # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
-	"$(MAKE)" atmega32u4atUART UART=1 LED_START_FLASHES=0
+	"$(MAKE)" atmega32u4atUART UART?=1 LED_START_FLASHES?=0
 
 atmega32u4_isp: atmega32u4
 atmega32u4_isp: TARGET = atmega32u4
