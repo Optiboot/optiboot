@@ -501,7 +501,7 @@
 
 #define TXB80   TXB81
 #define RXB80   RXB81
-#define UCSZ02  UCSZ21
+#define UCSZ02  UCSZ12
 #define TXEN0   TXEN1
 #define RXEN0   RXEN1
 #define UDRIE0  UDRIE1
@@ -509,12 +509,12 @@
 #define RXCIE0  RXCIE1
 
 #define UCPOL0  UCPOL1
-#define UCSZ00  UCSZ01
+#define UCSZ00  UCSZ10
 #define UCSZ01  UCSZ11
 #define USBS0   USBS1
-#define UPM00   UPM01
+#define UPM00   UPM10
 #define UPM01   UPM11
-#define UMSEL00 UMSEL01
+#define UMSEL00 UMSEL10
 #define UMSEL01 UMSEL11
 
 /* Ports for soft UART */
@@ -547,7 +547,7 @@
 
 #define TXB80   TXB81
 #define RXB80   RXB81
-#define UCSZ02  UCSZ21
+#define UCSZ02  UCSZ12
 #define TXEN0   TXEN1
 #define RXEN0   RXEN1
 #define UDRIE0  UDRIE1
@@ -555,12 +555,12 @@
 #define RXCIE0  RXCIE1
 
 #define UCPOL0  UCPOL1
-#define UCSZ00  UCSZ01
+#define UCSZ00  UCSZ10
 #define UCSZ01  UCSZ11
 #define USBS0   USBS1
-#define UPM00   UPM01
+#define UPM00   UPM10
 #define UPM01   UPM11
-#define UMSEL00 UMSEL01
+#define UMSEL00 UMSEL10
 #define UMSEL01 UMSEL11
 
 /* Ports for soft UART */
