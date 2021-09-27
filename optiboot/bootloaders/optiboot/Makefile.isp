@@ -54,10 +54,13 @@ ifdef EFUSE
 EFUSE_CMD= -U efuse:w:0x$(EFUSE):m
 endif
 
+# Default lock fuse configuration (NO lock)
+LOCKFUSE ?=3f# = APP protect mode 1, BL protect mode 1
+
 #
 # avrdude commands to erase chip, unlock memory, and program fuses.
 #
-ISPFUSES =	-e -u -U lock:w:0x3f:m $(EFUSE_CMD) \
+ISPFUSES =	-e -u -U lock:w:0x$(LOCKFUSE):m $(EFUSE_CMD) \
 	 	-U hfuse:w:0x$(HFUSE):m -U lfuse:w:0x$(LFUSE):m
 
 

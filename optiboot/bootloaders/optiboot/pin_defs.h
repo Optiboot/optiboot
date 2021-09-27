@@ -482,13 +482,9 @@
 #endif
 
 /*------------------------------------------------------------------------ */
-#if defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega32U2__)
+#if defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega32U2__) \
+|| (__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega32U6__)
 /*------------------------------------------------------------------------ */
-
-#if !defined(LED)
-#define LED         D5
-#endif
-
 /* Fix different register names */
 #define MPCM0   MPCM1
 #define U2X0    U2X1
@@ -525,53 +521,36 @@
 #define UART_TX_BIT 3
 #define UART_RX_BIT 2
 #endif
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega32U2__)
+/*------------------------------------------------------------------------ */
+
+#if !defined(LED)
+#define LED         D5 // because of Arduino Uno USB-MCU TXLED
 #endif
+#endif // AtmegaXYu2
 
 /*------------------------------------------------------------------------ */
 #if defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)
 /*------------------------------------------------------------------------ */
 
 #if !defined(LED)
-#define LED         C7
+#define LED         C7 // because of Arduino Micro LED_BUILTIN (D13)
 #endif
+#endif // AtmegaXYu4
 
-/* Fix different register names */
-#define MPCM0   MPCM1
-#define U2X0    U2X1
-#define UPE0    UPE1
-#define DOR0    DOR1
-#define FE0     FE1
-#define UDRE0   UDRE1
-#define TXC0    TXC1
-#define RXC0    RXC1
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_ATmega32U6__)
+/*------------------------------------------------------------------------ */
 
-#define TXB80   TXB81
-#define RXB80   RXB81
-#define UCSZ02  UCSZ12
-#define TXEN0   TXEN1
-#define RXEN0   RXEN1
-#define UDRIE0  UDRIE1
-#define TXCIE0  TXCIE1
-#define RXCIE0  RXCIE1
-
-#define UCPOL0  UCPOL1
-#define UCSZ00  UCSZ10
-#define UCSZ01  UCSZ11
-#define USBS0   USBS1
-#define UPM00   UPM10
-#define UPM01   UPM11
-#define UMSEL00 UMSEL10
-#define UMSEL01 UMSEL11
-
-/* Ports for soft UART */
-#if SOFT_UART
-#define UART_PORT   PORTD
-#define UART_PIN    PIND
-#define UART_DDR    DDRD
-#define UART_TX_BIT 3
-#define UART_RX_BIT 2
+#if !defined(LED)
+#define LED         C6 // because of PWM (OSC3A)
 #endif
-#endif
+#endif // AtmegaXYu6
+
+
+#endif // usbmcus
 
 /*------------------------------------------------------------------------ */
 #if defined(__AVR_ATtiny1634__)
