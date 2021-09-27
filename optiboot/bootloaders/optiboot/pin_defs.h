@@ -489,30 +489,6 @@
 #define LED         D5
 #endif
 
-/*
- * Handle devices with up to 4 uarts (eg m1280.)  Rather inelegantly.
- * Note that mega8/m32 still needs special handling, because ubrr is handled
- * differently.
- */
-#if (SOFT_UART == 0)
-#if UART == 0
-#error UART == 0, but no UART0 on device
-#elif UART == 1
-#if !defined(UDR1)
-#error UART == 1, but no UART1 on device
-#endif
-# define UART_SRA UCSR1A
-# define UART_SRB UCSR1B
-# define UART_SRC UCSR1C
-# define UART_SRL UBRR1L
-# define UART_UDR UDR1
-#elif UART == 2
-#error UART == 2, but no UART2 on device
-#elif UART == 3
-#error UART == 3, but no UART3 on device
-#endif
-#endif //end #if SOFT_UART==0
-
 /* Fix different register names */
 #define MPCM0   MPCM1
 #define U2X0    U2X1
