@@ -21,8 +21,12 @@ HELPTEXT += "target atmega8/16/32u2, atmega16/32u4 - newer 32/44pin AVR-USB-MCUs
 atmega8u2atUART: TARGET = atmega8u2
 atmega8u2atUART: MCU_TARGET = atmega8u2
 atmega8u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega8u2atUART: AVR_FREQ ?= 16000000L 
+atmega8u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe
+endif
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
@@ -46,8 +50,12 @@ atmega8u2_isp: isp
 atmega16u2atUART: TARGET = atmega16u2
 atmega16u2atUART: MCU_TARGET = atmega16u2
 atmega16u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega16u2atUART: AVR_FREQ ?= 16000000L 
+atmega16u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+endif
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
@@ -71,8 +79,12 @@ atmega16u2_isp: isp
 atmega32u2atUART: TARGET = atmega32u2
 atmega32u2atUART: MCU_TARGET = atmega32u2
 atmega32u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega32u2atUART: AVR_FREQ ?= 16000000L 
+atmega32u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
@@ -96,8 +108,12 @@ atmega32u2_isp: isp
 atmega16u4atUART: TARGET = atmega16u4
 atmega16u4atUART: MCU_TARGET = atmega16u4
 atmega16u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega16u4atUART: AVR_FREQ ?= 16000000L 
-atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega16u4atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+endif
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
@@ -123,8 +139,12 @@ atmega16u4_isp: isp
 atmega32u4atUART: TARGET = atmega32u4
 atmega32u4atUART: MCU_TARGET = atmega32u4
 atmega32u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega32u4atUART: AVR_FREQ ?= 16000000L 
+atmega32u4atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
@@ -150,14 +170,17 @@ atmega32u4_isp: isp
 atmega32u6atUART: TARGET = atmega32u6
 atmega32u6atUART: MCU_TARGET = atmega32u6
 atmega32u6atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
-atmega32u6atUART: AVR_FREQ ?= 16000000L 
+atmega32u6atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
 ifndef PRODUCTION
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega32u6:
-# disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 	"$(MAKE)" atmega32u6atUART UART?=1
 
 atmega32u6_isp: atmega32u6
