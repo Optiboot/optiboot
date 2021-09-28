@@ -43,6 +43,10 @@ declare -a mcu_and_params=(
 "atmega16u4"  "LED=C7 LED_START_FLASHES=0 UART=1" # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 "atmega32u4"  "LED=C7 LED_START_FLASHES=0 UART=1" # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 "atmega32u6"  "LED=C6 LED_START_FLASHES=2 UART=1" # for some reason it is not necessary to disable blinking the LED for this device
+"at90usb646"  "LED=C6 LED_START_FLASHES=2 UART=1 BIGBOOT=1" # enable bigboot since at90usbXYZS devices have minimal bootsection of 1048 Bytes
+"at90usb647"  "LED=C6 LED_START_FLASHES=2 UART=1 BIGBOOT=1" # enable bigboot since at90usbXYZS devices have minimal bootsection of 1048 Bytes
+"at90usb1286"  "LED=C6 LED_START_FLASHES=2 UART=1 BIGBOOT=1" # enable bigboot since at90usbXYZS devices have minimal bootsection of 1048 Bytes
+"at90usb1287"  "LED=C6 LED_START_FLASHES=2 UART=1 BIGBOOT=1" # enable bigboot since at90usbXYZS devices have minimal bootsection of 1048 Bytes
 )
 
 declare -a clock_and_baud=(
