@@ -42,6 +42,7 @@ declare -a mcu_and_params=(
 "atmega32u2"  "LED=D5 LED_START_FLASHES=2 UART=1"
 "atmega16u4"  "LED=C7 LED_START_FLASHES=0 UART=1" # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
 "atmega32u4"  "LED=C7 LED_START_FLASHES=0 UART=1" # disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
+"atmega32u6"  "LED=C6 LED_START_FLASHES=2 UART=1" # for some reason it is not necessary to disable blinking the LED for this device
 )
 
 declare -a clock_and_baud=(

@@ -142,3 +142,29 @@ atmega32u4_isp: EFUSE ?= FB# = 2.6V brownout
 atmega32u4_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
 atmega32u4_isp: isp
 
+
+#-----------------------
+# ATmega 32u6
+#-----------------------
+#ATmega32u6
+atmega32u6atUART: TARGET = atmega32u6
+atmega32u6atUART: MCU_TARGET = atmega32u6
+atmega32u6atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega32u6atUART: AVR_FREQ ?= 16000000L 
+atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
+ifndef PRODUCTION
+atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
+endif
+atmega32u6:
+# disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
+	"$(MAKE)" atmega32u6atUART UART?=1
+
+atmega32u6_isp: atmega32u6
+atmega32u6_isp: TARGET = atmega32u6
+atmega32u6_isp: MCU_TARGET = atmega32u6
+atmega32u6_isp: HFUSE ?= DE# = 512 byte boot, JTAG disabled
+atmega32u6_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u6_isp: EFUSE ?= FB# = 2.6V brownout
+atmega32u6_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega32u6_isp: isp
