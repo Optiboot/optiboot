@@ -30,8 +30,33 @@ make atmega328 SUPPORT_EEPROM=1
 make atmega328 LED=J1
 # no such led
 make atmega328 LED=fred
+# no such port
 make atmega328 UART=1
 #
 #invalid bit rates
 make atmega328 BAUD_RATE=300
 make atmega328 BAUD_RATE=3000000
+
+# ===========\
+# usbmcus   ==>
+# ===========/
+
+# atmegaXYu4
+make atmega8u2 LED=D5 BAUD_RATE=115200 # default
+make atmega16u2 LED=D5 BAUD_RATE=115200 # default
+make atmega32u2 LED=D5 BAUD_RATE=115200 # default
+
+# atmegaXYu4
+# disable led blinking at startup to save memory
+make atmega16u4 LED=C7 LED_START_FLASHES=0 # default
+make atmega32u4 LED=C7 LED_START_FLASHES=0 # default
+# use a 1048 Byte bootsection to enable the led
+make atmega16u4 LED=C7 LED_START_FLASHES=2 BIGBOOT=1
+make atmega32u4 LED=C7 LED_START_FLASHES=2 BIGBOOT=1
+make atmega32u6 LED=C6 LED_START_FLASHES=2 # default
+
+# at90usbXYZ6/7
+make at90usb646 LED=C6 LED_START_FLASHES=2 BIGBOOT=1 # default
+make at90usb647 LED=C6 LED_START_FLASHES=2 BIGBOOT=1 # default
+make at90usb1286 LED=C6 LED_START_FLASHES=2 BIGBOOT=1 # default
+make at90usb1287 LED=C6 LED_START_FLASHES=2 BIGBOOT=1 # default

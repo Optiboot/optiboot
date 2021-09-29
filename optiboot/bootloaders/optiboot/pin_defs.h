@@ -483,7 +483,9 @@
 
 /*------------------------------------------------------------------------ */
 #if defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega32U2__) \
-|| (__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega32U6__)
+|| defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega32U6__) \
+|| defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) \
+|| defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
 /*------------------------------------------------------------------------ */
 /* Fix different register names */
 #define MPCM0   MPCM1
@@ -548,6 +550,16 @@
 #define LED         C6 // because of PWM (OSC3A)
 #endif
 #endif // AtmegaXYu6
+
+/*------------------------------------------------------------------------ */
+#if defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) \
+|| defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__)
+/*------------------------------------------------------------------------ */
+
+#if !defined(LED)
+#define LED         C6 // because of PWM (OSC3A)
+#endif
+#endif // At90usbXYz6/7
 
 
 #endif // usbmcus
