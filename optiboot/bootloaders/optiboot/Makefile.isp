@@ -33,6 +33,9 @@
 AVRDUDE_ROOT ?= $(GCCROOT)
 AVRDUDE_CONF ?= -C$(TOOLROOT)/avr/etc/avrdude.conf
 
+# Default filename for the selected target
+FILENAME     ?=$ (PROGRAM)_$(TARGET).hex
+
 # These are the parameters for a usb-based STK500v2 programmer.
 # Exact type unknown.  (historical Makefile values.)
 #ISPTOOL	   = stk500v2
@@ -55,7 +58,7 @@ EFUSE_CMD= -U efuse:w:0x$(EFUSE):m
 endif
 
 # Default lock fuse configuration (NO lock)
-LOCKFUSE ?=3f# = APP protect mode 1, BL protect mode 1
+LOCKFUSE ?= 2f# APP protect mode 1, BL protect mode 1
 
 #
 # avrdude commands to erase chip, unlock memory, and program fuses.
@@ -69,7 +72,7 @@ ISPFUSES =	-e -u -U lock:w:0x$(LOCKFUSE):m $(EFUSE_CMD) \
 # space from accidental SPM writes.  Note: "2f" allows boot section to be read
 # by the application, which is different than the arduino default.
 #
-ISPFLASH =	-U flash:w:$(PROGRAM)_$(TARGET).hex -U lock:w:0x2f:m
+ISPFLASH =	-U flash:w:$(FILENAME).hex -U lock:w:$(LOCKFUSE):m
 
 # There are certain complicated caused by the fact that the default state
 # of a fuse is a "1" rather than a "0", especially with respect to fuse bits
@@ -86,7 +89,7 @@ ISPFLASH =	-U flash:w:$(PROGRAM)_$(TARGET).hex -U lock:w:0x2f:m
 # lock it), but since the high two bits of the lock byte are
 # unused, avrdude would get confused.
 
-isp: $(PROGRAM)_$(TARGET).hex
+isp: $(FILENAME)
 	$(AVRDUDE_ROOT)avrdude $(AVRDUDE_CONF) -c $(ISPTOOL) \
               -p $(MCU_TARGET) -P $(ISPPORT) $(ISPSPEED) \
 	$(ISPFUSES) \
