@@ -681,7 +681,8 @@ include Makefile.1284
 include Makefile.custom
 include Makefile.2560
 include Makefile.tiny
-include Makefile.MCUdude
+include Makefile.mcudude
+include Makefile.usbmcus
 
 BAUDCHECK=
 ifndef PRODUCTION

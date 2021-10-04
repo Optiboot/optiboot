@@ -10,6 +10,8 @@ Optiboot is an easy to install upgrade to the Arduino bootloader within Arduino 
   * Compatible with ATmega8, ATmega168, and ATmega328p Arduinos and derivatives including Lilypad, Pro, Nano, and many derivatives.
   * Works with *MANY* additional Atmel AVR chips - almost anything that supports bootloads or "flash self-programming."  This includes chips from ATtiny 8pin chips through the 100pin ATmega2560 used on Arduino Mega.
   * Supports alternate serial ports, CPU frequencies and baud rates.
+  * Additional support for AVR-USB-MCUs of the families ATmegaXYu2/4/6 and AT90usbXYZS – e.g. Arduino Uno USB-MCU (ATmega16u2) and Micro (ATmega32u4).
+
 
 Optiboot (an older version) is installed by default on the Arduino Uno and (as of 2018) official Arduino Nano boards.  It can be installed on all older mega8, 168 or 328 based Arduinos.
 

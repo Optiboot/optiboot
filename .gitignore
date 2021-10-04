@@ -1,0 +1,10 @@
+# Ignore compiled output files
+/optiboot/bootloaders/optiboot/*.elf # exclude .elf files
+/optiboot/bootloaders/optiboot/*.hex # exclude .hex files
+/optiboot/bootloaders/optiboot/*.lst # exclude .lst files
+/optiboot/bootloaders/optiboot/*.tmp* # exclude .tmp files
+
+# Ignore additional hexfiles
+/optiboot/hexfiles/* # exclude additional hexfiles
+!/optiboot/hexfiles/legacy/* # include a few legacy hexfiles
+

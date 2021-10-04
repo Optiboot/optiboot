@@ -1,0 +1,358 @@
+#/*
+# * These are the AVR-USB-MCUs
+# * soldered on Arduino Micro / Leonardo and similar boards representing the main IO-MCU
+# * or being used on Arduino Uno (Wifi) / Mega (2560) as USB to UART converter, the USB-MCU
+# * The USB (DFU)-Bootloader installed per default on these devices is REPLACED by Optiboot,
+# * thus supporting upload via USART1 (serial1) INSTEAD of USB!!!
+# * 
+# * https://github.com/Virtual-Java
+# *
+# * This file has basic CPU defintions, while many possible combinations
+# * of AVR_FREQ, BAUD_RATE, and UART are built by a shell script.
+# */
+
+
+HELPTEXT += "target atmega8/16/32u2, atmega16/32u4 - newer 32/44pin AVR-USB-MCUs \n"
+
+
+#-----------------------
+# ATmega 8u2
+#-----------------------
+#ATmega8u2
+atmega8u2atUART: TARGET = atmega8u2
+atmega8u2atUART: MCU_TARGET = atmega8u2
+atmega8u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega8u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe
+endif
+atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega8u2:
+	"$(MAKE)" atmega8u2atUART UART?=1
+
+atmega8u2_isp: atmega8u2
+atmega8u2_isp: TARGET = atmega8u2
+atmega8u2_isp: MCU_TARGET = atmega8u2
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega8u2_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega8u2_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega8u2_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega8u2_isp: EFUSE ?= FE# = 2.7V brownout
+atmega8u2_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega8u2_isp: isp
+
+
+#-----------------------
+# ATmega 16u2
+#-----------------------
+#ATmega16u2
+atmega16u2atUART: TARGET = atmega16u2
+atmega16u2atUART: MCU_TARGET = atmega16u2
+atmega16u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega16u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+endif
+atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega16u2:
+	"$(MAKE)" atmega16u2atUART UART?=1
+
+atmega16u2_isp: atmega16u2
+atmega16u2_isp: TARGET = atmega16u2
+atmega16u2_isp: MCU_TARGET = atmega16u2
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega16u2_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u2_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega16u2_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega16u2_isp: EFUSE ?= FE# = 2.7V brownout
+atmega16u2_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega16u2_isp: isp
+
+
+#-----------------------
+# ATmega 32u2
+#-----------------------
+#ATmega32u2
+atmega32u2atUART: TARGET = atmega32u2
+atmega32u2atUART: MCU_TARGET = atmega32u2
+atmega32u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega32u2atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
+atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega32u2:
+	"$(MAKE)" atmega32u2atUART UART?=1
+
+atmega32u2_isp: atmega32u2
+atmega32u2_isp: TARGET = atmega32u2
+atmega32u2_isp: MCU_TARGET = atmega32u2
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u2_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u2_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega32u2_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u2_isp: EFUSE ?= FE# = 2.7V brownout
+atmega32u2_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega32u2_isp: isp
+
+
+#-----------------------
+# ATmega 16u4
+#-----------------------
+#ATmega16u4
+atmega16u4atUART: TARGET = atmega16u4
+atmega16u4atUART: MCU_TARGET = atmega16u4
+atmega16u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega16u4atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
+endif
+atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega16u4:
+# disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
+	"$(MAKE)" atmega16u4atUART UART?=1 LED_START_FLASHES?=0
+
+atmega16u4_isp: atmega16u4
+atmega16u4_isp: TARGET = atmega16u4
+atmega16u4_isp: MCU_TARGET = atmega16u4
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega16u4_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega16u4_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega16u4_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega16u4_isp: EFUSE ?= FB# = 2.6V brownout
+atmega16u4_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega16u4_isp: isp
+
+
+#-----------------------
+# ATmega 32u4
+#-----------------------
+#ATmega32u4
+atmega32u4atUART: TARGET = atmega32u4
+atmega32u4atUART: MCU_TARGET = atmega32u4
+atmega32u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega32u4atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
+atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega32u4:
+# disable blinking the LED to make the bootloader to fit in 512 Bytes Bootsection
+	"$(MAKE)" atmega32u4atUART UART?=1 LED_START_FLASHES?=0
+
+atmega32u4_isp: atmega32u4
+atmega32u4_isp: TARGET = atmega32u4
+atmega32u4_isp: MCU_TARGET = atmega32u4
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u4_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u4_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega32u4_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u4_isp: EFUSE ?= FB# = 2.6V brownout
+atmega32u4_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega32u4_isp: isp
+
+
+#-----------------------
+# ATmega 32u6
+#-----------------------
+#ATmega32u6
+atmega32u6atUART: TARGET = atmega32u6
+atmega32u6atUART: MCU_TARGET = atmega32u6
+atmega32u6atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+atmega32u6atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
+endif
+atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+atmega32u6:
+	"$(MAKE)" atmega32u6atUART UART?=1
+
+atmega32u6_isp: atmega32u6
+atmega32u6_isp: TARGET = atmega32u6
+atmega32u6_isp: MCU_TARGET = atmega32u6	
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32u6_isp: HFUSE ?= DE# = 512 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32u6_isp: HFUSE ?= DC# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+atmega32u6_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+atmega32u6_isp: EFUSE ?= FB# = 2.6V brownout
+atmega32u6_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+atmega32u6_isp: isp
+
+
+#-----------------------
+# AT90USB646
+#-----------------------
+#at90usb646
+at90usb646atUART: TARGET = at90usb646
+at90usb646atUART: MCU_TARGET = at90usb646
+at90usb646atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+at90usb646atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+at90usb646atUART: LDSECTIONS = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
+else ## bigboot version is 1024 Bytes long; starts earlier
+at90usb646atUART: LDSECTIONS = -Wl,--section-start=.text=0xf800 -Wl,--section-start=.version=0xfffe
+endif
+at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+at90usb646:
+	"$(MAKE)" at90usb646atUART UART?=1 BIGBOOT?=1
+
+at90usb646_isp: at90usb646
+at90usb646_isp: TARGET = at90usb646
+at90usb646_isp: MCU_TARGET = at90usb646
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb646_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb646_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+at90usb646_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+at90usb646_isp: EFUSE ?= FB# = 2.6V brownout
+at90usb646_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+at90usb646_isp: isp
+
+
+#-----------------------
+# AT90USB647
+#-----------------------
+#at90usb647
+at90usb647atUART: TARGET = at90usb647
+at90usb647atUART: MCU_TARGET = at90usb647
+at90usb647atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+at90usb647atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb647atUART: LDSECTIONS = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb647atUART: LDSECTIONS = -Wl,--section-start=.text=0xf800 -Wl,--section-start=.version=0xfffe
+endif
+at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+at90usb647:
+	"$(MAKE)" at90usb647atUART UART?=1 BIGBOOT?=1
+
+at90usb647_isp: at90usb647
+at90usb647_isp: TARGET = at90usb647
+at90usb647_isp: MCU_TARGET = at90usb647	
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb647_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb647_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+at90usb647_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+at90usb647_isp: EFUSE ?= FB# = 2.6V brownout
+at90usb647_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+at90usb647_isp: isp
+
+
+#-----------------------
+# AT90USB1286
+#-----------------------
+#at90usb1286
+at90usb1286atUART: TARGET = at90usb1286
+at90usb1286atUART: MCU_TARGET = at90usb1286
+at90usb1286atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+at90usb1286atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb1286atUART: LDSECTIONS = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb1286atUART: LDSECTIONS = -Wl,--section-start=.text=0x1f800 -Wl,--section-start=.version=0x1fffe
+endif
+at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+at90usb1286:
+	"$(MAKE)" at90usb1286atUART UART?=1 BIGBOOT?=1
+
+at90usb1286_isp: at90usb1286
+at90usb1286_isp: TARGET = at90usb1286
+at90usb1286_isp: MCU_TARGET = at90usb1286	
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb1286_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb1286_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+at90usb1286_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+at90usb1286_isp: EFUSE ?= FB# = 2.6V brownout
+at90usb1286_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+at90usb1286_isp: isp
+
+
+#-----------------------
+# AT90USB1287
+#-----------------------
+#at90usb1287
+at90usb1287atUART: TARGET = at90usb1287
+at90usb1287atUART: MCU_TARGET = at90usb1287
+at90usb1287atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+at90usb1287atUART: AVR_FREQ ?= 16000000L
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb1287atUART: LDSECTIONS = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb1287atUART: LDSECTIONS = -Wl,--section-start=.text=0x1f800 -Wl,--section-start=.version=0x1fffe
+endif
+at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
+ifndef PRODUCTION
+at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
+endif
+at90usb1287:
+	"$(MAKE)" at90usb1287atUART UART?=1 BIGBOOT?=1 BIGBOOT?=1
+
+at90usb1287_isp: at90usb1287
+at90usb1287_isp: TARGET = at90usb1287
+at90usb1287_isp: MCU_TARGET = at90usb1287	
+ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
+at90usb1287_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+else ## bigboot version is 2048 Bytes long; starts earlier
+at90usb1287_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
+endif
+at90usb1287_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
+at90usb1287_isp: EFUSE ?= FB# = 2.6V brownout
+at90usb1287_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
+at90usb1287_isp: isp
+
