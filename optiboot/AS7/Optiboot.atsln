@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Atmel Studio Solution File, Format Version 11.00
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_xplained328p", "Projects\Optiboot_xplained328p.cproj", "{DCE6C7E3-EE26-4D79-826B-08594B9AD897}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3773CCBD-E79E-4D62-B530-E1CCDB09D098}"
+	ProjectSection(SolutionItems) = preProject
+		AS7-README.TXT = AS7-README.TXT
+		..\bootloaders\optiboot\boot_opt.h = ..\bootloaders\optiboot\boot_opt.h
+		..\bootloaders\optiboot\Makefile = ..\bootloaders\optiboot\Makefile
+		..\bootloaders\optiboot\Makefile.mega0 = ..\bootloaders\optiboot\Makefile.mega0
+		..\bootloaders\optiboot\optiboot.c = ..\bootloaders\optiboot\optiboot.c
+		..\bootloaders\optiboot\optiboot_x.c = ..\bootloaders\optiboot\optiboot_x.c
+		..\bootloaders\optiboot\parse_options.mk = ..\bootloaders\optiboot\parse_options.mk
+		..\bootloaders\optiboot\pin_defs.h = ..\bootloaders\optiboot\pin_defs.h
+		..\bootloaders\optiboot\pin_defs_x.h = ..\bootloaders\optiboot\pin_defs_x.h
+		..\bootloaders\optiboot\pins_rs485.h = ..\bootloaders\optiboot\pins_rs485.h
+		..\bootloaders\optiboot\pins_softuart.h = ..\bootloaders\optiboot\pins_softuart.h
+		..\bootloaders\optiboot\stk500.h = ..\bootloaders\optiboot\stk500.h
+	EndProjectSection
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_xplained328pb", "Projects\Optiboot_xplained328pb.cproj", "{1FCE634C-064E-4861-B59B-3D67F19F4E73}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_xplained168pb", "Projects\Optiboot_xplained168pb.cproj", "{4743E9BB-60C9-40C5-BE56-B3E6D46FE724}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_Curiosity4809", "Projects\Optiboot_Curiosity4809.cproj", "{6227EE60-D2C9-4F42-A423-6FC8100D656A}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_Xplained817", "Projects\Optiboot_Xplained817.cproj", "{0DACDF0F-4DFB-40BD-9C7A-8EB6ADD06DF8}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Optiboot_Curiosity3217", "Projects\Optiboot_Curiosity3217.cproj", "{4855869E-70EF-46C8-A56B-159D9DF9C08C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
+		{1FCE634C-064E-4861-B59B-3D67F19F4E73}.Debug|AVR.ActiveCfg = Debug|AVR
+		{1FCE634C-064E-4861-B59B-3D67F19F4E73}.Debug|AVR.Build.0 = Debug|AVR
+		{1FCE634C-064E-4861-B59B-3D67F19F4E73}.Release|AVR.ActiveCfg = Release|AVR
+		{1FCE634C-064E-4861-B59B-3D67F19F4E73}.Release|AVR.Build.0 = Release|AVR
+		{4743E9BB-60C9-40C5-BE56-B3E6D46FE724}.Debug|AVR.ActiveCfg = Debug|AVR
+		{4743E9BB-60C9-40C5-BE56-B3E6D46FE724}.Debug|AVR.Build.0 = Debug|AVR
+		{4743E9BB-60C9-40C5-BE56-B3E6D46FE724}.Release|AVR.ActiveCfg = Release|AVR
+		{4743E9BB-60C9-40C5-BE56-B3E6D46FE724}.Release|AVR.Build.0 = Release|AVR
+		{6227EE60-D2C9-4F42-A423-6FC8100D656A}.Debug|AVR.ActiveCfg = Debug|AVR
+		{6227EE60-D2C9-4F42-A423-6FC8100D656A}.Debug|AVR.Build.0 = Debug|AVR
+		{6227EE60-D2C9-4F42-A423-6FC8100D656A}.Release|AVR.ActiveCfg = Release|AVR
+		{6227EE60-D2C9-4F42-A423-6FC8100D656A}.Release|AVR.Build.0 = Release|AVR
+		{0DACDF0F-4DFB-40BD-9C7A-8EB6ADD06DF8}.Debug|AVR.ActiveCfg = Debug|AVR
+		{0DACDF0F-4DFB-40BD-9C7A-8EB6ADD06DF8}.Debug|AVR.Build.0 = Debug|AVR
+		{0DACDF0F-4DFB-40BD-9C7A-8EB6ADD06DF8}.Release|AVR.ActiveCfg = Release|AVR
+		{0DACDF0F-4DFB-40BD-9C7A-8EB6ADD06DF8}.Release|AVR.Build.0 = Release|AVR
+		{4855869E-70EF-46C8-A56B-159D9DF9C08C}.Debug|AVR.ActiveCfg = Debug|AVR
+		{4855869E-70EF-46C8-A56B-159D9DF9C08C}.Debug|AVR.Build.0 = Debug|AVR
+		{4855869E-70EF-46C8-A56B-159D9DF9C08C}.Release|AVR.ActiveCfg = Release|AVR
+		{4855869E-70EF-46C8-A56B-159D9DF9C08C}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
