@@ -814,7 +814,8 @@ int main(void) {
 #endif
 
 #if SOFT_UART
-  /* Set TX pin as output */
+  /* Set TX pin as HIGH output */
+  UART_PIN |= _BV(UART_TX_BIT);
   UART_DDR |= _BV(UART_TX_BIT);
 #endif
 
