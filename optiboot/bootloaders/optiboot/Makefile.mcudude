@@ -42,6 +42,24 @@ atmega16: $(PROGRAM)_atmega16_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
 endif
 atmega16a: atmega16
 
+#ATmega32/A
+#atmega32: TARGET = atmega32
+#atmega32: MCU_TARGET = atmega32
+#atmega32: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
+#atmega32: AVR_FREQ ?= 16000000L
+#atmega32: FLASH_SIZE_KIB = 32
+#ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+#atmega32: BOOT_SECTION_SIZE_B = 512
+#else ## bigboot version is 1024 Bytes long; starts earlier
+#atmega32: BOOT_SECTION_SIZE_KIB = 1
+#endif
+#atmega32: LDSECTIONS = $(COMMON_SECTIONS)
+#atmega32: $(PROGRAM)_atmega32_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).hex
+#ifndef PRODUCTION
+#atmega32: $(PROGRAM)_atmega32_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ).lst
+#endif
+atmega32a: atmega32
+
 #ATmega64/A
 atmega64: TARGET = atmega64
 atmega64: MCU_TARGET = atmega64
