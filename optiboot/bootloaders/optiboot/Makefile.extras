@@ -90,7 +90,7 @@ HELPTEXT += "target atmega32      - ATmega32 (40pin, 32k)\n"
 atmega32: TARGET = atmega32
 atmega32: MCU_TARGET = atmega32
 atmega32: CFLAGS += $(COMMON_OPTIONS)
-atmega32: AVR_FREQ ?= 11059200L
+atmega32: AVR_FREQ ?= 16000000L
 atmega32: FLASH_SIZE_KIB = 32
 ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega32: BOOT_SECTION_SIZE_B = 512
