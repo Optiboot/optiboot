@@ -32,7 +32,7 @@ atmega8u2atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega8u2atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega8u2atUART: LDSECTIONS = $(COMMON_SECTIONS) -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega8u2atUART: LDSECTIONS = $(COMMON_SECTIONS) $(COMMON_SECTIONS)
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -68,7 +68,7 @@ atmega16u2atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega16u2atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega16u2atUART: LDSECTIONS = $(COMMON_SECTIONS)
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -104,7 +104,7 @@ atmega32u2atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega32u2atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega32u2atUART: LDSECTIONS = $(COMMON_SECTIONS)
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -140,7 +140,7 @@ atmega16u4atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega16u4atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega16u4atUART: LDSECTIONS = $(COMMON_SECTIONS)
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -177,7 +177,7 @@ atmega32u4atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega32u4atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega32u4atUART: LDSECTIONS = $(COMMON_SECTIONS)
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -216,7 +216,7 @@ atmega32u6atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega32u6atUART: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega32u6atUART: LDSECTIONS = $(COMMON_SECTIONS)
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -252,7 +252,7 @@ at90usb646atUART: BOOT_SECTION_SIZE_KIB = 1
 else ## bigboot version is 2048 Bytes long; starts earlier
 at90usb646atUART: BOOT_SECTION_SIZE_KIB = 2
 endif
-at90usb646atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+at90usb646atUART: LDSECTIONS = $(COMMON_SECTIONS)
 at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -288,7 +288,7 @@ at90usb647atUART: BOOT_SECTION_SIZE_KIB = 1
 else ## bigboot version is 2048 Bytes long; starts earlier
 at90usb647atUART: BOOT_SECTION_SIZE_KIB = 2
 endif
-at90usb647atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+at90usb647atUART: LDSECTIONS = $(COMMON_SECTIONS)
 at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -324,7 +324,7 @@ at90usb1286atUART: BOOT_SECTION_SIZE_KIB = 1
 else ## bigboot version is 2048 Bytes long; starts earlier
 at90usb1286atUART: BOOT_SECTION_SIZE_KIB = 2
 endif
-at90usb1286atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+at90usb1286atUART: LDSECTIONS = $(COMMON_SECTIONS)
 at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -360,7 +360,7 @@ at90usb1287atUART: BOOT_SECTION_SIZE_KIB = 1
 else ## bigboot version is 2048 Bytes long; starts earlier
 at90usb1287atUART: BOOT_SECTION_SIZE_KIB = 2
 endif
-at90usb1287atUART: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+at90usb1287atUART: LDSECTIONS = $(COMMON_SECTIONS)
 at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst

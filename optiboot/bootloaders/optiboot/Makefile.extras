@@ -6,6 +6,9 @@
 # * See optiboot.c for details.
 #
 
+# include Makefile that contains common definitions of variables
+include Makefile.inc
+
 #
 # Extra chips (maybe) supported by optiboot
 # Note that these are usually only minimally tested.
@@ -19,7 +22,13 @@ atmega88: TARGET = atmega88
 atmega88: MCU_TARGET = atmega88
 atmega88: CFLAGS += $(COMMON_OPTIONS)
 atmega88: AVR_FREQ ?= 16000000L 
-atmega88: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
+atmega88: FLASH_SIZE_KIB = 8
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega88: BOOT_SECTION_SIZE_B = 512
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega88: BOOT_SECTION_SIZE_KIB = 1
+endif
+atmega88: LDSECTIONS = $(COMMON_SECTIONS) -Wl,--gc-sections -Wl,--undefined=optiboot_version
 atmega88: $(PROGRAM)_atmega88.hex
 atmega88: $(PROGRAM)_atmega88.lst
 
@@ -82,7 +91,13 @@ atmega32: TARGET = atmega32
 atmega32: MCU_TARGET = atmega32
 atmega32: CFLAGS += $(COMMON_OPTIONS)
 atmega32: AVR_FREQ ?= 11059200L
-atmega32: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
+atmega32: FLASH_SIZE_KIB = 32
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+atmega32: BOOT_SECTION_SIZE_B = 512
+else ## bigboot version is 1024 Bytes long; starts earlier
+atmega32: BOOT_SECTION_SIZE_KIB = 1
+endif
+atmega32: LDSECTIONS = $(COMMON_SECTIONS)
 atmega32: $(PROGRAM)_atmega32.hex
 atmega32: $(PROGRAM)_atmega32.lst
 
@@ -100,7 +115,10 @@ HELPTEXT += "target atmega128rfa1  - ATmega128RFA1 (100pin, 128k)\n"
 atmega128rfa1: MCU_TARGET = atmega128rfa1
 atmega128rfa1: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
 atmega128rfa1: AVR_FREQ ?= 16000000L
-atmega128rfa1: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
+atmega128rfa1: FLASH_SIZE_KIB = 128
+## bigboot version is 1024 Bytes long; starts earlier
+atmega128rfa1: BOOT_SECTION_SIZE_KIB = 1
+atmega128rfa1: LDSECTIONS = $(COMMON_SECTIONS)
 atmega128rfa1: $(PROGRAM)_atmega128rfa1.hex
 ifndef PRODUCTION
 atmega128rfa1: $(PROGRAM)_atmega128rfa1.lst

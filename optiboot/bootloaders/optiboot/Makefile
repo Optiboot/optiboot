@@ -355,7 +355,7 @@ virboot8: AVR_FREQ ?= 16000000L
 virboot8: FLASH_SIZE_KIB = 8
 # Start address of 1D80 allows for size up to 640 bytes, app up to 7552
 virboot8: BOOT_SECTION_SIZE_B = 640
-virboot8: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+virboot8: LDSECTIONS = $(COMMON_SECTIONS)
 virboot8: $(PROGRAM)_virboot8.hex
 ifndef PRODUCTION
 virboot8: $(PROGRAM)_virboot8.lst
@@ -370,7 +370,7 @@ virboot328: AVR_FREQ ?= 16000000L
 virboot328: FLASH_SIZE_KIB = 32
 # Start address of 7D80 allows for size up to 640 bytes, app up to 32128
 virboot328: BOOT_SECTION_SIZE_B = 640
-virboot328: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+virboot328: LDSECTIONS = $(COMMON_SECTIONS)
 virboot328: $(PROGRAM)_virboot328.hex
 ifndef PRODUCTION
 virboot328: $(PROGRAM)_virboot328.lst
@@ -417,7 +417,7 @@ atmega8: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega8: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega8: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET) -Wl,--gc-sections -Wl,--undefined=optiboot_version
+atmega8: LDSECTIONS = $(COMMON_SECTIONS) -Wl,--gc-sections -Wl,--undefined=optiboot_version
 atmega8: $(PROGRAM)_atmega8.hex
 ifndef PRODUCTION
 atmega8: $(PROGRAM)_atmega8.lst
@@ -448,7 +448,7 @@ atmega168: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega168: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega168: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega168: LDSECTIONS = $(COMMON_SECTIONS)
 atmega168: $(PROGRAM)_atmega168.hex
 ifndef PRODUCTION
 atmega168: $(PROGRAM)_atmega168.lst
@@ -480,7 +480,7 @@ atmega328: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier
 atmega328: BOOT_SECTION_SIZE_KIB = 1
 endif
-atmega328: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega328: LDSECTIONS = $(COMMON_SECTIONS)
 atmega328: $(PROGRAM)_atmega328.hex
 ifndef PRODUCTION
 atmega328: $(PROGRAM)_atmega328.lst
@@ -510,7 +510,7 @@ atmega1280: AVR_FREQ ?= 16000000L
 atmega1280: FLASH_SIZE_KIB = 128
 ## bigboot version is 1024 Bytes long; starts earlier
 atmega1280: BOOT_SECTION_SIZE_KIB = 1
-atmega1280: LDSECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET) -Wl,--section-start=.version=$(VERSION_SEC_OFFSET)
+atmega1280: LDSECTIONS = $(COMMON_SECTIONS)
 atmega1280: $(PROGRAM)_atmega1280.hex
 ifndef PRODUCTION
 atmega1280: $(PROGRAM)_atmega1280.lst

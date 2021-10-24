@@ -5,6 +5,9 @@
 # * This software is licensed under version 2 of the Gnu Public Licence.
 # * See optiboot.c for details.
 
+# include Makefile that contains common definitions of variables
+include Makefile.inc
+
 # Chip level targets
 #
 HELPTEXT += "target atmega2560    - ATmega2560p (100pin, 256k)\n"
@@ -12,7 +15,10 @@ atmega2560: TARGET = atmega2560
 atmega2560: MCU_TARGET = atmega2560
 atmega2560: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT
 atmega2560: AVR_FREQ ?= 16000000L
-atmega2560: LDSECTIONS  = -Wl,--section-start=.text=0x3fc00 -Wl,--section-start=.version=0x3fffe
+atmega2560: FLASH_SIZE_KIB = 256
+## bigboot version is 1024 Bytes long; starts earlier
+atmega2560: BOOT_SECTION_SIZE_KIB = 1
+atmega2560: LDSECTIONS = $(COMMON_SECTIONS)
 atmega2560: CFLAGS += $(UART_CMD)
 atmega2560: $(PROGRAM)_atmega2560.hex
 ifndef PRODUCTION

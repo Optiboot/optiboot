@@ -5,6 +5,9 @@
 # * This software is licensed under version 2 of the Gnu Public Licence.
 # * See optiboot.c for details.
 
+# include Makefile that contains common definitions of variables
+include Makefile.inc
+
 # Chip level targets
 #
 HELPTEXT += "target atmega644p    - ATmega644p\n"
@@ -12,7 +15,10 @@ atmega644p: TARGET = atmega644p
 atmega644p: MCU_TARGET = atmega644p
 atmega644p: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT
 atmega644p: AVR_FREQ ?= 16000000L
-atmega644p: LDSECTIONS  = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
+atmega644p: FLASH_SIZE_KIB = 64
+## bigboot version is 1024 Bytes long; starts earlier
+atmega644p: BOOT_SECTION_SIZE_KIB = 1
+atmega644p: LDSECTIONS = $(COMMON_SECTIONS)
 atmega644p: CFLAGS += $(UART_CMD)
 atmega644p: $(PROGRAM)_atmega644p.hex
 ifndef PRODUCTION
@@ -24,7 +30,11 @@ atmega1284: TARGET = atmega1284p
 atmega1284: MCU_TARGET = atmega1284p
 atmega1284: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT
 atmega1284: AVR_FREQ ?= 16000000L
-atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
+#atmega1284: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
+atmega1284: FLASH_SIZE_KIB = 16
+## bigboot version is 1024 Bytes long; starts earlier
+atmega1284: BOOT_SECTION_SIZE_KIB = 1
+atmega1284: LDSECTIONS = $(COMMON_SECTIONS)
 atmega1284: CFLAGS += $(UART_CMD)
 atmega1284: $(PROGRAM)_atmega1284p.hex
 ifndef PRODUCTION
