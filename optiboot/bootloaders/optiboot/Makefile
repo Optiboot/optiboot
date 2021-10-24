@@ -62,8 +62,8 @@ PROGRAM    = optiboot
 export
 
 # defaults
-MCU_TARGET = atmega168
-LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+default:
+	"$(MAKE)" atmega168
 
 # Build environments
 # Start of some ugly makefile-isms to allow optiboot to be built
