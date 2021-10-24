@@ -369,21 +369,21 @@ endif
 #-----------------------
 
 attiny841at20noLED:
-	$(MAKE) attiny841	 AVR_FREQ=20000000L LED_START_FLASHES=0  LDSECTIONS  = -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
+	$(MAKE) attiny841	 AVR_FREQ=20000000L LED_START_FLASHES=0  LDSECTIONS= -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_attiny841_20000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_attiny841_20000000L_noLED.lst
 endif
 
 attiny841at16noLED:
-	$(MAKE) attiny841	 AVR_FREQ=16000000L LED_START_FLASHES=0 LDSECTIONS  = -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
+	$(MAKE) attiny841	 AVR_FREQ=16000000L LED_START_FLASHES=0 LDSECTIONS= -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_attiny841_16000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_attiny841_16000000L_noLED.lst
 endif
 
 attiny841at8noLED:
-	$(MAKE) attiny841	 AVR_FREQ=8000000L  BAUD_RATE=57600 LED_START_FLASHES=0 LDSECTIONS  = -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
+	$(MAKE) attiny841	 AVR_FREQ=8000000L  BAUD_RATE=57600 LED_START_FLASHES=0 LDSECTIONS= -Wl,--section-start=.text=0x1dc0 -Wl,--section-start=.version=0x1ffe
 	mv $(PROGRAM)_attiny841.hex $(PROGRAM)_attiny841_8000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny841.lst $(PROGRAM)_attiny841_8000000L_noLED.lst
@@ -595,21 +595,21 @@ endif
 #-----------------------
 
 attiny441at20noLED:
-	$(MAKE) attiny441	 AVR_FREQ=20000000L LED_START_FLASHES=0  LDSECTIONS  = -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
+	$(MAKE) attiny441	 AVR_FREQ=20000000L LED_START_FLASHES=0  LDSECTIONS= -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
 	mv $(PROGRAM)_attiny441.hex $(PROGRAM)_attiny441_20000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny441.lst $(PROGRAM)_attiny441_20000000L_noLED.lst
 endif
 
 attiny441at16noLED:
-	$(MAKE) attiny441	 AVR_FREQ=16000000L LED_START_FLASHES=0 LDSECTIONS  = -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
+	$(MAKE) attiny441	 AVR_FREQ=16000000L LED_START_FLASHES=0 LDSECTIONS= -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
 	mv $(PROGRAM)_attiny441.hex $(PROGRAM)_attiny441_16000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny441.lst $(PROGRAM)_attiny441_16000000L_noLED.lst
 endif
 
 attiny441at8noLED:
-	$(MAKE) attiny441	 AVR_FREQ=8000000L  BAUD_RATE=57600 LED_START_FLASHES=0 LDSECTIONS  = -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
+	$(MAKE) attiny441	 AVR_FREQ=8000000L  BAUD_RATE=57600 LED_START_FLASHES=0 LDSECTIONS= -Wl,--section-start=.text=0x0dc0 -Wl,--section-start=.version=0x0ffe
 	mv $(PROGRAM)_attiny441.hex $(PROGRAM)_attiny441_8000000L_noLED.hex
 ifndef PRODUCTION
 	mv $(PROGRAM)_attiny441.lst $(PROGRAM)_attiny441_8000000L_noLED.lst
