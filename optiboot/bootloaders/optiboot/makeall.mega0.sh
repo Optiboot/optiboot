@@ -1,9 +1,8 @@
 # xTiny
-export PACKS=/Downloads/Atmel.ATtiny_DFP.1.3.229
+# change to point to your unpacked attiny packs directory
+export PACKS=/Downloads/Atmel.ATtiny_DFP.1.10.348
 
 make -f Makefile.mega0 version
-
-make -f Makefile.mega0 atmega4809 LED=D6 UARTTX=A0
 
 make -f Makefile.mega0 attiny402 LED=A3 TIMEOUT=8 UARTTX=A1
 make -f Makefile.mega0 attiny412 LED=A3 TIMEOUT=8 UARTTX=A6
@@ -23,7 +22,8 @@ make -f Makefile.mega0 curiosity1607
 make -f Makefile.mega0 xplained416
 
 # Mega0
-export PACKS=/Downloads/Atmel.ATmega_DFP.1.3.300
+# change to point to your unpacked atmega packs directory
+export PACKS=/Downloads/Atmel.ATmega_DFP.1.7.374
 
 make -f Makefile.mega0 version
 
