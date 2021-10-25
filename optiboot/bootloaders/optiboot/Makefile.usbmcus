@@ -171,7 +171,6 @@ atmega32u4atUART: MCU_TARGET = atmega32u4
 atmega32u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega32u4atUART: AVR_FREQ ?= 16000000L
 atmega32u4atUART: FLASH_SIZE_KIB = 32
-atmega32u4atUART: BOOT_SECTION_SIZE_B = 512
 ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
 atmega32u4atUART: BOOT_SECTION_SIZE_B = 512
 else ## bigboot version is 1024 Bytes long; starts earlier

@@ -8,6 +8,9 @@
 # * This software is licensed under version 2 of the Gnu Public Licence.
 # * See optiboot.c for details.
 
+# include file that contains common definitions of variables
+include Makefile.inc
+
 HELPTEXT = "\n"
 #----------------------------------------------------------------------
 #
@@ -18,15 +21,16 @@ MF:= $(MAKEFILE_LIST)
 # defaults
 MCU_TARGET = atmega4809
 
-ifdef BIGBOOT
-LDSECTIONS  = -Wl,-section-start=.text=0 \
-	      -Wl,--section-start=.application=0x400 \
-	      -Wl,--section-start=.version=0x3fe
-else
-LDSECTIONS  = -Wl,-section-start=.text=0 \
-	      -Wl,--section-start=.application=0x200 \
-	      -Wl,--section-start=.version=0x1fe
+
+BOOTSECTION_FIRST = 1
+#FLASH_SIZE_KIB does not need to be defined if bootsection first
+ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
+BOOT_SECTION_SIZE_B = 512
+else ## bigboot version is 1024 Bytes long; starts earlier
+BOOT_SECTION_SIZE_KIB = 1
 endif
+LDSECTIONS = $(COMMON_SECTIONS)
+
 
 BAUD_RATE=115200
 
