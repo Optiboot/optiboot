@@ -22,19 +22,19 @@ BOOT_SECTION_SIZE_B   = ($(BOOT_SECTION_SIZE_KIB) * 1024)
 FLASH_SIZE_B          = ($(FLASH_SIZE_KIB) * 1024)
 
 # formulas to calculate addresses of memory sections
-FLASH_START_OFFSET    = $(call CALC_ADDRESS_IN_HEX, (0) )
-FLASH_END_OFFSET      = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_SIZE_B) - 1) )
+FLASH_START_OFFSET    = (0)
+FLASH_END_OFFSET      = ($(FLASH_SIZE_B) - 1)
 
 # mega0 family (optiboot_x)
 ifdef BOOTSECTION_FIRST
-  APP_START_OFFSET      = $(call CALC_ADDRESS_IN_HEX, ($(BOOT_SECTION_SIZE_B)) )
-  APP_END_OFFSET        = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_END_OFFSET)) )
+  APP_START_OFFSET      = ($(BOOT_SECTION_SIZE_B))
+  APP_END_OFFSET        = ($(FLASH_END_OFFSET))
 
-  BOOT_START_OFFSET     = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_START_OFFSET)) )
-  BOOT_END_OFFSET       = $(call CALC_ADDRESS_IN_HEX, ($(BOOT_SECTION_SIZE_B) - 1) )
+  BOOT_START_OFFSET     = ($(FLASH_START_OFFSET)) )
+  BOOT_END_OFFSET       = ($(BOOT_SECTION_SIZE_B) - 1))
 
   # calculate section offsets
-  BOOT_SEC_OFFSET       = $(BOOT_START_OFFSET)
+  BOOT_SEC_OFFSET       = $(call CALC_ADDRESS_IN_HEX, $(BOOT_START_OFFSET) )
   TEXT_SEC_OFFSET       = $(BOOT_SEC_OFFSET)
   VERSION_SEC_OFFSET    = $(call CALC_ADDRESS_IN_HEX, ($(BOOT_END_OFFSET) - 1) )
   ## space for further formulas
@@ -48,14 +48,14 @@ ifdef BOOTSECTION_FIRST
 
 # most other avr's (optiboot)
 else # BOOTSECTION_AFTER
-  APP_START_OFFSET      = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_START_OFFSET)) )
-  APP_END_OFFSET        = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_END_OFFSET)) - ($(BOOT_SECTION_SIZE_B)) )
+  APP_START_OFFSET      = ($(FLASH_START_OFFSET))
+  APP_END_OFFSET        = ($(FLASH_END_OFFSET)) - ($(BOOT_SECTION_SIZE_B))
 
-  BOOT_START_OFFSET     = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_SIZE_B)) - ($(BOOT_SECTION_SIZE_B)) )
-  BOOT_END_OFFSET       = $(call CALC_ADDRESS_IN_HEX, ($(FLASH_END_OFFSET)) )
+  BOOT_START_OFFSET     = ($(FLASH_SIZE_B) - $(BOOT_SECTION_SIZE_B))
+  BOOT_END_OFFSET       = ($(FLASH_END_OFFSET))
 
   # calculate section offsets
-  BOOT_SEC_OFFSET       = $(BOOT_START_OFFSET)
+  BOOT_SEC_OFFSET       = $(call CALC_ADDRESS_IN_HEX, $(BOOT_START_OFFSET) )
   TEXT_SEC_OFFSET       = $(BOOT_SEC_OFFSET)
   VERSION_SEC_OFFSET    = $(call CALC_ADDRESS_IN_HEX, ($(BOOT_END_OFFSET) - 1) )
   ## space for further formulas

@@ -17,7 +17,7 @@ HELPTEXT += "target atmega8/16/32u2, atmega16/32u4 - newer 32/44pin AVR-USB-MCUs
 # include file that contains common definitions of variables
 include Makefile.inc
 
-COMMON_SECTIONS = -Wl,--section-start=.text=$(TEXT_SEC_OFFSET)
+
 #-----------------------
 # ATmega 8u2
 #-----------------------
