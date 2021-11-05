@@ -12,7 +12,6 @@ atmega2560: TARGET = atmega2560
 atmega2560: MCU_TARGET = atmega2560
 atmega2560: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT
 atmega2560: AVR_FREQ ?= 16000000L
-atmega2560: LDSECTIONS  = -Wl,--section-start=.text=0x3fc00 -Wl,--section-start=.version=0x3fffe
 atmega2560: CFLAGS += $(UART_CMD)
 atmega2560: $(PROGRAM)_atmega2560.hex
 ifndef PRODUCTION

@@ -19,7 +19,6 @@ atmega88: TARGET = atmega88
 atmega88: MCU_TARGET = atmega88
 atmega88: CFLAGS += $(COMMON_OPTIONS)
 atmega88: AVR_FREQ ?= 16000000L 
-atmega88: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
 atmega88: $(PROGRAM)_atmega88.hex
 atmega88: $(PROGRAM)_atmega88.lst
 
@@ -82,7 +81,6 @@ atmega32: TARGET = atmega32
 atmega32: MCU_TARGET = atmega32
 atmega32: CFLAGS += $(COMMON_OPTIONS)
 atmega32: AVR_FREQ ?= 11059200L
-atmega32: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
 atmega32: $(PROGRAM)_atmega32.hex
 atmega32: $(PROGRAM)_atmega32.lst
 
@@ -100,7 +98,6 @@ HELPTEXT += "target atmega128rfa1  - ATmega128RFA1 (100pin, 128k)\n"
 atmega128rfa1: MCU_TARGET = atmega128rfa1
 atmega128rfa1: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
 atmega128rfa1: AVR_FREQ ?= 16000000L
-atmega128rfa1: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
 atmega128rfa1: $(PROGRAM)_atmega128rfa1.hex
 ifndef PRODUCTION
 atmega128rfa1: $(PROGRAM)_atmega128rfa1.lst

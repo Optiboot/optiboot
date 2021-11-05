@@ -23,11 +23,6 @@ atmega8u2atUART: TARGET = atmega8u2
 atmega8u2atUART: MCU_TARGET = atmega8u2
 atmega8u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega8u2atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega8u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe
-endif
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega8u2atUART: $(PROGRAM)_atmega8u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -57,11 +52,6 @@ atmega16u2atUART: TARGET = atmega16u2
 atmega16u2atUART: MCU_TARGET = atmega16u2
 atmega16u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega16u2atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega16u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
-endif
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega16u2atUART: $(PROGRAM)_atmega16u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -91,11 +81,6 @@ atmega32u2atUART: TARGET = atmega32u2
 atmega32u2atUART: MCU_TARGET = atmega32u2
 atmega32u2atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega32u2atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega32u2atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
-endif
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u2atUART: $(PROGRAM)_atmega32u2_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -125,11 +110,6 @@ atmega16u4atUART: TARGET = atmega16u4
 atmega16u4atUART: MCU_TARGET = atmega16u4
 atmega16u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega16u4atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega16u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
-endif
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega16u4atUART: $(PROGRAM)_atmega16u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -160,11 +140,6 @@ atmega32u4atUART: TARGET = atmega32u4
 atmega32u4atUART: MCU_TARGET = atmega32u4
 atmega32u4atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega32u4atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega32u4atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
-endif
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u4atUART: $(PROGRAM)_atmega32u4_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -195,11 +170,6 @@ atmega32u6atUART: TARGET = atmega32u6
 atmega32u6atUART: MCU_TARGET = atmega32u6
 atmega32u6atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 atmega32u6atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-atmega32u6atUART: LDSECTIONS = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
-endif
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 atmega32u6atUART: $(PROGRAM)_atmega32u6_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -229,11 +199,6 @@ at90usb646atUART: TARGET = at90usb646
 at90usb646atUART: MCU_TARGET = at90usb646
 at90usb646atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 at90usb646atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 512 Bytes long; starts earlier
-at90usb646atUART: LDSECTIONS = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
-else ## bigboot version is 1024 Bytes long; starts earlier
-at90usb646atUART: LDSECTIONS = -Wl,--section-start=.text=0xf800 -Wl,--section-start=.version=0xfffe
-endif
 at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb646atUART: $(PROGRAM)_at90usb646_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -244,11 +209,7 @@ at90usb646:
 at90usb646_isp: at90usb646
 at90usb646_isp: TARGET = at90usb646
 at90usb646_isp: MCU_TARGET = at90usb646
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
 at90usb646_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb646_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-endif
 at90usb646_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
 at90usb646_isp: EFUSE ?= FB# = 2.6V brownout
 at90usb646_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
@@ -263,11 +224,6 @@ at90usb647atUART: TARGET = at90usb647
 at90usb647atUART: MCU_TARGET = at90usb647
 at90usb647atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 at90usb647atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
-at90usb647atUART: LDSECTIONS = -Wl,--section-start=.text=0xfc00 -Wl,--section-start=.version=0xfffe
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb647atUART: LDSECTIONS = -Wl,--section-start=.text=0xf800 -Wl,--section-start=.version=0xfffe
-endif
 at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb647atUART: $(PROGRAM)_at90usb647_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -278,11 +234,7 @@ at90usb647:
 at90usb647_isp: at90usb647
 at90usb647_isp: TARGET = at90usb647
 at90usb647_isp: MCU_TARGET = at90usb647	
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
 at90usb647_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb647_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-endif
 at90usb647_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
 at90usb647_isp: EFUSE ?= FB# = 2.6V brownout
 at90usb647_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
@@ -297,11 +249,6 @@ at90usb1286atUART: TARGET = at90usb1286
 at90usb1286atUART: MCU_TARGET = at90usb1286
 at90usb1286atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 at90usb1286atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
-at90usb1286atUART: LDSECTIONS = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb1286atUART: LDSECTIONS = -Wl,--section-start=.text=0x1f800 -Wl,--section-start=.version=0x1fffe
-endif
 at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb1286atUART: $(PROGRAM)_at90usb1286_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -312,11 +259,7 @@ at90usb1286:
 at90usb1286_isp: at90usb1286
 at90usb1286_isp: TARGET = at90usb1286
 at90usb1286_isp: MCU_TARGET = at90usb1286	
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
 at90usb1286_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb1286_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-endif
 at90usb1286_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
 at90usb1286_isp: EFUSE ?= FB# = 2.6V brownout
 at90usb1286_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2
@@ -331,11 +274,6 @@ at90usb1287atUART: TARGET = at90usb1287
 at90usb1287atUART: MCU_TARGET = at90usb1287
 at90usb1287atUART: CFLAGS += $(COMMON_OPTIONS) $(UART_CMD)
 at90usb1287atUART: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
-at90usb1287atUART: LDSECTIONS = -Wl,--section-start=.text=0x1fc00 -Wl,--section-start=.version=0x1fffe
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb1287atUART: LDSECTIONS = -Wl,--section-start=.text=0x1f800 -Wl,--section-start=.version=0x1fffe
-endif
 at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).hex
 ifndef PRODUCTION
 at90usb1287atUART: $(PROGRAM)_at90usb1287_UART$(UART)_$(BAUD_RATE)_$(AVR_FREQ)_BB$(BIGBOOT).lst
@@ -346,11 +284,7 @@ at90usb1287:
 at90usb1287_isp: at90usb1287
 at90usb1287_isp: TARGET = at90usb1287
 at90usb1287_isp: MCU_TARGET = at90usb1287	
-ifndef BIGBOOT ## standard version is 1024 Bytes long; starts earlier
 at90usb1287_isp: HFUSE ?= DE# = 1024 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-else ## bigboot version is 2048 Bytes long; starts earlier
-at90usb1287_isp: HFUSE ?= DC# = 2048 byte boot, SPI (ISP!!!) enabled, JTAG disabled
-endif
 at90usb1287_isp: LFUSE ?= FF# = Full Swing xtal (16MHz) 16KCK/14CK+65ms
 at90usb1287_isp: EFUSE ?= FB# = 2.6V brownout
 at90usb1287_isp: LOCK  ?= 2F# = APP protect mode 1, BL protect mode 2

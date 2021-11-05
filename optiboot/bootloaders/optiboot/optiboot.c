@@ -239,6 +239,10 @@
 /**********************************************************/
 /* Edit History:                                          */
 /*                                                        */
+/* Oct 2021                                               */
+/* 8.3 WestfW add section-start determination code to     */
+/*     the C source.  In theory, this causes no changes   */
+/*     to the binary, but it's "risky", so ... bump.      */
 /* Aug 2019                                               */
 /* 8.1  WestfW Fix bug in calculation of Vboot offset     */
 /* Sep 2018                                               */
@@ -328,7 +332,7 @@
 /**********************************************************/
 
 #define OPTIBOOT_MAJVER 8
-#define OPTIBOOT_MINVER 2
+#define OPTIBOOT_MINVER 3
 
 /*
  * OPTIBOOT_CUSTOMVER should be defined (by the makefile) for custom edits
@@ -597,6 +601,92 @@ static addr16_t buff = {(uint8_t *)(RAMSTART)};
 
 #endif // VIRTUAL_BOOT_PARTITION
 
+void sectionOpts() __attribute__((naked));
+void sectionOpts() {
+/*
+ * Mysterious Magic code to allow section-start addresses to be
+ * specifed by the C code (which, after all, has access to CPP symbols
+ * like FLASHEND, and can make a "safer" guess than putting manually
+ * determined constants in the Makefile.  This is dependent on a custom
+ * linker script that makes use of the __BOOT_ symbols that we define.
+ * Fortunately, that script can be used to link optiboot on any of its
+ * usual chips.
+ *
+ * with some judicious use of asm directives, we can define symbols
+ * that the linker will look at for positioning our segments (in
+ * combination with a custom linker script) based on the flash size
+ * defined via io.h, instead of requiring magic --section-start
+ * constants on the build line.
+ *
+ * This apparently needs to be inside a function in order to pass
+ * arguments to the asm command (even though the asm doesn't
+ * generate any code)  But we can make sure the function (which doesn't
+ * actually contain any code) doesn't actually end up in the binary.
+ */
+#if BIGBOOT
+  /*
+   * BIGBOOT images are easy, because they're much smaller than the
+   * flash size that they are defined to occupy (1k)
+   */
+  asm(" .global __BOOT_SIZE__, __BOOT_START__, __VERSION_START__\n"
+      " .equ __BOOT_SIZE__, 1024\n"
+      " .equ __BOOT_START__, (%0-1023)\n"
+      " .equ __VERSION_START__, (%0-1)\n"
+      ::"i"((uint32_t)FLASHEND));
+#else
+  /*
+   * non-BIGBOOT images try to fit in 512bytes, but don't quite fit
+   * on chips that don't have HW support for a boot section.  We try
+   * to guess how big the extra bits of code are, and then round up
+   * to the next larger flash page boundry (which can be nearly 4 pages
+   * away on chips with FOURPAGEERASE)
+   * These numbers are determined manually by building a reference
+   * implementation with various options and comparing sizes.
+   */
+# if VIRTUAL_BOOT_PARTITION
+/*  VIRTUAL_BOOT_PARTITION code is about 100 bytes */
+#   define VBSIZE 110
+# else
+#   define VBSIZE 0
+# endif
+# if LED_START_FLASHES==0
+/*  if LED_START_FLASHES is 0 (eg on 8pin chips), it saves some code */
+#   define LEDSIZE (-30)
+# else
+#   define LEDSIZE 0
+# endif
+# if SOFT_UART
+/*  But not having a hardware UART costs a bit */
+#   define SOFTUSIZE 16
+# else
+#   define SOFTUSIZE 0
+# endif
+
+# if FOURPAGEERASE
+/*  FOURPAGEERASE adds some code, and also affects how we round */
+#   define ERASESIZE 8
+#   define PAGSIZ_B (SPM_PAGESIZE*4)
+# else
+#   define PAGSIZ_B (SPM_PAGESIZE)
+#   define ERASESIZE 0
+# endif
+
+/*
+ * Round our guess up to next page size.  So 560 byte images occupy 576bytes,
+ * 600 byte images occupy 640 bytes, etc.  Depending on chip.
+ * Note that SPM_PAGESIZE is already in bytes in the .h files.
+ */  
+# define ROUNDTOPAGE(size) (((size + (PAGSIZ_B/2))/(PAGSIZ_B))*(PAGSIZ_B))
+/* use 511 here so we don't round up to the next page on normal systems. */
+# define BOOTSIZE (511+ERASESIZE+VBSIZE+SOFTUSIZE+LEDSIZE)
+  asm(" .global __BOOT_SIZE__, __BOOT_START__, __VERSION_START__\n"
+      " .equ __BOOT_SIZE__, %1\n"
+      " .equ __BOOT_START__, ((%0+1)-%1)\n"
+      " .equ __VERSION_START__, (%0-1)\n"
+      ::"i"((uint32_t)FLASHEND), "i"(ROUNDTOPAGE(BOOTSIZE)));
+#endif
+/* Wasn't that FUN! */
+}
 
 /* everything that needs to run VERY early */
 void pre_main(void) {
@@ -1566,7 +1656,10 @@ OPT2FLASH(SOFT_UART);
 OPT2FLASH(UART);
 #endif
 
+#if (!defined(NODATE)) || (NODATE == 0)
+// Leave out the date, useful if we want to compare binaries
 OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
+#endif
 #if BIGBOOT
 OPT2FLASH(BIGBOOT);
 #endif

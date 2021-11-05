@@ -60,7 +60,7 @@ export
 
 # defaults
 MCU_TARGET = atmega168
-LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
+LDSECTIONS  = -Wl,-Tlink_optiboot.ld
 
 # Build environments
 # Start of some ugly makefile-isms to allow optiboot to be built
@@ -349,8 +349,6 @@ virboot8: TARGET = atmega8
 virboot8: MCU_TARGET = atmega8
 virboot8: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION' '-Dsave_vect_num=EE_RDY_vect_num'
 virboot8: AVR_FREQ ?= 16000000L 
-# Start address of 1D80 allows for size up to 640 bytes, app up to 7552
-virboot8: LDSECTIONS  = -Wl,--section-start=.text=0x1d80 -Wl,--section-start=.version=0x1ffe
 virboot8: $(PROGRAM)_virboot8.hex
 ifndef PRODUCTION
 virboot8: $(PROGRAM)_virboot8.lst
@@ -362,7 +360,6 @@ virboot328: TARGET = atmega328
 virboot328: MCU_TARGET = atmega328p
 virboot328: CFLAGS += $(COMMON_OPTIONS) '-DVIRTUAL_BOOT_PARTITION'
 virboot328: AVR_FREQ ?= 16000000L
-virboot328: LDSECTIONS  = -Wl,--section-start=.text=0x7d80 -Wl,--section-start=.version=0x7ffe
 virboot328: $(PROGRAM)_virboot328.hex
 ifndef PRODUCTION
 virboot328: $(PROGRAM)_virboot328.lst
@@ -403,11 +400,6 @@ atmega8: TARGET = atmega8
 atmega8: MCU_TARGET = atmega8
 atmega8: CFLAGS += $(COMMON_OPTIONS)
 atmega8: AVR_FREQ ?= 16000000L 
-ifndef BIGBOOT
-atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1e00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
-else
-atmega8: LDSECTIONS  = -Wl,--section-start=.text=0x1c00 -Wl,--section-start=.version=0x1ffe -Wl,--gc-sections -Wl,--undefined=optiboot_version
-endif
 atmega8: $(PROGRAM)_atmega8.hex
 ifndef PRODUCTION
 atmega8: $(PROGRAM)_atmega8.lst
@@ -432,11 +424,6 @@ atmega168: TARGET = atmega168
 atmega168: MCU_TARGET = atmega168
 atmega168: CFLAGS += $(COMMON_OPTIONS)
 atmega168: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT
-atmega168: LDSECTIONS  = -Wl,--section-start=.text=0x3e00 -Wl,--section-start=.version=0x3ffe
-else
-atmega168: LDSECTIONS  = -Wl,--section-start=.text=0x3c00 -Wl,--section-start=.version=0x3ffe
-endif
 atmega168: $(PROGRAM)_atmega168.hex
 ifndef PRODUCTION
 atmega168: $(PROGRAM)_atmega168.lst
@@ -462,12 +449,6 @@ atmega328: TARGET = atmega328
 atmega328: MCU_TARGET = atmega328p
 atmega328: CFLAGS += $(COMMON_OPTIONS)
 atmega328: AVR_FREQ ?= 16000000L
-ifndef BIGBOOT
-atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7e00 -Wl,--section-start=.version=0x7ffe
-else
-# bigboot version is 1k long; starts earlier
-atmega328: LDSECTIONS  = -Wl,--section-start=.text=0x7c00 -Wl,--section-start=.version=0x7ffe
-endif
 atmega328: $(PROGRAM)_atmega328.hex
 ifndef PRODUCTION
 atmega328: $(PROGRAM)_atmega328.lst
@@ -494,7 +475,6 @@ atmega328_isp: isp
 atmega1280: MCU_TARGET = atmega1280
 atmega1280: CFLAGS += $(COMMON_OPTIONS) -DBIGBOOT $(UART_CMD)
 atmega1280: AVR_FREQ ?= 16000000L
-atmega1280: LDSECTIONS  = -Wl,--section-start=.text=0x1fc00  -Wl,--section-start=.version=0x1fffe
 atmega1280: $(PROGRAM)_atmega1280.hex
 ifndef PRODUCTION
 atmega1280: $(PROGRAM)_atmega1280.lst
