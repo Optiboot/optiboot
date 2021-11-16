@@ -34,7 +34,7 @@ AVRDUDE_ROOT ?= $(GCCROOT)
 AVRDUDE_CONF ?= -C$(TOOLROOT)/avr/etc/avrdude.conf
 
 # Default filename for the selected target
-FILENAME     ?=$ (PROGRAM)_$(TARGET).hex
+FILENAME     ?= $(PROGRAM)_$(TARGET).hex
 
 # These are the parameters for a usb-based STK500v2 programmer.
 # Exact type unknown.  (historical Makefile values.)
