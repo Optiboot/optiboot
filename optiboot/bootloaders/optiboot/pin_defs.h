@@ -106,6 +106,7 @@
   #define UDR0          UDR
   #define UDRE0         UDRE
   #define RXC0          RXC
+  #define TXC0          TXC
   #define FE0           FE
   #define TIFR1         TIFR
   #define WDTCSR        WDTCR
