@@ -344,8 +344,15 @@
 #define OPTIBOOT_CUSTOMVER 0
 #endif
 
-unsigned const int __attribute__((section(".version")))
-optiboot_version = 256*(OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER) + OPTIBOOT_MINVER;
+struct OptibootVersion { 
+  unsigned char minor; // minor first, for backward compatible memory layout
+  unsigned char major;
+} __attribute__((packed)); 
+const struct OptibootVersion __attribute__((section(".version")))
+optiboot_version = { 
+  .major = OPTIBOOT_MAJVER + OPTIBOOT_CUSTOMVER,
+  .minor = OPTIBOOT_MINVER
+};
 
 
 #define __AVR_LIBC_DEPRECATED_ENABLE__ 1  // don't poison MCUSR on some chips
@@ -929,12 +936,11 @@ int main(void) {
       verifySpace();
       /*
        * Send optiboot version as "SW version"
-       * Note that the references to memory are optimized away.
        */
       if (which == STK_SW_MINOR) {
-        putch(optiboot_version & 0xFF);
+        putch(pgm_read_byte_near(&optiboot_version.minor));
       } else if (which == STK_SW_MAJOR) {
-        putch(optiboot_version >> 8);
+        putch(pgm_read_byte_near(&optiboot_version.major));
       } else {
         /*
          * GET PARAMETER returns a generic 0x03 reply for
