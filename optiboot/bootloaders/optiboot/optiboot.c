@@ -703,8 +703,9 @@ void pre_main(void) {
     "set_osccal:\n" // start_main must difer only by extra 1s, so they can be overwritten to 0s after calibration is done. Here is rjmp is set default to 0x05 and would overwrite to 0x01.
     "  nop\n"
     "  ldi r24, 0xFF\n"
-    "  sts 0x0066, r24\n"
+    "  sts %[osccal_reg], r24\n"
     "start_main:\n"
+    : : [osccal_reg] "M" (_SFR_MEM_ADDR(OSCCAL)) : "r24"
     );
 }
 
