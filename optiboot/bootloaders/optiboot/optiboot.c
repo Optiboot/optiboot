@@ -783,10 +783,19 @@ int main(void) {
 #  define WDRF_CLR_REASONS 0  /* Never clear WDRF */
 #endif
 
+#if ALWAYS_USE_BOOTLOADER
+#define _ALWAYS_USE_BOOTLOADR 1
+#else
+#define _ALWAYS_USE_BOOTLOADR 0
+#endif
+
   ch = MCUSR;
 
   // Skip all logic and run bootloader if MCUSR is cleared (application request)
-  if (ch != 0) {
+  if (_ALWAYS_USE_BOOTLOADR || ch != 0) {
+
+#undef _ALWAYS_USE_BOOTLOADR
+
     /*
      * To run the boot loader, External Reset Flag must be set.
      * If not, we could make shortcut and jump directly to application code.
