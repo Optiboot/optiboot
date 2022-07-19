@@ -1267,7 +1267,12 @@ static void inline toggle_led(void) {
   defined(__AVR_ATmega64__)   || defined(__AVR_ATmega128__)
   LED_PORT ^= _BV(LED);
 #else
-  LED_PIN |= _BV(LED);  // Newer AVRs can toggle by writing PINx
+  // Newer AVRs can toggle by writing PINx.
+  if (&LED_PIN <= &_SFR_IO8(0x31)) {  // "if" code optimizes away.
+    LED_PIN |= _BV(LED); // becomes SBI on low ports (in theory: incorrectly)
+  } else {
+    LED_PIN = _BV(LED);  // high ports can't be sbi'ed (Issue #346)
+  }
 #endif
 }
 
