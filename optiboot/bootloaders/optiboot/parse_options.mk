@@ -10,6 +10,13 @@ endif
 dummy = FORCE
 endif
 
+ifdef NODATE
+ifneq ($(NODATE),0)
+VERSION_CMD = -DPRODUCTION=1
+endif
+dummy = FORCE
+endif
+
 
 # Build Options
 
@@ -142,11 +149,26 @@ endif
 
 HELPTEXT += "Option AVR_FREQ=<n>          - Clock rate of AVR CPU\n"
 
+HELPTEXT += "Option BOOT_ON_POR           - Run bootloader on power-on\n"
+ifdef NO_START_APP_ON_POR
+ifneq ($(NO_START_APP_ON_POR),0)
+POR_CMD = -DNO_START_APP_ON_POR=1
+dummy = FORCE
+endif
+endif
+
+ifdef BOOT_ON_POR
+ifneq ($(NO_START_APP_ON_POR),0)
+POR_CMD = -DNO_START_APP_ON_POR=1
+dummy = FORCE
+endif
+endif
+
 
 LED_OPTIONS = $(LED_START_FLASHES_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(LED_START_ON_CMD) $(LEDINV_CMD)
 CPU_OPTIONS = $(RESETPIN_CMD) $(TIMEOUT_CMD) $(FCPU_CMD)
 COMMON_OPTIONS =  $(BIGBOOT_CMD) $(APPSPM_CMD) $(VERSION_CMD)
-COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD)
+COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(POR_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"

@@ -718,3 +718,6 @@ clean_asm:
 
 help:
 	@echo -e $(HELPTEXT)
+
+.DEFAULT:
+	@echo No target named \"$<\":  Maybe you need \"-f Makefile.mega0\"?

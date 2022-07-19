@@ -138,8 +138,8 @@ atmega%:
 attiny%:
 	$(MAKE) -f $(MF) optiboot_attiny$*.hex
 
-HELPTEXT += "target optiboot_*.hex - Any approriate mega-0, tiny-0, or tiny-1\n"
-HELPTEXT += "                          ie: optiboot_atmega4809\n"
+HELPTEXT += "target *.hex         - Any approriate mega-0, tiny-0,1 or 2\n"
+HELPTEXT += "                          ie: atmega4809\n"
 HELPTEXT += "target drazzy402,412 - Dr Azzy's 8pin dev boards.\n"
 drazzy%2:
 	$(MAKE) -f $(MF) optiboot_attiny$*2.hex UARTTX=A1 TIMEOUT=8 LED=A7

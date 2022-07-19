@@ -785,37 +785,92 @@
  *   The 14, 20, and 24pin packages all conveniently have the UART on the
  *   same port pins, and the same pinmux structure!
  */
-#if defined(__AVR_ATtiny1614__) || defined(__AVR_ATtiny1604__) ||       \
-    defined(__AVR_ATtiny814__)  || defined(__AVR_ATtiny804__) ||        \
-    defined(__AVR_ATtiny1606__) || defined(__AVR_ATtiny806__) ||        \
-    defined(__AVR_ATtiny406__) || defined(__AVR_ATtiny3216__) ||        \
-    defined(__AVR_ATtiny816__) || defined(__AVR_ATtiny416__) || \
-    defined(__AVR_ATtiny1617__) || defined(__AVR_ATtiny3217__) || \
-    defined(__AVR_ATtiny1607__) || defined(__AVR_ATtiny817__)
-#define MYPMUX_REG PORTMUX.CTRLB
+#if /* 24pin: xxx7 */                                             \
+    defined(__AVR_ATtiny3217__)    /* 3207 doesn't exist */    || \
+    defined(__AVR_ATtiny1617__) || defined(__AVR_ATtiny1607__) || \
+    defined(__AVR_ATtiny817__)  || defined(__AVR_ATtiny807__)  || \
+    defined(__AVR_ATtiny417__)     /* 407 doesn't exist */     || \
+    /* 20 pin: xxx6 */                                            \
+    defined(__AVR_ATtiny3216__) || defined(__AVR_ATtiny3206__) || \
+    defined(__AVR_ATtiny1616__) || defined(__AVR_ATtiny1606__) || \
+    defined(__AVR_ATtiny816__)  || defined(__AVR_ATtiny806__)  || \
+    defined(__AVR_ATtiny416__)  || defined(__AVR_ATtiny406__)  || \
+    /* 14 pin: xxx4 */                                            \
+    defined(__AVR_ATtiny1614__) || defined(__AVR_ATtiny1604__) || \
+    defined(__AVR_ATtiny814__)  || defined(__AVR_ATtiny804__)  || \
+    defined(__AVR_ATtiny414__)  || defined(__AVR_ATtiny404__)
+
+# define MYPMUX_REG PORTMUX.CTRLB
 # if (UARTTX == B2)
-#  define UART_NAME "B2"
-#  ifndef USART0
-#   error Pin on USART0, but no USART0 exists
-#  endif
-#  define MYUART USART0
-#  define MYUART_TXPORT VPORTB
-#  define MYUART_TXPIN (1<<PORT2)
-#  define MYUART_PMUX_VAL 0
+#   define UART_NAME "B2"
+#   ifndef USART0
+#     error Pin on USART0, but no USART0 exists
+#   endif
+#   define MYUART USART0
+#   define MYUART_TXPORT VPORTB
+#   define MYUART_TXPIN (1<<PORT2)
+#   define MYUART_PMUX_VAL 0
 # elif (UARTTX == A1)
-#  define UART_NAME "A1"
-#  ifndef USART0
-#   error Pin on USART0, but no USART0 exists
-#  endif
-#  define MYUART USART0
-#  define MYUART_TXPORT VPORTA
-#  define MYUART_TXPIN (1<<PORT1)
-#  define MYUART_PMUX_VAL (USART_ALTPMUX)
+#   define UART_NAME "A1"
+#   ifndef USART0
+#     error Pin on USART0, but no USART0 exists
+#   endif
+#   define MYUART USART0
+#   define MYUART_TXPORT VPORTA
+#   define MYUART_TXPIN (1<<PORT1)
+#   define MYUART_PMUX_VAL (USART_ALTPMUX)
 # else
-#  pragma GCC diagnostic warning "-Wfatal-errors"
-#  pragma GCC error "Invalid UARTTX pin for chip"
-# endif
-#endif
+#   pragma GCC diagnostic warning "-Wfatal-errors"
+#   pragma GCC error "Invalid UARTTX pin for chip"
+# endif /* UARTTX == */
+#endif  /* ifdef tiny0s, tiny1s */
+
+
+/*
+ *  14, 20, and 24 pin Tiny-2
+ *   The 14, 20, and 24pin packages all conveniently have the UART on the
+ *   same port pins, and the same pinmux structure!
+ */
+
+#if /* 24pin: xxx7 */                                             \
+    defined(__AVR_ATtiny3227__) || defined(__AVR_ATtiny1627__) || \
+    defined(__AVR_ATtiny827__)  ||  defined(__AVR_ATtiny427__) || \
+    /* 20 pin: xxx6 */                                            \
+    defined(__AVR_ATtiny3226__) || defined(__AVR_ATtiny1626__) || \
+    defined(__AVR_ATtiny826__)  || defined(__AVR_ATtiny426__)  || \
+    /* 14 pin: xxx4 */                                            \
+    defined(__AVR_ATtiny3224__) || defined(__AVR_ATtiny1624__) || \
+    defined(__AVR_ATtiny824__)  || defined(__AVR_ATtiny424__)
+# define MYPMUX_REG PORTMUX.USARTROUTEA
+# if (UARTTX == B2)
+#   define UART_NAME "B2"
+#   ifndef USART0
+#     error Pin on USART0, but no USART0 exists
+#   endif
+#   define MYUART USART0
+#   define MYUART_TXPORT VPORTB
+#   define MYUART_TXPIN (1 << PORT2)
+#   define MYUART_PMUX_VAL 0
+# elif (UARTTX == A1)
+#   define UART_NAME "A1"
+#   ifndef USART0
+#     error Pin on USART0, but no USART0 exists
+#   endif
+#   define MYUART USART0
+#   define MYUART_TXPORT VPORTA
+#   define MYUART_TXPIN (1 << PORT1)
+#   define MYUART_PMUX_VAL (USART_ALTPMUX)
+# elif (UARTTX == C2)
+#   define UART_NAME "C2"
+#   ifndef USART1
+#     error Pin on USART1, but no USART1 exists
+#   endif
+#   define MYUART USART1
+#   define MYUART_TXPORT VPORTC
+#   define MYUART_TXPIN (1 << PORT2)
+#   define MYUART_PMUX_VAL (USART_ALTPMUX << 2)
+# endif /* UARTTX == chain */
+#endif  /* ifdef tiny2s */
 
 #ifndef MYUART
 # warning No UARTTX pin specified.
