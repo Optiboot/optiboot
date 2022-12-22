@@ -1,4 +1,8 @@
 #!/bin/bash
+
+set -e
+set -x
+
 make clean
 #
 #  buildable platforms of somewhat questionable support level

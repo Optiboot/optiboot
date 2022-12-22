@@ -1,0 +1,22 @@
+name: "All Arduino"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * *' # Daily at 5:00 UTC
+
+jobs:
+  build-latest:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:11
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+    - name: Fetch dependencies
+      run: |
+        apt-get update
+        apt-get install -y gcc-avr avr-libc make
+    - name: Make the target
+      run: |
+        cd optiboot/bootloaders/optiboot
+        ./makeall.arduino.sh
