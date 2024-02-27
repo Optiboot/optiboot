@@ -294,12 +294,20 @@ dummy = FORCE
 endif
 endif
 
+HELPTEXT += "Option NODATE=1              - Leave out the date, useful if we want to compare binaries\n"
+ifdef NODATE
+ifneq ($(NODATE),0)
+NODATE_CMD = -DNODATE=1
+dummy = FORCE
+endif
+endif
+
 
 COMMON_OPTIONS = $(BAUD_RATE_CMD) $(LED_START_FLASHES_CMD) $(BIGBOOT_CMD)
 COMMON_OPTIONS += $(SOFT_UART_CMD) $(LED_DATA_FLASH_CMD) $(LED_CMD) $(SS_CMD)
 COMMON_OPTIONS += $(SUPPORT_EEPROM_CMD) $(LED_START_ON_CMD) $(APPSPM_CMD)
 COMMON_OPTIONS += $(OSCCAL_VALUE_CMD) $(VERSION_CMD) $(TIMEOUT_CMD)
-COMMON_OPTIONS += $(POR_CMD) $(EXTR_CMD) $(RS485_CMD)
+COMMON_OPTIONS += $(POR_CMD) $(EXTR_CMD) $(RS485_CMD) $(NODATE_CMD)
 
 #UART is handled separately and only passed for devices with more than one.
 HELPTEXT += "Option UART=n                - use UARTn for communications\n"
