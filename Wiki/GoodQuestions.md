@@ -10,7 +10,7 @@ Optiboot occasionally generates questions on various forums (Arduino, AVRFreaks,
 In older versions, Optiboot was limited by the "Version 1" STK500 communications protocol, which only allows up to 64kwords of flash to be programmed.  The v7.0 code uses an out-of-band "SPI Command" to set the RAMPX register.<br><br>
  
   1. Why does Optiboot have its own copy of boot.h ?<br><br>
-  The copy of boot.h used by Optiboot has been modified to use "out" instructions instead of "sts."  The out instruction is shorter, but only works if the target registers in withing the first 64 IO addresses.<br>
+  The copy of boot.h used by Optiboot has been modified to use "out" instructions instead of "sts."  The out instruction is shorter, but only works if the target register is within the first 64 IO addresses.<br>
   As of Version 7.0, the Optiboot copy of boot.h has been renamed to boot_opt.h, defines ONLY the special "short" functions, and includes the standard \<avr/boot.h\> to pick up all the standard definitions.<br><br>
   
   1. What is a "Virtual Boot Partition"<br><br> 
