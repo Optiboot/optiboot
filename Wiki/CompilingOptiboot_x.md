@@ -55,7 +55,7 @@ For example:
 make -f Makefile.mega0 UARTTX=A1 LED=A7 atmega4809
 make -f Makefile.mega0 curiosity4809
 ~~~~
-Note that many of the board-level targets are implemented using a recursive invocation of make using this options.  For exmaple, the "drazzy402" target ends up being:
+Note that many of the board-level targets are implemented using a recursive invocation of make using this options.  For example, the "drazzy402" target ends up being:
 
 ~~~~
  make -f  Makefile.mega0 optiboot_attiny402.hex UARTTX=A1 TIMEOUT=8 LED=A7
@@ -66,6 +66,6 @@ The mega-0 and tiny-0/1 architecture is significantly different (and "nicer") th
 
  1. The bootloader starts at 0x0, and the Application start after the bootloader. <br>This means that the bootloader binary is the same for chips in the same family that have different flash memory size (eg ATmega1609 and ATmega4809.)
  2. Commonality of binaries.<br>These chips have much better cross-chip compatibility than previous AVR generations.  Common peripherals are identical and at the same addresses.  Combined with (1), this means that the same bootloader binary should run on any of the 14, 20, and 24pin tiny0 or tiny1 chips, if the same UARTTX ports are in use.
- 3. Chosing a UART.<br>In addition to having multiple UARTs, the mega-0 has a pin multiplexing ability that can redirect the functionality to two different sets of pins for each UART.  Specifying the port and pin of the TX signal uniquely identfies both the UART and pinmux settings.
+ 3. Choosing a UART.<br>In addition to having multiple UARTs, the mega-0 has a pin multiplexing ability that can redirect the functionality to two different sets of pins for each UART.  Specifying the port and pin of the TX signal uniquely identifies both the UART and pinmux settings.
  4. Clock speed.<br>Mega-0 chips normally boot to an internal clock that is accurate and fast enough for uart communications, regardless of whether "normal operation" of that board uses a different clock rate.  Optiboot runs off of this internal clock after figuring out the rate
  1. New NVM structure.<br>Flash and EEPROM are treated very similarly, so that support for both fits easily in the 512byte bootloader.
