@@ -2,7 +2,7 @@
 
 Optiboot implements a small subset of the  "STK500 communications protocol" (version 1) defined by Atmel in their [Application Note AVR061](http://www.atmel.com/Images/doc2525.pdf)  In order to conserve code space, many of the protocol commands are ignored and receive "lies" rather than correct response codes, leading to the possibility that the bootloader may not operate correctly with all host-side software.  It is known to work with versions of "avrdude" supporting the "-c arduino" programmer type.
 
-Optiboot is designed to reside in the bootloader section, and chip fuses should be set appropriately for the size of optiboot (normally 256 words) (BOOTSZx) and to reset to the bootloader start address (BOOTRST)  Note that BOOTSZx values are chip-dependent, and some of the chips suppored by Optiboot have a 512word minimum bootloader size.)
+Optiboot is designed to reside in the bootloader section, and chip fuses should be set appropriately for the size of optiboot (normally 256 words) (BOOTSZx) and to reset to the bootloader start address (BOOTRST).  Note that BOOTSZx values are chip-dependent, and some of the chips supported by Optiboot have a 512 word minimum bootloader size.)
 
 ## Basic Operation ##
   1. On reset, Optiboot starts and reads the reset reason from MCUSR.  For any cause other than "external reset", the application is started immediately.  Otherwise, optiboot attempts to download new application software:
@@ -33,7 +33,7 @@ The following commands will have their arguments correctly read, and produce in 
 |STK\_SET\_DEVICE|0x42, 'B'| |
 |STK\_SET\_DEVICE\_EXT|0x45, 'E'| |
 
-All other commands will result in a success response if they are immediate followed by CRC\_EOP (0x20, ' ') (ie they are ignored), or a WDT reset (start applicatin) otherwise.
+All other commands will result in a success response if they are immediate followed by CRC\_EOP (0x20, ' ') (ie they are ignored), or a WDT reset (start application) otherwise.
 
 ## Space Saving Techniques ##
 In order to save space, Optiboot utilizes a couple of techniques that may be of general interest:
