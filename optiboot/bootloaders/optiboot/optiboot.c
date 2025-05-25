@@ -1519,12 +1519,20 @@ static inline void read_mem(uint8_t memtype, addr16_t address, pagelen_t length)
 
   switch (memtype) {
 
-#if SUPPORT_EEPROM || BIGBOOT
   case 'E': // EEPROM
+#if SUPPORT_EEPROM || BIGBOOT
     do {
       putch(eeprom_read_byte((address.bptr++)));
     } while (--length);
     break;
+#else
+    /*
+     * On systems where EEPROM write is not supported, just busy-loop
+     * until the WDT expires, which will eventually cause an error on
+     * host system (which is what it should do.)
+     */
+    while (1)
+      ; // Error: wait for WDT
 #endif
   default:
     do {
