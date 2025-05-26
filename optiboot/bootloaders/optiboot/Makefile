@@ -673,9 +673,11 @@ include Makefile.mcudude
 include Makefile.usbmcus
 
 BAUDCHECK=
+ifneq (, $(shell which bash))  # don't run baudcheck if no shell exists
 ifndef PRODUCTION
 ifndef SOFT_UART
 BAUDCHECK= baudcheck
+endif
 endif
 endif
 
