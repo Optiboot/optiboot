@@ -896,7 +896,7 @@ int main(void) {
 #endif
 
 #ifdef HOLD_TO_PROG
-  if (HOLD_TO_PROG_ON)
+  if (HOLD_TO_PROG)
     watchdogConfig(WATCHDOG_OFF);
   else
 #endif
