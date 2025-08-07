@@ -1638,7 +1638,7 @@
 
 #else
 #error -------------------------------------------
-#error Unrecognized LED name.  Should be like "B5"
+#error Unrecognized HOLD_TO_PROG name.  Should be like "B5"
 #error -------------------------------------------
 #endif
 
