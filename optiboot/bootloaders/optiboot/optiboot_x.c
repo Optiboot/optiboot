@@ -271,6 +271,8 @@ void __attribute__((noinline)) __attribute__((leaf)) putch(char);
 uint8_t __attribute__((noinline)) __attribute__((leaf)) getch(void) ;
 void __attribute__((noinline)) verifySpace();
 void __attribute__((noinline)) watchdogConfig(uint8_t x);
+inline void rs485_txon();
+inline void rs485_txoff();
 
 static void getNch(uint8_t);
 
@@ -572,8 +574,10 @@ int main (void) {
       verifySpace();
     }
     putch(STK_OK);
+    rs485_txoff();  // perhaps turn off xmit, in prep for next input
   }
 }
+
 
 #if RS485
 inline void rs485_txon() {
@@ -582,10 +586,10 @@ inline void rs485_txon() {
 # else
   RS485_PORT.OUT |= _BV(RS485_BIT);
 # endif
+  MYUART.STATUS = USART_TXCIF_bm;  // This clears the TX complete flag
 }
 inline void rs485_txoff() {
 // First, wait for any pending transmits to finish.
-  MYUART.STATUS = USART_TXCIF_bm;  // This clears the TX complete flag
   while ((MYUART.STATUS & USART_TXCIF_bm) == 0)
     ; // spin loop waiting for TX Complete (could be immediately)
 # ifdef RS485_INVERT
@@ -604,7 +608,6 @@ void putch (char ch) {
   while (0 == (MYUART.STATUS & USART_DREIF_bm))
     ;
   MYUART.TXDATAL = ch;
-  rs485_txoff();    // To receive, turn off transmitter
 }
 
 uint8_t getch (void) {
@@ -718,6 +721,13 @@ static void do_nvmctrl (uint16_t address, uint8_t command, uint8_t data) {
 
 __attribute__((section(".fini9"))) const char f_delimit = 0xFF;
 
+#ifdef BIGBOOT
+OPT2FLASH(BIGBOOT);
+#endif
+#ifndef NODATE
+OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
+#endif
+
 #ifdef LED_START_FLASHES
 OPT2FLASH(LED_START_FLASHES);
 #endif
@@ -745,10 +755,6 @@ OPT2FLASH(BAUD_RATE);
 OPTFLASHSECT const char f_uart[] = "UARTTX=" UART_NAME;
 #endif
 
-OPTFLASHSECT const char f_date[] = "Built:" __DATE__ ":" __TIME__;
-#ifdef BIGBOOT
-OPT2FLASH(BIGBOOT);
-#endif
 OPTFLASHSECT const char f_device[] = "Device=" xstr(__AVR_DEVICE_NAME__);
 #ifdef OPTIBOOT_CUSTOMVER
 # if OPTIBOOT_CUSTOMVER != 0
