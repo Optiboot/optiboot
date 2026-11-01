@@ -1,0 +1,5 @@
+# Local Optiboot Mini build products and Python caches.
+/output/
+/optiboot_mini328.o
+/optiboot_mini328.elf
+__pycache__/

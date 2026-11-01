@@ -16,3 +16,10 @@ ifndef PRODUCTION
 	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 endif
 
+# BEGIN optiboot-mini328 integration
+include Makefile.mini328.inc
+# END optiboot-mini328 integration
+
+# BEGIN optiboot-mini-multi integration
+include Makefile.mini.inc
+# END optiboot-mini-multi integration

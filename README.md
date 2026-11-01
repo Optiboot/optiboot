@@ -15,6 +15,16 @@ Optiboot is an easy to install upgrade to the Arduino bootloader within Arduino 
 
 Optiboot (an older version) is installed by default on the Arduino Uno and (as of 2018) official Arduino Nano boards.  It can be installed on all older mega8, 168 or 328 based Arduinos.
 
+## Experimental Optiboot Mini
+
+An optional assembly implementation adds EEPROM transfers, read-only fuse/lock
+queries and explicit packet/address checks within a 512-byte boot section on
+ATmega328P/PB. It has 38 classic AVR build profiles, including experimental
+ATtiny Virtual Boot ports. See the [feature comparison](docs/mini/FEATURES.md),
+[build guide](optiboot/bootloaders/optiboot/README_MINI_MULTI.md) and
+[ATmega328PB hardware results](docs/mini/HARDWARE_ATMEGA328PB_2026-10-30.md).
+The existing C implementation and board targets remain available.
+
 ## Optiboot_X
 As of 2019, Atmel was acquired by Microchip Inc, and released several "new" architectures with the AVR CPU.  These are known as the Mega-0, Tiny-0, and Tiny-1 Series.  While the basic CPU operation is about the same as older AVRs, the peripherals, including Flash self-programming, are significantly different.  This justified a new version of Optiboot with separate source code and Makefiles, which we're calling "optiboot_x" (the new AVR chips closely resemble the "AVR XMega" chips.)
 

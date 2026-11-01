@@ -8,3 +8,6 @@
 /optiboot/hexfiles/* # exclude additional hexfiles
 !/optiboot/hexfiles/legacy/* # include a few legacy hexfiles
 
+# Local task worktrees and private hardware-test backups
+/.worktree/
+

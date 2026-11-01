@@ -1,0 +1,572 @@
+{
+  "atmega328p": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      15
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega328": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      20
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega328pb": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      22
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega168p": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      11
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega168": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      6
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega88p": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      15
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega88": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      10
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega324pa": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      17
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega164pa": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      10
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega16": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      3
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 1119,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega32a": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      2
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 2143,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega64a": {
+    "flash": 65536,
+    "eeprom": 2048,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      2
+    ],
+    "max_mhz": 16,
+    "profile": "mega64",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega128a": {
+    "flash": 131072,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      151,
+      2
+    ],
+    "max_mhz": 16,
+    "profile": "mega128",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega1284": {
+    "flash": 131072,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      151,
+      6
+    ],
+    "max_mhz": 20,
+    "profile": "modern128",
+    "ramend": 16639,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega1284p": {
+    "flash": 131072,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      151,
+      5
+    ],
+    "max_mhz": 20,
+    "profile": "modern128",
+    "ramend": 16639,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega8": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      7
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 1119,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega8a": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      7
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 1119,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega8515": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      6
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 607,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega8535": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      8
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 607,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega162": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      4
+    ],
+    "max_mhz": 16,
+    "profile": "legacy",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega164p": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      10
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega164a": {
+    "flash": 16384,
+    "eeprom": 512,
+    "page": 128,
+    "sig": [
+      30,
+      148,
+      15
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 1279,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega324p": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      8
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega324a": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      21
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega324pb": {
+    "flash": 32768,
+    "eeprom": 1024,
+    "page": 128,
+    "sig": [
+      30,
+      149,
+      23
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 2303,
+    "default_boot": 512,
+    "virtual_boot": false
+  },
+  "atmega644": {
+    "flash": 65536,
+    "eeprom": 2048,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      9
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega644p": {
+    "flash": 65536,
+    "eeprom": 2048,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      10
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega644a": {
+    "flash": 65536,
+    "eeprom": 2048,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      9
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega644pa": {
+    "flash": 65536,
+    "eeprom": 2048,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      10
+    ],
+    "max_mhz": 20,
+    "profile": "modern",
+    "ramend": 4351,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega640": {
+    "flash": 65536,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      150,
+      8
+    ],
+    "max_mhz": 16,
+    "profile": "modern",
+    "ramend": 8703,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega1280": {
+    "flash": 131072,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      151,
+      3
+    ],
+    "max_mhz": 16,
+    "profile": "modern128",
+    "ramend": 8703,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega1281": {
+    "flash": 131072,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      151,
+      4
+    ],
+    "max_mhz": 16,
+    "profile": "modern128",
+    "ramend": 8703,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega2560": {
+    "flash": 262144,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      152,
+      1
+    ],
+    "max_mhz": 16,
+    "profile": "modern256",
+    "ramend": 8703,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "atmega2561": {
+    "flash": 262144,
+    "eeprom": 4096,
+    "page": 256,
+    "sig": [
+      30,
+      152,
+      2
+    ],
+    "max_mhz": 16,
+    "profile": "modern256",
+    "ramend": 8703,
+    "default_boot": 1024,
+    "virtual_boot": false
+  },
+  "attiny841": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 16,
+    "sig": [
+      30,
+      147,
+      21
+    ],
+    "max_mhz": 16,
+    "profile": "tiny841",
+    "ramend": 767,
+    "default_boot": 1024,
+    "virtual_boot": true
+  },
+  "attiny1634": {
+    "flash": 16384,
+    "eeprom": 256,
+    "page": 32,
+    "sig": [
+      30,
+      148,
+      18
+    ],
+    "max_mhz": 12,
+    "profile": "tiny1634",
+    "ramend": 1279,
+    "default_boot": 1024,
+    "virtual_boot": true
+  },
+  "attiny85": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      11
+    ],
+    "max_mhz": 20,
+    "profile": "soft85",
+    "ramend": 607,
+    "default_boot": 1024,
+    "virtual_boot": true
+  },
+  "attiny84": {
+    "flash": 8192,
+    "eeprom": 512,
+    "page": 64,
+    "sig": [
+      30,
+      147,
+      12
+    ],
+    "max_mhz": 20,
+    "profile": "soft84",
+    "ramend": 607,
+    "default_boot": 1024,
+    "virtual_boot": true
+  }
+}
